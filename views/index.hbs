@@ -8,16 +8,6 @@
         This is a success alert—check it out!
     </div>
     <div id="app"></div>
-    <script type="text/javascript">
-    function connect() {
-        const ws = new WebSocket('ws://' + window.location.host + '/test');
-        ws.onmessage = function(msg) {
-            console.log(msg.data);
-        };
-    }
-
-    window.onload = connect;
-    </script>
     </body>
     {{> jsinc }}
 </html>

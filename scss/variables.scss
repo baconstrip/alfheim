@@ -1,0 +1,10 @@
+$body-bg: #F3F7F4;
+$theme-colors: (
+    "primary": #3A6EA5,
+    "secondary": #FF6700,
+    "info": #332E3C,
+);
+
+@import "node_modules/bootstrap/scss/functions";
+@import "node_modules/bootstrap/scss/variables";
+@import "node_modules/bootstrap/scss/mixins";

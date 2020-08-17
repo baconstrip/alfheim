@@ -1,11 +1,13 @@
 let gulp = require('gulp')
 let browserSync = require('browser-sync').create();
 let sass = require('gulp-sass');
-let browserify = require('gulp-browserify');
-let rename = require('gulp-rename');
+let browserify = require('browserify');
+let tsify = require('tsify');
+let source = require('vinyl-source-stream');
+let babelify = require('babelify');
 let plumber = require('gulp-plumber');
-let uglify = require('gulp-uglify');
-let gulpif = require('gulp-if');
+let webpack = require('webpack-stream');
+let rename = require('gulp-rename');
 const { env } = require('process');
 
 gulp.task('sass', () => {
@@ -25,18 +27,33 @@ gulp.task('js', () => {
         .pipe(browserSync.stream());
 });
 
+gulp.task('pack', () => {
+    return gulp.src('client/vue/index.js')
+        .pipe(webpack(require('./webpack.config.js')))
+        .pipe(rename('app.js'))
+        .pipe(gulp.dest('static/js/'));
+});
+
+/// DO NOT Use
 gulp.task('browserify', () => {
-    return gulp.src('client/vue/main.vue')
-        .pipe(plumber())
-        .pipe(browserify({
-            debug: !env.p,
-            transform: ['vueify']
-        }))
-        .pipe(gulpif(env.p, uglify()))
-        .pipe(rename({
-            extname: ".js"
-        }))
-        .pipe(gulp.dest('static/js'));
+    let b = browserify({
+        debug: !env.p,
+        basedir: "./client",
+        entries: ["vue/index.js"],
+        cache: {},
+        transform: [
+            'vueify',
+            babelify.configure({
+                presets: ['@babel/preset-env', '@babel/preset-react']
+            })
+        ],
+        sourceType: 'module'
+    });
+
+    return b.plugin(tsify)
+        .bundle()
+        .pipe(source("bundle.js"))
+        .pipe(gulp.dest("static/js"))
 });
 
 gulp.task('serve-sass', gulp.series('sass', () => {
@@ -44,8 +61,8 @@ gulp.task('serve-sass', gulp.series('sass', () => {
     gulp.watch('scss/*', gulp.series('sass'));
 }));
 
-gulp.task('serve-vue', gulp.series('browserify', () => {
-    gulp.watch('client/vue', gulp.series('browserify'));
+gulp.task('serve-vue', gulp.series('pack', () => {
+    gulp.watch('client/vue', gulp.series('pack'));
 }));
 
 
