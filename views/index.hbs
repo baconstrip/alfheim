@@ -1,11 +1,13 @@
 <html>
-    <head>
-        <title>Alfheim Landing</title>
-    </head>
+    {{> header }}
     <body>
     test page {{part}}
 
     <img src="/static/images/placeholder.svg" width=100px height=100px />
+    <div class="alert alert-success" role="alert">
+        This is a success alert—check it out!
+    </div>
+    <div id="app"></div>
     <script type="text/javascript">
     function connect() {
         const ws = new WebSocket('ws://' + window.location.host + '/test');
@@ -17,4 +19,5 @@
     window.onload = connect;
     </script>
     </body>
+    {{> jsinc }}
 </html>
