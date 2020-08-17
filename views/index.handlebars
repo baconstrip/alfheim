@@ -1,0 +1,20 @@
+<html>
+    <head>
+        <title>Alfheim Landing</title>
+    </head>
+    <body>
+    test page {{part}}
+
+    <img src="/static/images/placeholder.svg" width=100px height=100px />
+    <script type="text/javascript">
+    function connect() {
+        const ws = new WebSocket('ws://' + window.location.host + '/test');
+        ws.onmessage = function(msg) {
+            console.log(msg.data);
+        };
+    }
+
+    window.onload = connect;
+    </script>
+    </body>
+</html>

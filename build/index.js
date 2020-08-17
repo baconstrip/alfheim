@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const app = express_1.default();
 const PORT = 8054;
-app.get('/', (req, res) => res.send('test'));
+app.get('/', (req, res) => res.send('test page'));
 app.listen(PORT, () => {
-    console.log('Server is up');
+    console.log('Server is up...');
 });
