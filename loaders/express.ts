@@ -9,4 +9,5 @@ export default async ({ app } : { app: express.Application}) => {
     app.set('views', __dirname + '/../views');
 
     app.get('/', (req,res) => res.render('index', {part: "param"}));
+    app.get('/game', (req,res) => res.render('game'));
 };
