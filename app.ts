@@ -3,6 +3,9 @@ import ws from 'ws';
 import http from 'http';
 import loaders from './loaders';
 
+// Required for TypeORM
+import "reflect-metadata"
+
 const PORT = 8054;
 
 async function startServer() {
@@ -11,7 +14,11 @@ async function startServer() {
     const server = http.createServer(app);
     const socketServer = new ws.Server({server});
 
-    await loaders({ expressApp: app, wsServer: socketServer });
+    let services = await loaders({ 
+        expressApp: app, 
+        wsServer: socketServer,
+        httpServer: server
+    });
 
     server.listen(PORT, () => {
         console.log('Server is up...')

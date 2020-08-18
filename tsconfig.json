@@ -5,10 +5,12 @@
     "rootDir": "./",
     "outDir": "./build",
     "esModuleInterop": true,
-    "strict": true
+    "strict": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
   },
   "exclude": [
     "node_modules/*",
     "build/*"
-  ]
+  ],
 }

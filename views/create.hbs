@@ -1,9 +1,9 @@
 <div class="container-flex d-flex login-fill">
-    <div class="col-6 bg-info d-flex flex-column text-light flex-grow-1">
+    <div class="col-6 bg-primary d-flex flex-column text-light flex-grow-1">
         <div class="row flex-grow-1 align-items-center">
             <div class="col text-right">
                 <div class="p-5">
-                    <h1>Sign in to Alfheim</h1>
+                    <h1>Create a user in Alfheim</h1>
                 </div>
             </div>
         </div>
@@ -20,14 +20,26 @@
                             <label for="usernameinput">Username</label>
                             <input type="text" class="form-control" id="usernameinput">
                             <small class="form-text text-muted">
-                                This is your username that you use to log in with, not your display name
+                                This is your username that you will use to login. Alphanumeric only. Maximum of 20
+                                characters.
+                            </small>
+                        </div>
+                        <div class="form-group">
+                            <label for="displaynameinput">Display Name</label>
+                            <input type="text" class="form-control" id="displaynameinput">
+                            <small class="form-text text-muted">
+                                This is the name that will be shown to others in-game, maximum of 30 characters.
                             </small>
                         </div>
                         <div class="form-group">
                             <label for="passwordinput">Password</label>
                             <input type="password" class="form-control" id="passwordinput">
                         </div>
-                        <button type="button" class="btn btn-info" onclick="loginsubmit();">Log In</button>
+                        <div class="form-group">
+                            <label for="confirmpasswordinput">Confirm Password</label>
+                            <input type="password" class="form-control" id="confirmpasswordinput">
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="loginsubmit();">Log In</button>
                     </form>
                 </div>
             </div>
@@ -36,21 +48,24 @@
     </div>
 </div>
 
+{{> jsinc }}
 {{!-- Temporary Hack --}}
 <script type="text/javascript">
     function loginsubmit() {
         let uname = $('#usernameinput').val();
         let pass = $('#passwordinput').val();
+        let dname = $('#displaynameinput').val();
 
         $.ajax({
             type: 'POST',
-            url: '/login/ajax/auth',
+            url: '/login/ajax/create',
             data: {
                 user: uname,
                 pass: pass,
+                displayname: dname,
             },
             success: function () {
-                window.location.pathname = "/game";
+                window.location.pathname = "/login";
             },
             error: function (e) {
                 $('#loginerror').html("Error logging in: " + e.statusText + ", " + e.responseJSON);
