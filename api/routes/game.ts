@@ -11,11 +11,7 @@ export default (route: Router) => {
         loggedin.ensureLoggedIn(),
         (req: Request, res: Response) => {
             console.log((req as any).isAuthenticated())
-            res.render('game', 
-                { 
-                    part: "param", 
-                    username: userFromRequest(req).username
-                });
+            res.render('game', { part: "param", username: userFromRequest(req).username });
         }
     );
 };

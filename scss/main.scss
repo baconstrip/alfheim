@@ -3,3 +3,45 @@
  .login-fill {
      min-height: 100vh;
  }
+
+ .game-window {
+    height: 100%;
+ }
+
+ .fixed-height-3 {
+    height: 3px;
+ }
+
+ .sidebar {
+     background-color: $dark;
+ }
+
+ .text-container {
+     min-height: 30vh;
+ }
+
+ #text-log, #text-input{
+     outline: 0 !important;
+     resize: none;
+     background-color: darken($light, 10%);
+     border: solid 2px $dark;
+     padding: 0.3em 1em 0.3em 1em;
+ }
+
+ #text-log:disabled {
+    color: $dark !important;
+ }
+
+ #text-input {
+     overflow: hidden;
+     border-top: none !important;
+ }
+//  #text-input {
+//      overflow: hidden;
+//      outline: 0 !important;
+//      resize: none;
+//  }
+
+ #text-input:focus {
+     outline: 0 !important;
+ }
