@@ -54,11 +54,17 @@ export default (route: Router) => {
             }
             console.log('Creating user ' + req.body.user)
 
-            const u = await addUser(req.body.user, req.body.pass, req.body.displayname);
+            try {
+                const u = await addUser(req.body.user, req.body.pass, req.body.displayname);
+                return res.status(200).json({
+                    message: "Successfully registered " + u.displayname + " (" + u.username + ")."
+                });
+            } catch (e) {
+                return res.status(400).json({
+                    errors: e.message,
+                });
+            }
 
-            return res.status(200).json({
-                message: "Successfully registered " + u.displayname + " (" + u.username + ")."
-            });
         }
     );
 };

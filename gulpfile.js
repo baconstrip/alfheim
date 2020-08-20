@@ -18,10 +18,17 @@ gulp.task('js', () => {
         .pipe(gulp.dest('static/js'));
 });
 
-gulp.task('pack', () => {
-    return gulp.src('client/vue/index.js')
-        .pipe(webpack(require('./webpack.config.js')))
-        .pipe(rename('app.js'))
+gulp.task('game-pack', () => {
+    return gulp.src('client/vue/game/index.js')
+        .pipe(webpack(require('./webpack-game.config.js')))
+        .pipe(rename('game.js'))
+        .pipe(gulp.dest('static/js/'));
+});
+
+gulp.task('pages-pack', () => {
+    return gulp.src('client/vue/webpages/index.js')
+        .pipe(webpack(require('./webpack-webpages.config.js')))
+        .pipe(rename('webpages.js'))
         .pipe(gulp.dest('static/js/'));
 });
 
@@ -29,9 +36,12 @@ gulp.task('serve-sass', gulp.series('sass', () => {
     gulp.watch('scss/*', gulp.series('sass'));
 }));
 
-gulp.task('serve-vue', gulp.series('pack', () => {
-    gulp.watch('client/vue', gulp.series('pack'));
+gulp.task('serve-game', gulp.series('game-pack', () => {
+    gulp.watch('client/vue', gulp.series('game-pack'));
+}));
+gulp.task('serve-pages', gulp.series('pages-pack', () => {
+    gulp.watch('client/vue', gulp.series('pages-pack'));
 }));
 
 
-gulp.task('default', gulp.parallel('js', 'serve-sass', 'serve-vue'));
+gulp.task('default', gulp.parallel('js', 'serve-sass', 'serve-game', 'serve-pages'));

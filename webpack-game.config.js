@@ -3,20 +3,27 @@
 const { VueLoaderPlugin } = require('vue-loader')
 const path = require('path');
 
-module.exports = {
+const gameConfig = {
   mode: 'development',
+  name: "webpagesconfig",
   entry: [
-    './client/vue/index.js'
+    'client/vue/game/index.js'
   ],
   output: {
-    path: __dirname + '/static/js'
+    path: __dirname + '/static/js',
+    filename: "webpages.js"
   },
   module: {
     rules: [
       {
         test: /\.vue$/,
         use: 'vue-loader'
-      }
+      },
+      {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
     ]
   },
   resolve: {
@@ -24,6 +31,7 @@ module.exports = {
       'vue$': 'vue/dist/vue.esm.js',
       'socs': '../',
     },
+    extensions: ['.tsx', '.ts', '.js'],
     modules: [
       path.resolve(__dirname,'.'), 
       './client',
@@ -35,3 +43,5 @@ module.exports = {
     new VueLoaderPlugin()
   ]
 }
+
+module.exports = gameConfig;

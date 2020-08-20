@@ -1,5 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { userFromRequest } from '../../services/user';
+import { AlfEvent } from '../../types/events';
+import { EventBus } from '../../services/eventbus';
 const loggedin = require('connect-ensure-login');
 
 const gameRoute = Router();
@@ -11,7 +13,11 @@ export default (route: Router) => {
         loggedin.ensureLoggedIn(),
         (req: Request, res: Response) => {
             console.log((req as any).isAuthenticated())
-            res.render('game', { part: "param", username: userFromRequest(req).username });
+            res.render('game', { 
+                part: "param", 
+                username: userFromRequest(req).username,
+                gamejs: true
+            });
         }
     );
 };

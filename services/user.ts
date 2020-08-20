@@ -38,6 +38,15 @@ export function comparePassword(clear: string, hashed: string): boolean {
 }
 
 export async function addUser(username: string, password: string, displayName: string) {
+    let found = false;
+    await findOne(username, (x:any, y:any) => {
+        if (y) {
+            found = true;
+        }
+    });
+    if (found) {
+        throw new Error("Failed to create user, username already exists");
+    }
     username = username.toLowerCase();
     let user = new AuthUser();
     user.username = username;

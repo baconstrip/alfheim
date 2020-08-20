@@ -1,6 +1,8 @@
 import ws from 'ws';
 import { Server, ClientRequest } from 'http';
 import { Duplex } from 'stream';
+import { AlfEvent } from '../types/events';
+import { EventBus } from '../services/eventbus';
 
 class TimedWebSocket extends ws {
     lastMessage: Date = new Date();
@@ -24,9 +26,21 @@ export default async ({ wsServer, httpServer, sessions } :
     // When clients connect, greet them and register echo listener.
     wsServer.on('connection', (soc: TimedWebSocket) =>{
         soc.on('message', (message: string) => {
+            EventBus.dispatch(AlfEvent.RAW_MESSAGE_IN, message);
             soc.lastMessage = new Date();
-            console.log('message from client: ' + message);
-            soc.send('Hello thar ' + message);
+            try {
+                var data = JSON.parse(message);
+                if (data['mAgiC__clIEnTActiVe']) {
+                    soc.send(JSON.stringify({
+                        'mAgiC__KEepAlive': true,
+                    }));
+                    return;
+                }
+                EventBus.dispatch(AlfEvent.MESSAGE_IN, data);
+                console.log('message from client: ' + message);
+            } catch (e) {
+                console.log('Failed to parse message from client as JSON: ' + message);
+            }
         });
 
         soc.lastMessage = new Date();
@@ -34,7 +48,8 @@ export default async ({ wsServer, httpServer, sessions } :
             soc.lastMessage = new Date();
         });
 
-        soc.send('Connected to server. Welcome');
+        soc.send(JSON.stringify({greeting: 'Connected to server. Welcome' }));
+        console.log("greeting client");
     });
 
     setInterval(() => {
@@ -45,7 +60,6 @@ export default async ({ wsServer, httpServer, sessions } :
 
     setInterval(() => {
         wsServer.clients.forEach((soc: ws) => {
-            console.log((soc as TimedWebSocket).lastMessage);
             let last = (soc as TimedWebSocket).lastMessage;
             if (new Date().getTime() - last.getTime() > 10000) {
                 soc.terminate();
