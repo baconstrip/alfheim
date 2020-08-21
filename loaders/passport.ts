@@ -1,5 +1,5 @@
 import * as express from 'express';
-import { findOne, findById, comparePassword } from '../services/user';
+import { findOne, findById, comparePassword } from '../services/userdb';
 const passport = require('passport');
 let localStrategy = require('passport-local').Strategy
 
@@ -26,7 +26,6 @@ export default async ({app} : {app: express.Application}) => {
     ));
     
     passport.serializeUser(function(user: any, done: any) {
-        console.log('serialise' + user)
         done(null, user.id);
     });
 

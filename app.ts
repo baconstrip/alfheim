@@ -3,6 +3,7 @@ import ws from 'ws';
 import http from 'http';
 import loaders from './loaders';
 
+
 // Required for TypeORM
 import "reflect-metadata"
 
@@ -12,7 +13,7 @@ async function startServer() {
     
     const app = express();
     const server = http.createServer(app);
-    const socketServer = new ws.Server({server});
+    const socketServer = new ws.Server({noServer: true});
 
     let services = await loaders({ 
         expressApp: app, 

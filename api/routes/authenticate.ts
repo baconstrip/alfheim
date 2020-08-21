@@ -1,5 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { addUser } from '../../services/user';
+import { addUser, userFromRequest } from '../../services/userdb';
+import { EventBus } from '../../services/eventbus';
+import { AlfEvent } from '../../types/events';
 const { body, validationResult } = require('express-validator');
 const passport = require('passport');
 
@@ -33,6 +35,8 @@ export default (route: Router) => {
                 })
             }
             console.log('got auth req with body ' + req.body.user);
+            // Used to load player into live sessions.
+            EventBus.dispatch(AlfEvent.PLAYER_LOGIN, userFromRequest(req));
 
             return res.status(200).json(["hello"]);
         }

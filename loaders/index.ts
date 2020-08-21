@@ -5,7 +5,9 @@ import expressloader from './express';
 import wsloader from './ws';
 import sqlloader from './sql';
 import passport from './passport';
+import services from './services';
 import { Server } from 'http';
+import basicgame from './basicgame';
 
 export default async ({ expressApp, wsServer, httpServer } : 
     { 
@@ -21,6 +23,10 @@ export default async ({ expressApp, wsServer, httpServer } :
     console.log('WebSockets initialized');
     let db = await sqlloader({});
     console.log('DB initialized');
+    let s = await services({});
+    console.log('Loaded services');
+    await basicgame({});
+    console.log('loaded base game components');
 
     return {
         db: db,

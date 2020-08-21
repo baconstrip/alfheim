@@ -2,9 +2,13 @@ export enum AlfEvent {
     // Unimplemented
     PLAYER_REGISTER = 0,
     // Unimplemented
-    PLAYER_JOIN,
+    PLAYER_JOIN_LIVE,
     // Unimplemented
-    PLAYER_DISCONNECT,
+    PLAYER_DISCONNECT_LIVE,
+    // Unimplemented
+    PLAYER_LOGIN,
+    // Unimplemented
+    PLAYER_LOGOUT,
     // Unimplemented
     RAW_MESSAGE_IN,
     // Unimplemented

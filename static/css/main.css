@@ -11,14 +11,16 @@
   background-color: #343a40; }
 
 .text-container {
-  min-height: 30vh; }
+  min-height: 30vh;
+  max-height: 30vh; }
 
 #text-log, #text-input {
   outline: 0 !important;
   resize: none;
   background-color: #dae0e5;
   border: solid 2px #343a40;
-  padding: 0.3em 1em 0.3em 1em; }
+  padding: 0.3em 1em 0.3em 1em;
+  overflow-y: scroll; }
 
 #text-log:disabled {
   color: #343a40 !important; }

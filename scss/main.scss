@@ -18,6 +18,7 @@
 
  .text-container {
      min-height: 30vh;
+     max-height: 30vh;
  }
 
  #text-log, #text-input{
@@ -26,6 +27,7 @@
      background-color: darken($light, 10%);
      border: solid 2px $dark;
      padding: 0.3em 1em 0.3em 1em;
+     overflow-y: scroll;
  }
 
  #text-log:disabled {

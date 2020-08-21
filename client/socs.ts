@@ -1,4 +1,4 @@
-export function connect(message: Function, error: Function): void {
+export function connect(message: Function, error: Function): Function {
     const ws = new WebSocket('ws://' + window.location.host + '/test');
     var lastSeen = new Date();
     ws.onmessage = function (msg) {
@@ -33,4 +33,8 @@ export function connect(message: Function, error: Function): void {
             console.log('losing connection to server');
         } 
     }, 1000);
+
+    return (x: Object) => {
+        ws.send(JSON.stringify(x));
+    };
 }

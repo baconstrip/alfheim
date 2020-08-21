@@ -10,10 +10,13 @@ new Vue({
   render: h => h(App),
   mounted: () => {
     console.log('Connecting to server...');
-    socs.connect((msg) => {
+    const socCallback = socs.connect((msg) => {
       EventBus.$emit('raw-message', msg);
     }, (err) => {
       EventBus.$emit('error', msg);
+    });
+    EventBus.$on('send-message', (x) => {
+      socCallback((x instanceof Object) ? x : {x});
     });
     console.log('Connected!');
   }

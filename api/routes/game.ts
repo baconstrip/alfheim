@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { userFromRequest } from '../../services/user';
+import { userFromRequest } from '../../services/userdb';
 import { AlfEvent } from '../../types/events';
 import { EventBus } from '../../services/eventbus';
 const loggedin = require('connect-ensure-login');

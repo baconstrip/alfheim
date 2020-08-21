@@ -1,9 +1,8 @@
 import { AlfEvent } from '../types/events';
 import { $enum } from 'ts-enum-util';
+import * as Messages from '../types/messages';
 
 type _EventDict = Map<AlfEvent, Function[] | undefined>;
-
-    // type _EventDict = {[key in AlfEvent]: _EventList};
 
 class EventBusType { 
     listeners!: _EventDict;
@@ -27,7 +26,8 @@ class EventBusType {
         }
     }
 
-    dispatch(e: AlfEvent, args?: any) {
+    dispatch(e: AlfEvent, args: any) {
+
         console.log('dispatching event ' + e);
         this.listeners.get(e)?.forEach((x) => {
             x(args, e);
@@ -53,15 +53,3 @@ export namespace EventBus {
         return _x.dispatch(e, args);
     }
 }
-
-// export default (function (root, factory) {
-// 	if(typeof exports === 'object' && typeof module === 'object')
-// 		module.exports = factory();
-// 	else if(typeof exports === 'object')
-// 		exports["eventbus"] = factory();
-// 	else
-// 		(root as any)["eventbus"] = factory();
-// })(this, function(): EventBus {
-//     var ebus = new EventBus();
-//     return ebus
-// });
