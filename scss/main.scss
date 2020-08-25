@@ -47,3 +47,17 @@
  #text-input:focus {
      outline: 0 !important;
  }
+
+ img.sample {
+     max-height: 60vh;
+     display: block;
+ }
+
+ .ooc {
+     font-weight: normal;
+     color: darken(orange, 30%);
+ }
+
+ .ooc-prefix {
+    font-weight: bold;
+ }

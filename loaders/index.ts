@@ -8,6 +8,7 @@ import passport from './passport';
 import services from './services';
 import { Server } from 'http';
 import basicgame from './basicgame';
+import worlds from './worlds';
 
 export default async ({ expressApp, wsServer, httpServer } : 
     { 
@@ -26,7 +27,9 @@ export default async ({ expressApp, wsServer, httpServer } :
     let s = await services({});
     console.log('Loaded services');
     await basicgame({});
-    console.log('loaded base game components');
+    console.log('Loaded base game components');
+    await worlds({});
+    console.log('Loaded worlds from definitions');
 
     return {
         db: db,

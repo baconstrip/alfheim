@@ -7,6 +7,7 @@ export enum ServerMessage {
     // Start at 1000 to provide namespace separation.
     PUBLISH_TEXT = 1000,
     CLEAR_TEXT,
+    UPDATE_LOCATION
 }
 
 // ------ Base Message Type ------- //
@@ -39,6 +40,12 @@ export class PublishText {
 
 export class ClearText {}
 
+export class UpdateLocation {
+    world!: string;
+    room!: string;
+}
+
+// ---------- Utilities ---------- //
 
 export function BuildMessage(t: ClientMessage |  ServerMessage, body: Object, error?: string): Msg{
     let msg = new Msg();

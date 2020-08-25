@@ -1,6 +1,6 @@
 <template>
   <div class="row">
-    <h1>hi</h1>
+    <img class="sample" src="/static/images/fantasy.jpg" />
   </div>
 </template>
 

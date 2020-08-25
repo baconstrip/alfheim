@@ -43,6 +43,4 @@ export default {
     topbar,
   },
 };
-
-EventBus.$on('raw-message', (a) => console.log("From events: " + a));
 </script>

@@ -4,7 +4,7 @@ import { Duplex } from 'stream';
 import { AlfEvent } from '../types/events';
 import { EventBus } from '../services/eventbus';
 import { TimedWebSocket } from '../types/timedwebsocket';
-import { LookupPlayerId } from '../services/players';
+import players, { LookupPlayerId } from '../services/players';
 
 
 export default async ({ wsServer, httpServer, sessions } : 
@@ -28,8 +28,11 @@ export default async ({ wsServer, httpServer, sessions } :
     });
     // When clients connect, greet them and register echo listener.
     wsServer.on('connection', (soc: TimedWebSocket, req: any) =>{
+        console.log('new connection');
         const id = req.session.passport.user;
         EventBus.dispatch(AlfEvent.PLAYER_JOIN_LIVE, {id: id, soc: soc});
+
+        EventBus.dispatch(AlfEvent.POST_PLAYER_JOIN_LIVE, LookupPlayerId(id));
 
         // Add message reciever behaviour
         soc.on('message', (message: string) => {
@@ -56,6 +59,27 @@ export default async ({ wsServer, httpServer, sessions } :
                     throw e;
                 }
             }
+        });
+
+        soc.on('close', () => {
+            EventBus.dispatch(AlfEvent.PLAYER_DISCONNECT_LIVE, LookupPlayerId(id));
+            console.log('Player disconnected: ' + id);
+            const userTimeout = 10 * 1000;
+            // Set a timer to clean up the user and reset them.
+            const cancel = setTimeout(() => {
+                console.log('Forgetting user: ' + id);
+                EventBus.dispatch(AlfEvent.PLAYER_CLEANUP, id);
+            }, userTimeout);
+            // Cancel the timer if the user rejoins quickly enough by adding
+            // another listener.
+            const eventCancel = EventBus.onEvent(AlfEvent.PLAYER_JOIN_LIVE, (x: any) => {
+                clearTimeout(cancel);
+            });
+            // Cancel the above listener after the timeout to avoid creating
+            // excess listeners.
+            setTimeout(() => {
+                eventCancel();
+            }, userTimeout);
         });
 
         // Update last Message when connecting

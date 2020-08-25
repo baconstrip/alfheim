@@ -26,7 +26,6 @@ export function connect(message: Function, error: Function): Function {
         ws.send(JSON.stringify({
             'mAgiC__clIEnTActiVe': true,
         }));
-        // FOR DEVELOPMENT ONLY
     }, 1000);
     setInterval(() => {
         if (new Date().getTime() - lastSeen.getTime() > 3000) {

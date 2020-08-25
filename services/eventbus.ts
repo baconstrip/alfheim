@@ -1,6 +1,5 @@
 import { AlfEvent } from '../types/events';
 import { $enum } from 'ts-enum-util';
-import * as Messages from '../types/messages';
 
 type _EventDict = Map<AlfEvent, Function[] | undefined>;
 
@@ -21,14 +20,15 @@ class EventBusType {
         return () => {
             this.listeners.set(e,
                 this.listeners.get(e)?.filter((x) => {
-                return x == cb;
+                return x != cb;
             }));
         }
     }
 
     dispatch(e: AlfEvent, args: any) {
-
-        console.log('dispatching event ' + e);
+        if (e != AlfEvent.RAW_MESSAGE_IN) {
+            console.log('dispatching event ' + e);
+        }
         this.listeners.get(e)?.forEach((x) => {
             x(args, e);
         });

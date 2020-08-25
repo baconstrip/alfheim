@@ -26,12 +26,14 @@ export default {
     },
   },
   mounted: () => {
-    EventBus.$on('raw-message',  (x) => {
-      if (x.type === Messages.ServerMessage.PUBLISH_TEXT) {
-        $('#text-log').html($('#text-log').html() + x.body.output);
+    EventBus.$on('write-textlog', (x) => {
+        $('#text-log').html($('#text-log').html() + x);
         $('#text-log').scrollTop(1e9);
-      }
-    })
+    });
+    EventBus.$on('clear-textlog', (x) => {
+        $('#text-log').html('');
+        $('#text-log').scrollTop(1e9);
+    });
   }
 };
 </script>
