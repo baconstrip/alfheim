@@ -14,11 +14,12 @@ export default class Player {
      * 
      * @param msg Message to send, may contain HTML.
      */
-    sendMessage(msg: string) {
+    sendMessage(msg: string, debug?: Object | undefined) {
         this.soc?.send(
             JSON.stringify(Messages.BuildMessage(Messages.ServerMessage.PUBLISH_TEXT, {
                 output: msg,
                 html: true,
+                debug: debug,
             }))
         );
     }

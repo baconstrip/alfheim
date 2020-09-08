@@ -5,7 +5,7 @@ import { PathDirection } from "../types/game/direction";
 
 export default new World({
     name: "Overworld",
-    joinMessage: "<em>You've been transported to a mysterious realm. You're in an open field.</em><br>",
+    joinMessage: "<em>You've been transported to a mysterious realm. You're in an open field.</em>",
     rooms: new Array<Room>(
         new Room({
             name: "Hub", 

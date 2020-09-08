@@ -20,9 +20,6 @@ export default async ({ app } : { app: express.Application}) => {
     //app.set('views', 'views/');
     app.engine('.hbs', hbs({
         extname: '.hbs',
-        //defaultLayout: 'index',
-        //layoutsDir: __dirname + 'layouts/',
-        //partialsDir: __dirname + 'partials/'
     }));
     app.set('view engine', '.hbs');
     app.use(passport.initialize());
@@ -30,10 +27,6 @@ export default async ({ app } : { app: express.Application}) => {
 
     app.use('/static', express.static('static'));
     app.use('/', routes());
-
-
-    //app.get('/login', (req,res) => res.render('login', {part: "param", layout: false}));
-    //app.get('/game', (req,res) => res.render('game'));
 
     return esSession
 };

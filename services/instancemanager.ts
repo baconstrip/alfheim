@@ -23,6 +23,7 @@ export default async (defaultWorld: Instance) => {
         if (___findPlayer(ply.authUser.id)) {
             console.log('Player returning: ' + ply.authUser.id);
             ply.___refreshUI();
+            ply.sendMessage("Welcome back, we hope you enjoyed your hiatus");
             ply.sendMessage(ply.location?.fromWorld.forWorld.joinMessage ?? '');
             return;
         }

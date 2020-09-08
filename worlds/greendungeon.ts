@@ -5,7 +5,7 @@ import { PathDirection } from "../types/game/direction";
 
 export default new World({
     name: "Green Dungeon",
-    joinMessage: "<em>You find yourself at the watery entrence to a verdant cave. You can't immediately tell how deep the cave goes...</em><br>",
+    joinMessage: "<em>You find yourself at the watery entrence to a verdant cave. You can't immediately tell how deep the cave goes...</em>",
     rooms: new Array<Room>(
         new Room({
             name: "Cave entrance", 

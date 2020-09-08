@@ -9,7 +9,7 @@ export default async ({ }) => {
             const body = (message.body as any).input as string;
             if (body.toLowerCase().trim().startsWith('echo')) {
                 const reply = body.trim().substring(5);
-                ply.sendMessage('> <i>' + reply + '</i><br>');
+                ply.sendMessage('> <i>' + reply + '</i>');
             }
         }
     });

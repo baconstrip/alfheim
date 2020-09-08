@@ -9,6 +9,7 @@ import services from './services';
 import { Server } from 'http';
 import basicgame from './basicgame';
 import worlds from './worlds';
+import compromise from './compromise';
 
 export default async ({ expressApp, wsServer, httpServer } : 
     { 
@@ -30,6 +31,8 @@ export default async ({ expressApp, wsServer, httpServer } :
     console.log('Loaded base game components');
     await worlds({});
     console.log('Loaded worlds from definitions');
+    await compromise({});
+    console.log('Loaded natural language processor')
 
     return {
         db: db,

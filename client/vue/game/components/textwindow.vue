@@ -27,7 +27,8 @@ export default {
   },
   mounted: () => {
     EventBus.$on('write-textlog', (x) => {
-        $('#text-log').html($('#text-log').html() + x);
+        const containedMessage = "<div class='textlog-message'>" + x + "</div>";
+        $('#text-log').html($('#text-log').html() + containedMessage);
         $('#text-log').scrollTop(1e9);
     });
     EventBus.$on('clear-textlog', (x) => {

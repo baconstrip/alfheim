@@ -35,6 +35,7 @@ export class TextInput {
 export class PublishText {
     output!: string;
     // Whether the client should treat the text as preformatted or HTML. 
+    debug!: Object;
     html: boolean = false;
 }
 

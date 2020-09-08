@@ -12,22 +12,22 @@ class PlyManager {
         this.playersById = new Map();
     }
 }
-var inst: PlyManager;
+var ___inst: PlyManager;
 
 export default async ({ }) => {
-    inst = new PlyManager();
+    ___inst = new PlyManager();
     console.log('created players')
 
     EventBus.onEvent(AlfEvent.PLAYER_LOGIN, (u: AuthUser) => {
         const ply = new Player();
         ply.authUser = u;
-        inst.players.set(u.username, ply);
-        inst.playersById.set(u.id, ply);
+        ___inst.players.set(u.username, ply);
+        ___inst.playersById.set(u.id, ply);
     });
 
     EventBus.onEvent(AlfEvent.PLAYER_JOIN_LIVE, (info: any) => {
         const id = info.id;
-        const ply = inst.playersById.get(id);
+        const ply = ___inst.playersById.get(id);
         if (!ply) {
             return;
         }
@@ -40,7 +40,7 @@ export default async ({ }) => {
     })
 
     EventBus.onEvent(AlfEvent.PLAYER_CLEANUP, (id: number) => {
-        const ply = inst.playersById.get(id);
+        const ply = ___inst.playersById.get(id);
         const name = ply?.authUser.username;
         // TODO: Add event priority so this can be handled properly
         //ply?.___reset();
@@ -48,11 +48,11 @@ export default async ({ }) => {
 }
 
 export function LookupPlayer(name: string): Player | undefined {
-    return inst.players.get(name);
+    return ___inst.players.get(name);
 }
 
 export function LookupPlayerId(id: number): Player | undefined {
-    return inst.playersById.get(id);
+    return ___inst.playersById.get(id);
 }
 
 /**
@@ -61,5 +61,5 @@ export function LookupPlayerId(id: number): Player | undefined {
  * @param msg An HTML encoded message to send to players
  */
 export function Broadcast(msg: string) {
-    inst.players.forEach((x) => x.sendMessage(msg));
+    ___inst.players.forEach((x) => x.sendMessage(msg));
 }

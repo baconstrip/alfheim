@@ -4,6 +4,10 @@ import * as Messages from '../../../types/messages';
 function processMessage(msg: any) {
     if (msg.type === Messages.ServerMessage.PUBLISH_TEXT) {
         EventBus.$emit('write-textlog', msg.body.output);
+        const debugMessage = (msg.body as Messages.PublishText).debug; 
+        if (debugMessage){
+            console.log(debugMessage);
+        }
     }
     if (msg.type === Messages.ServerMessage.CLEAR_TEXT) {
         EventBus.$emit('clear-textlog');
