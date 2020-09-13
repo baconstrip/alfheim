@@ -8,10 +8,10 @@ export default (route: Router) => {
     route.use('/', homeRoute);
 
     homeRoute.get('/', 
-        loggedin.ensureLoggedIn(),
+        //loggedin.ensureLoggedIn(),
         (req: Request, res: Response) => {
             console.log((req as any).isAuthenticated())
-            return res.render('index', { part: "param", username: userFromRequest(req).username });
+            return res.render('index', { part: "param", username: userFromRequest(req)?.username });
         }
     );
 };

@@ -15,6 +15,9 @@ function processMessage(msg: any) {
     if (msg.type === Messages.ServerMessage.UPDATE_LOCATION) {
         EventBus.$emit('update-location', msg.body);
     }
+    if (msg.type === Messages.ServerMessage.UPDATE_MEDIA) {
+        EventBus.$emit('update-media', msg.body);
+    }
 }
 
 export default({}) => {

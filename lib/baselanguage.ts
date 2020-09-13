@@ -19,6 +19,11 @@ export default ({}) => {
         ],
     });
     registerGlobalVerb(verbMove);
+    const verbExamine = new LanguagePart({
+        semanticName: 'examine',
+        synonyms: ['look', 'check', 'inspect'],
+    });
+    registerGlobalVerb(verbExamine);
 
     // Add some rules to make it more likely that directions are matched
     // correctly, and annotate them as directions.

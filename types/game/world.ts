@@ -1,11 +1,17 @@
-import Room from "./room";
-import Path from "./path";
+import Room, { MutableRoom } from "./room";
+import Path, { MutablePath } from "./path";
+import GameObject, { MutableGameObject } from "./gameobject";
+import _ from "lodash";
 
 export default class World {
     /**
      * A name for the world, may contain basic HTML attributes.
      */
     readonly name: string;
+    /**
+     * A short name for the world, must only be one word.
+     */
+    readonly shortName: string;
     readonly rooms: Room[];
     /**
      * A message sent when players join, may contain basic HTML attributes.
@@ -25,6 +31,11 @@ export default class World {
      * A set of paths that ajoin all the rooms. 
      */
     readonly paths: Path[];
+    /**
+     * List of all objects available in the world, these can be containers
+     * themselves.
+     */
+    readonly objects: GameObject[];
 
     /**
      * Whether players can create instances of this world.
@@ -36,19 +47,35 @@ export default class World {
 
     constructor(s: {
         name: string,
+        shortName: string,
         rooms: Room[],
         joinMessage: string,
         defaultRoom: number,
         unrestrictedMovement?: boolean,
         paths: Path[],
         loadable?: boolean
+        objects?: GameObject[],
     }) {
         this.name = s.name;
+        this.shortName = s.shortName;
         this.rooms = s.rooms;
         this.joinMessage = s.joinMessage;
         this.defaultRoom = s.defaultRoom;
-        this.unrestrictedMovement = s.unrestrictedMovement ? s.unrestrictedMovement : false;
-        this.loadable = s.loadable === false ? false : true;
+        this.unrestrictedMovement = s.unrestrictedMovement ?? false;
+        this.loadable = s.loadable ?? true;
         this.paths = s.paths;
+        this.objects = s.objects ?? [];
+    }
+
+    toMutable(): MutableWorld {
+        return _.cloneDeep(this) as MutableWorld;
     }
 }
+
+export type MutableWorld = {
+    objects: MutableGameObject[]; 
+    rooms: MutableRoom[];
+    paths: MutablePath[];
+} & {
+    -readonly [P in keyof World]: World[P];
+} 

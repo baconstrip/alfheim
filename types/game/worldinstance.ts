@@ -1,19 +1,26 @@
-import World from "./world";
+import World, { MutableWorld } from "./world";
 import Player from "./player";
 import RoomInstance from "./roominstance";
+import GameObjectInstance from "./gameobjectinstance";
 
 export class Instance {
     readonly instName: string;
-    readonly forWorld: World;
+    readonly forWorld: MutableWorld;
     readonly rooms: Map<number, RoomInstance>;
+    // This needs to be reworked to support inifinte items properly.
+    readonly objects: Map<number, GameObjectInstance>;
 
     constructor(w: World, instName: string) {
         this.instName = instName;
-        this.forWorld = w;
+        this.forWorld = w.toMutable();
         this.rooms = new Map();
+        this.objects = new Map();
 
         this.forWorld.rooms.forEach((x) => {
             this.rooms.set(x.id, new RoomInstance(x, this));
+        });
+        this.forWorld.objects.forEach(x => {
+            this.objects.set(x.id, new GameObjectInstance(x, this))
         });
     }
 
@@ -63,5 +70,18 @@ export class Instance {
      */
     Broadcast(msg: string) {
         this.players().forEach(ply => ply.sendMessage(msg));
+    }
+
+    /**
+     * Generates a map of strings that correspond to things in this world with
+     * a reference to what they refer to. 
+     */
+    WorldLexicon(): Map<string, Object> {
+        let lexi: Map<string, Object> = new Map();
+        lexi.set(this.forWorld.name, this);
+        lexi.set(this.forWorld.name, this);
+        this.rooms.forEach(x => lexi.set(x.forRoom.name, x));
+        this.objects.forEach(x => lexi.set(x.forObject.name, x));
+        return lexi;
     }
 }

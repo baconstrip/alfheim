@@ -5,7 +5,6 @@ import Player from '../../types/game/player';
 import { replacePunctuation } from '../../lib/util';
 import nlp from 'compromise';
 
-
 type LanguageExtension = (doc: nlp.Document, world: nlp.World) => void;
 
 export class LanguagePart {
@@ -28,6 +27,19 @@ export class LanguagePart {
     }
 }
 
+/**
+ * Sentences represent a single imperative 
+ */
+class Sentence {
+    text: string;
+    parsed: nlp.ExtendedDocument<{}, nlp.World, nlp.Phrase>;
+
+    constructor(doc: nlp.ExtendedDocument<{}, nlp.World, nlp.Phrase>) {
+        this.parsed = doc;
+        this.text = doc.text();
+    }
+}
+
 // Singleton manager.
 class InputManager {
     wordReplacements: Map<string, string>;
@@ -42,10 +54,6 @@ function replaceAll(input: string, find: RegExp, replace: string): string {
     return input.replace(new RegExp(find, 'g'), replace);
 }
 
-function fixWhitespace(input: string): string {
-    return input.trim().replace(/\s{2,}/g, ' ');
-}
-
 /**
  * Updates a string to use words more regularly, replacing certain words to
  * make it easier on the language parser.
@@ -56,7 +64,6 @@ function fixWhitespace(input: string): string {
  * NOT USED, consider this
  */
 function normalizeWords(input: string): string {
-    ___inst.wordReplacements
     return "";
 }
 
@@ -80,8 +87,8 @@ function normalisePunctuation(input: string): string {
 function breakSentences(input: nlp.ExtendedDocument<{}, nlp.World, nlp.Phrase>, cb: (x: nlp.ExtendedDocument<{}, nlp.World, nlp.Phrase>) => void) {
     let sections = input.sentences();
     input.sentences().forEach((y) => {
-        // This should probably do multiple nested clauses, but I can't be bothered.
-        let found = false;
+        // This should probably do multiple nested clauses, but I can't be 
+        // bothered.
         const matched = y.match('[<prev>#Verb .+? #Noun .+?] and [<next>.+? #Verb .+?]').splitAfter('and');
         if (matched.some(_=>true)) {
             matched.lastTerms().delete('and');
@@ -89,7 +96,44 @@ function breakSentences(input: nlp.ExtendedDocument<{}, nlp.World, nlp.Phrase>, 
         }
     });
 
-    sections.forEach(x => {
+    let splits = sections;
+
+    // NOTE TO SELF: this hack with the phrase as any is what's needed to 
+    // fix this code.
+    // const splits = sections.map((y: nlp.Phrase) => {
+    //     const matches = (y as any).match("#Verb");
+    //     console.log('matches: %O', matches);
+    //     return matches;
+    // })
+    // This is going to need a lot more work, for now, let's ignore it
+    // and move on.
+    // sections.forEach(y => {
+    //     const matched = y.match('[<prev>#Verb  .+?] and [<next>.+? #Verb .+]').splitAfter('and');
+    //     console.log("Matching.. %O", matched)
+    //     if(matched.some(_=>true)) {
+    //         matched.lastTerms().delete('and');
+    //         const postfix = matched.match('#Verb [.?+]').groups()[0];
+    //         matched.groups()['prev'].append(postfix.text());
+    //         splits = matched;
+    //     }
+    // });
+
+    splits.forEach(x => {
+        cb(x);
+    })
+}
+
+/**
+ * Takes a crude pass over all the objects in a player's world to attempt to
+ * match objects that exist in their world with GameObject. Tags all objects in
+ * the WorldLexicon() of the player's instance.
+ */
+function tagWorldObjects(ply: Player, input: nlp.ExtendedDocument<{}, nlp.World, nlp.Phrase>, cb: (x: nlp.ExtendedDocument<{}, nlp.World, nlp.Phrase>) => void) {
+    const lexicon = ply.location?.fromWorld.WorldLexicon();
+    input.forEach(x => {
+        lexicon?.forEach((v, k) =>{
+            x.match(k).canBe("#Noun? #Adjective?").tag("GameObject");
+        });
         cb(x);
     })
 }
@@ -101,14 +145,15 @@ function handleRawInput(ply: Player, input: string) {
     // Normalize input to replace punctuation with regular interpretation.
     const normalised = normalisePunctuation(puncless);
 
+    breakSentences(nlp(normalised), (x) => {
+        tagWorldObjects(ply, x, (statement) => {
+            ply.sendMessage("I think you said " + statement.text(), statement.termList())
 
-    breakSentences(nlp(normalised), (statement) => {
-
-        ply.sendMessage("I think you said " + statement.text(), statement.termList())
-        console.log("%O", statement.nouns());
-        console.log("%O", statement.verbs());
-        console.log("%O", statement.topics());
-        console.log("%O", statement.sentences());
+            console.log("%O", statement.nouns());
+            console.log("%O", statement.verbs());
+            console.log("%O", statement.topics());
+            console.log("%O", statement.sentences());
+        });
     });
 }
 
@@ -135,7 +180,10 @@ export default async ({ }) => {
             if (ignoreCommands(body)) {
                 return;
             }
+            const start = new Date();
             handleRawInput(ply, body);
+            const end = new Date();
+            console.log("Time to perform request %Oms", end.getTime() - start.getTime());
         }
     });
 };

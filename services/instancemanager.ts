@@ -2,6 +2,7 @@ import { EventBus } from "./eventbus"
 import { AlfEvent } from "../types/events"
 import Player from "../types/game/player"
 import { Instance } from "../types/game/worldinstance";
+import World from "../types/game/world";
 
 // Singleton manager.
 class InstanceManager {
@@ -39,6 +40,19 @@ export default async (defaultWorld: Instance) => {
             ply.location = undefined;
         }
     });
+}
+
+export function CreateInstance(w: World, name: string): Instance {
+    if (inst.instances.get(name)) {
+        throw new Error("Duplicate instance name");
+    }
+    const newInst = new Instance(w, name);
+    inst.instances.set(name, newInst);
+    return newInst;
+}
+
+export function DefaultInstance(): Instance {
+    return inst.defaultWorld;
 }
 
 function ___findPlayer(id: number): Player | undefined {

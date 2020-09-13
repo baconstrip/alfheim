@@ -15,3 +15,7 @@ export default class Path {
         this.hidden = s.hidden;
     }
 }
+
+export type MutablePath = {
+    -readonly [P in keyof Path]: Path[P];
+} 

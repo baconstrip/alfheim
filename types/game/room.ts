@@ -9,13 +9,28 @@ export default class Room {
     readonly id: number;
 
     /**
+     * A short snippet that describes the room to the player.
+     */
+    readonly description: string;
+
+    /**
      * URL to obtain the background image from.
      */
     readonly img: string;
 
-    constructor(s : {name: string, id: number, img: string}) {
+    constructor(s : {
+        name: string, 
+        id: number, 
+        img: string,
+        description: string,
+    }) {
         this.name = s.name;
         this.id = s.id;
         this.img = s.img;
+        this.description = s.description;
     }
 }
+
+export type MutableRoom = {
+    -readonly [P in keyof Room]: Room[P];
+} 

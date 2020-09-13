@@ -7,7 +7,8 @@ export enum ServerMessage {
     // Start at 1000 to provide namespace separation.
     PUBLISH_TEXT = 1000,
     CLEAR_TEXT,
-    UPDATE_LOCATION
+    UPDATE_LOCATION,
+    UPDATE_MEDIA
 }
 
 // ------ Base Message Type ------- //
@@ -44,6 +45,14 @@ export class ClearText {}
 export class UpdateLocation {
     world!: string;
     room!: string;
+}
+
+export class UpdateMedia {
+    // Only one of the following will be set
+    /**
+     * A URL that specifies an image to display in the media area.
+     */
+    img!: string
 }
 
 // ---------- Utilities ---------- //

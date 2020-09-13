@@ -46,7 +46,8 @@ export default class Player {
 
     /**
      * Internal use only, inserts a player into a room unconditionally.
-     * @param room 
+     * 
+     * Use the addplayer and removeplayer methods on Instance instead.
      */
     ___spawnPlayer(room: RoomInstance | undefined) {
         this.location = room;
@@ -59,6 +60,11 @@ export default class Player {
             JSON.stringify(Messages.BuildMessage(Messages.ServerMessage.UPDATE_LOCATION, {
                 world: this.location?.fromWorld.forWorld.name,
                 room: this.location?.forRoom.name,
+            }))
+        );
+        this.soc?.send(
+            JSON.stringify(Messages.BuildMessage(Messages.ServerMessage.UPDATE_MEDIA, {
+                img: this.location?.forRoom.img,
             }))
         );
     }
