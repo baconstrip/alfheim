@@ -4,26 +4,93 @@ import { AlfEvent } from '../../types/events';
 import Player from '../../types/game/player';
 import { replacePunctuation } from '../../lib/util';
 import nlp from 'compromise';
+import { Instance } from '../../types/game/worldinstance';
+import _ from 'lodash';
+import { verbose } from 'sqlite3';
 
 type LanguageExtension = (doc: nlp.Document, world: nlp.World) => void;
+
+type LanguageHandler = (a: {
+    sentence: Sentence, 
+    ply: Player, 
+    instance?: Instance,
+    probableSubject?: WordTree,
+}) => void;
 
 export class LanguagePart {
     debugName?: string;
     semanticName: string;
     synonyms?: string[];
+    ___alternatives: string[];
 
+    /**
+     * languageInstructions contain extensions to compromise itself to improve
+     * language processing on aribitrary related words.
+     */
     languageInstructions?: LanguageExtension[];
+
+    /**
+     * handlers implement the behaviour when a player says a sentence that
+     * trigger this LanaguagePart.
+     */
+    handler: LanguageHandler;
 
     constructor(s: {
         semanticName: string,
         debugName?: string,
         synonyms?: string[],
         languageInstructions?: LanguageExtension[],
+        handler: LanguageHandler;
     }) {
         this.semanticName = s.semanticName;
         this.synonyms = s.synonyms;
         this.debugName = s.debugName;
         this.languageInstructions = s.languageInstructions;
+        this.handler = s.handler;
+
+        let names = this.synonyms ?? [];
+        names.push(this.semanticName);
+        this.___alternatives = names;
+    }
+}
+
+/**
+ * WordTree contains a set of words associated to the root word. 
+ * Generally attempts to treat proper nouns of the world as one word.
+ */
+class WordTree {
+    rootTerm?: nlp.ExtendedDocument<{}, nlp.World, nlp.Phrase>;
+    modifiers: nlp.Term[] = [];
+
+    gameObject: boolean;
+
+    constructor(root: nlp.ExtendedDocument<{}, nlp.World, nlp.Phrase>, gameObject: boolean) {
+        this.rootTerm = root;
+        this.gameObject = gameObject;
+    }
+
+    addModifier(w: nlp.Term) {
+        this.modifiers.unshift(w);
+    }
+
+    debugPrint() {
+        console.log("Term:\n%O", this.rootTerm?.text());
+        this.modifiers.forEach(x => {
+            console.log("\t%O", (x as any).text())
+        })
+    }
+
+    /**
+     * Returns a preposition if this term is modified by one.
+     * Useful for determining if this phrase is the subject of a sentence.
+     */
+    modifiedByPreposition(): nlp.Term | undefined {
+        this.modifiers.forEach(x => {
+            if ((x as any).match('#Preposition')) {
+                return x;
+            }
+        })
+        return undefined;
     }
 }
 
@@ -33,19 +100,131 @@ export class LanguagePart {
 class Sentence {
     text: string;
     parsed: nlp.ExtendedDocument<{}, nlp.World, nlp.Phrase>;
+    verb?: nlp.Term = undefined;
+    topics?: nlp.ExtendedDocument<{}, nlp.World, nlp.Phrase>;
+
+    trees: WordTree[] = [];
+    //gameObjects?: nlp.ExtendedDocument<{}, nlp.World, nlp.Phrase>;
 
     constructor(doc: nlp.ExtendedDocument<{}, nlp.World, nlp.Phrase>) {
         this.parsed = doc;
         this.text = doc.text();
+    }
+
+    /**
+     * build creates a sentence from its inputs. Returns false if parsing the
+     * sentence failed.
+     */
+    build(): boolean {
+        // For now, a sentence has one verb or its invalid.
+        this.parsed.termList().forEach (w => {
+            if (w.tags['Verb']) {
+                if (this.verb) {
+                    return false;
+                }
+                this.verb = w;
+            }
+        });
+
+        const cb = (o: nlp.ExtendedDocument<{}, nlp.World, nlp.Phrase>) => {
+            // Create a tree and look backwards through the sentence till we
+            // find a verb or noun, then stop. Each stage prepends a word to the
+            // tree of the noun that appears after it.
+            const tree = new WordTree(o, true);
+            o.lookBehind('.').reverse().some(x => {
+                if ((x as any).match('(#Noun|#Verb)').some((_:any)=>true)) {
+                    return true;
+                }
+                tree.addModifier((x as any).firstTerms());
+                return false;
+            });
+            this.trees.push(tree);
+        }
+
+        // For each game object in the sentence, this is a bit dumb, but
+        // should work well for most input.
+        const objects = this.parsed.match("#GameObject+"); 
+        objects.forEach(cb);
+
+        const directions = this.parsed.match("#Direction");
+        directions.forEach(cb);
+        return true;
+    }
+
+    pickProbableSubject(): WordTree | undefined {
+        // If we have no nouns, treat it as a subjectless command.
+        if (this.trees.length == 0) {
+            return undefined;
+        }
+        // Pick the only one, if there is only one.
+        if (this.trees.length == 1) {
+            return this.trees[0];
+        }
+
+        let marked: WordTree | undefined = undefined;
+        _.forEachRight(this.trees, x => {
+            if (x.modifiedByPreposition()) {
+                marked = x;
+                return;
+            }
+        });
+        if (marked) {
+            return marked;
+        }
+
+        // Otherwise pick the last one.
+        return this.trees[-1];
+    }
+
+    debugPrint() {
+        console.log("Sentence with verb %O:", this.verb?.text);
+        this.trees.forEach(x => {
+            x.debugPrint();
+        });
     }
 }
 
 // Singleton manager.
 class InputManager {
     wordReplacements: Map<string, string>;
+    globalVerbs: LanguagePart[] = [];
 
     constructor() {
         this.wordReplacements = new Map();
+    }
+
+    handleSentence(s: Sentence, ply: Player) {
+        if (!s.verb) {
+            ply.sendMessage("I'm sorry, I don't understand what you're trying to say. Try speaking imperatively with simple commands.");
+            return;
+        }
+
+
+        // This is actual location where verbs are run.
+        const verbCallback = (verb: LanguagePart) => {
+            verb.handler({
+                sentence: s,
+                ply: ply,
+                instance: ply.location?.fromWorld,
+                probableSubject: s.pickProbableSubject(),
+            });
+        }
+
+        // Right now, we only check the global verbs to see if its one of them.
+        const ran = this.globalVerbs.some(verb => {
+            return verb.___alternatives.some(x => {
+                if (x == s.verb?.text) {
+                    verbCallback(verb);
+                    return true;
+                }
+                return false;
+            });
+        });
+
+        if (!ran) {
+            ply.sendMessage(`I'm sorry, I don't know how to ${s.verb?.text}.`);
+            return;
+        }
     }
 }
 var ___inst: InputManager;
@@ -131,14 +310,17 @@ function breakSentences(input: nlp.ExtendedDocument<{}, nlp.World, nlp.Phrase>, 
 function tagWorldObjects(ply: Player, input: nlp.ExtendedDocument<{}, nlp.World, nlp.Phrase>, cb: (x: nlp.ExtendedDocument<{}, nlp.World, nlp.Phrase>) => void) {
     const lexicon = ply.location?.fromWorld.WorldLexicon();
     input.forEach(x => {
+        ply.location?.fromWorld.players().forEach(otherPly => {
+            x.match(otherPly.authUser.displayname).tag("#Player");
+        })
         lexicon?.forEach((v, k) =>{
             x.match(k).canBe("#Noun? #Adjective?").tag("GameObject");
         });
         cb(x);
-    })
+    });
 }
 
-function handleRawInput(ply: Player, input: string) {
+function handleTextInput(ply: Player, input: string) {
     // Step one, clean the input.
     const puncless = replacePunctuation(input).toLowerCase();
 
@@ -149,10 +331,13 @@ function handleRawInput(ply: Player, input: string) {
         tagWorldObjects(ply, x, (statement) => {
             ply.sendMessage("I think you said " + statement.text(), statement.termList())
 
-            console.log("%O", statement.nouns());
-            console.log("%O", statement.verbs());
-            console.log("%O", statement.topics());
-            console.log("%O", statement.sentences());
+            const sentence = new Sentence(statement);
+            const success = sentence.build();
+            ply.sendMessage(`The verb was ${sentence.verb?.text}: ${success}`);
+
+            sentence.debugPrint();
+
+            ___inst.handleSentence(sentence, ply);
         });
     });
 }
@@ -169,6 +354,7 @@ function addGlobalLanguageExtension(instructions?: LanguageExtension[]) {
 
 export function registerGlobalVerb(s: LanguagePart) {
     addGlobalLanguageExtension(s.languageInstructions);
+    ___inst.globalVerbs.push(s);
 };
 
 export default async ({ }) => {
@@ -181,7 +367,7 @@ export default async ({ }) => {
                 return;
             }
             const start = new Date();
-            handleRawInput(ply, body);
+            handleTextInput(ply, body);
             const end = new Date();
             console.log("Time to perform request %Oms", end.getTime() - start.getTime());
         }

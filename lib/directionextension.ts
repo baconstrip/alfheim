@@ -1,30 +1,7 @@
-import { registerGlobalVerb, LanguagePart } from "../services/player/inputparsing";
 import nlp from 'compromise';
 import { Direction } from "../types/game/direction";
 
 export default ({}) => {
-    const verbMove = new LanguagePart({
-        semanticName: "move",
-        synonyms: ['go', 'head'],
-        languageInstructions: [
-            (doc: nlp.Document, world: nlp.World) => {
-                // Attempt to correct some quirks with movement
-                world.postProcess(doc => {
-                    doc.match('(move|head|go) (to|in|toward|at)')
-                        .tag('Verb Preposition')
-                        .match('(to|in|toward|at)')
-                        .unTag('#Conjunction');
-                });
-            }
-        ],
-    });
-    registerGlobalVerb(verbMove);
-    const verbExamine = new LanguagePart({
-        semanticName: 'examine',
-        synonyms: ['look', 'check', 'inspect'],
-    });
-    registerGlobalVerb(verbExamine);
-
     // Add some rules to make it more likely that directions are matched
     // correctly, and annotate them as directions.
     nlp.extend((doc: nlp.Document, world: nlp.World) => {

@@ -2,6 +2,7 @@ import World, { MutableWorld } from "./world";
 import Player from "./player";
 import RoomInstance from "./roominstance";
 import GameObjectInstance from "./gameobjectinstance";
+import { PathDirection, GetSourceDirection, GetDestinationDirection } from "./direction";
 
 export class Instance {
     readonly instName: string;
@@ -22,6 +23,8 @@ export class Instance {
         this.forWorld.objects.forEach(x => {
             this.objects.set(x.id, new GameObjectInstance(x, this))
         });
+
+        this.___createRoomGraph();
     }
 
     /**
@@ -83,5 +86,24 @@ export class Instance {
         this.rooms.forEach(x => lexi.set(x.forRoom.name, x));
         this.objects.forEach(x => lexi.set(x.forObject.name, x));
         return lexi;
+    }
+
+    ___createRoomGraph() {
+        this.forWorld.paths.forEach(x => {
+            this.AddPath(x.source, x.dest, x.direction);
+        })
+    }
+
+    /**
+     * AddPath dynamically adds a path to this World.
+     */
+    AddPath(a: number, b: number, direction: PathDirection) {
+        const source = this.roomByID(a);
+        const dest = this.roomByID(b);
+        if (!source || !dest) {
+            throw new Error('Bad definition creating Path');
+        }
+        source?.paths.set(GetSourceDirection(direction), dest);
+        dest?.paths.set(GetDestinationDirection(direction), source);
     }
 }

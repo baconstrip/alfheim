@@ -32,7 +32,7 @@ export default new World({
         new Path({
             source: 0,
             dest: 1,
-            direction: PathDirection.NORTH_SOUTH,
+            direction: PathDirection.DOWN_UP,
             hidden: false
         }),
     ),
