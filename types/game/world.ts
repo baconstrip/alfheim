@@ -43,6 +43,11 @@ export default class World {
      */
     readonly loadable: boolean;
 
+    /**
+     * Default inventory size of players, if not set, this value is 2.
+     */
+    readonly defaultInventorySize: number;
+
     readonly id!: string;
 
     constructor(s: {
@@ -55,6 +60,7 @@ export default class World {
         paths: Path[],
         loadable?: boolean
         objects?: GameObject[],
+        defaultInventorySize?: number,
     }) {
         this.name = s.name;
         this.shortName = s.shortName;
@@ -65,6 +71,7 @@ export default class World {
         this.loadable = s.loadable ?? true;
         this.paths = s.paths;
         this.objects = s.objects ?? [];
+        this.defaultInventorySize = s.defaultInventorySize ?? 2;
     }
 
     toMutable(): MutableWorld {

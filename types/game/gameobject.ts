@@ -19,9 +19,16 @@ export default class GameObject {
      * The room this object starts in. If left undefined, it will not be in the
      * world, but it will be available for other features to spawn it.
      * 
-     * Objects that are contained within other objects should leave this unset.
+     * Objects that are contained within other objects must leave this unset.
      */
-    readonly inRoom: number;
+    readonly inRoom?: number;
+    /**
+     * The container this object starts in. If left undefined it will not be in
+     * the world, but it will be available for other features to spawn it.
+     * 
+     * Objects that are in a Room must leave this unset.
+     */
+    readonly inContainer?: number;
     /**
      * Whether or not the object can be picked up. Defaults to false.
      */
@@ -29,12 +36,10 @@ export default class GameObject {
     /**
      * Whether or not the object is an infinite source of itself. For example,
      * a box of matches may be an infinite source of matches. Defaults to false.
+     * 
+     * NOTE THIS IS CURRENTLY IGNORED
      */
     readonly infinite: boolean;
-    /**
-     * List of IDs of objects that this object contains. 
-     */
-    readonly contains: number[];
 
     /**
      * Specifies whether the object is visible to a player by default. 
@@ -52,19 +57,22 @@ export default class GameObject {
         id: number, 
         img?: string,
         inRoom?: number,
+        inContainer?: number,
         portable?: boolean,
         infinite?: boolean,
-        contains?: number[],
         hidden?: boolean,
         description: string,
     }) {
+        if (s.inRoom && s.inContainer) {
+            throw new Error("Both inRoom and inContainer declared, objects must have one or zero parents.");
+        }
         this.name = s.name;
         this.id = s.id;
         this.img = s.img;
-        this.inRoom = s.inRoom ?? -1;
+        this.inRoom = s.inRoom;
+        this.inContainer = s.inContainer;
         this.portable = s.portable ?? false;
         this.infinite = s.infinite ?? false;
-        this.contains = s.contains ?? [];
         this.hidden = s.hidden ?? false;
         this.description = s.description;
     }

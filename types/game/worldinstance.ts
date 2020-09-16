@@ -3,6 +3,8 @@ import Player from "./player";
 import RoomInstance from "./roominstance";
 import GameObjectInstance from "./gameobjectinstance";
 import { PathDirection, GetSourceDirection, GetDestinationDirection } from "./direction";
+import { WorldEntityType } from "./worldentitytype";
+import Inventory from "./inventory";
 
 export class Instance {
     readonly instName: string;
@@ -24,23 +26,77 @@ export class Instance {
             this.objects.set(x.id, new GameObjectInstance(x, this))
         });
 
+        // Put objects in the place after rooms and objects, so order doesn't 
+        // matter.
+        this.objects.forEach(x => {
+            if (x.forObject.inContainer) {
+                this.objects.get(x.forObject.inContainer)?.inventory.addItem(x);
+                return;
+            }
+            if (x.forObject.inRoom) {
+                this.rooms.get(x.forObject.inRoom)?.inventory.addItem(x);
+                return;
+            }
+        });
+
         this.___createRoomGraph();
     }
 
     /**
      * Looks up a room by its ID, returns undefined if it's not found.
-     * @param id 
      */
     roomByID(id: number): RoomInstance | undefined {
         return this.rooms.get(id);
     }
 
     /**
-     * Looks up a room by its name, case sensitive. Prefer roomByID 
-     * @param name 
+     * Looks up a room by its name, case insensitive. Prefer roomByID 
      */
     roomByName(name: string): RoomInstance | undefined {
-        return [...this.rooms.entries()].map((x) => x[1]).find((x) => x.forRoom.name == name)
+        return [...this.rooms.entries()].map((x) => x[1]).find((x) => x.forRoom.name.toLowerCase() == name.toLowerCase());
+    }
+
+    /**
+     * Looks up an object by its name, case insensitive. Prefer objectByID.
+     */
+    objectByName(name: string): GameObjectInstance | undefined {
+        return [...this.objects.entries()].map((x) => x[1]).find((x) => x.forObject.name.toLowerCase() == name.toLowerCase());
+    }
+
+    objectByID(id: number): GameObjectInstance | undefined {
+        return this.objects.get(id);
+    }
+
+    findObjectHolder(id: number): Inventory | undefined {
+        for (let [_, room] of this.rooms) {
+            for (let obj of room.inventory.contents) {
+                if (obj.forObject.hidden) {
+                    continue;
+                }
+
+                if (obj.forObject.id == id) {
+                    return room.inventory;
+                }
+                
+                for (let innerObj of obj.inventory.contents) {
+                    if (innerObj.forObject.hidden) {
+                        continue;
+                    }
+                    if (innerObj.forObject.id == id) {
+                        return obj.inventory;
+                    }
+                }
+            }
+        }
+
+        for (let ply of this.players()) {
+            for (let obj of ply.inventory.contents) {
+                if (obj.forObject.id == id) {
+                    return ply.inventory;
+                }
+            }
+        }
+        return undefined;
     }
 
     /**
@@ -60,10 +116,19 @@ export class Instance {
     addPlayer(ply: Player) {
         ply.sendMessage(this.forWorld.joinMessage);
         ply.___spawnPlayer(this.rooms.get(this.forWorld.defaultRoom));
+        ply.inventory.size = this.forWorld.defaultInventorySize;
     }
 
     removePlayer(ply: Player) {
         ply.sendMessage("Leaving this world...");
+        // When a player leaves the world, drop their inventory in the room
+        // they were in.
+        ply.inventory.contents.forEach(x => {
+            if (!ply.location) {
+                return;
+            }
+            ply.inventory.transferTo(ply.location.inventory, x);
+        })
         ply.location?.players.delete(ply);
     }
 
@@ -77,14 +142,14 @@ export class Instance {
 
     /**
      * Generates a map of strings that correspond to things in this world with
-     * a reference to what they refer to. 
+     * a reference to what they refer to, and what type of entity they are.
      */
-    WorldLexicon(): Map<string, Object> {
-        let lexi: Map<string, Object> = new Map();
-        lexi.set(this.forWorld.name, this);
-        lexi.set(this.forWorld.name, this);
-        this.rooms.forEach(x => lexi.set(x.forRoom.name, x));
-        this.objects.forEach(x => lexi.set(x.forObject.name, x));
+    WorldLexicon(): Map<string, {v: Object, t: WorldEntityType}> {
+        let lexi: Map<string, {v: Object, t: WorldEntityType}> = new Map();
+        lexi.set(this.forWorld.name, {v: this, t: WorldEntityType.WORLD});
+        this.rooms.forEach(x => lexi.set(x.forRoom.name, {v: x, t: WorldEntityType.ROOM}));
+        this.objects.forEach(x => lexi.set(x.forObject.name, {v: x, t: WorldEntityType.OBJECT}));
+        this.players().forEach(x => lexi.set(x.authUser.displayname, {v: x, t:WorldEntityType.PLAYER}));
         return lexi;
     }
 
@@ -105,5 +170,54 @@ export class Instance {
         }
         source?.paths.set(GetSourceDirection(direction), dest);
         dest?.paths.set(GetDestinationDirection(direction), source);
+    }
+
+    /**
+     * For an object with a given ID, returns true if a player can reach it.
+     * This means they're in the same room with it, and they can see it.
+     */
+    PlayerCanReachObject(id: number, ply: Player): boolean {
+        // First, check if the item is in their inventory
+        if (ply.inventory.contents.some(x => x.forObject.id == id)) {
+            return true;
+        }
+
+        console.log("location's inventory: %O", ply.location?.inventory.contents);
+        // Next, check if it's out on the floor in the room with them, 
+        // and that the object isn't hidden.
+        if (ply.location?.inventory.contents.some(x => (x.forObject.id == id) && !x.forObject.hidden)) {
+            return true;
+        }
+
+        let found = false;
+        // Next, check all unlocked containers in the room, that 
+        // aren't themselves hidden.
+        ply.location?.inventory.contents.filter(x => !x.forObject.hidden).forEach(x => {
+            found = x.inventory.contents.filter(x => !x.forObject.hidden).some(x => x.forObject.id == id);
+        });
+        if (found) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * PlayerCanSeeObject is similar to PlayerCanReachObject, but also returns
+     * true if the player is in a room with another player holding the object.
+     */
+    PlayerCanSeeObject(id: number, ply: Player): boolean {
+        if (this.PlayerCanReachObject(id, ply)) {
+            return true;
+        }
+
+        let seen = false;
+        ply.location?.players.forEach(x => {
+            if (x.inventory.contents.filter(x => !x.forObject.hidden).some(x => x.forObject.id == id)) {
+                seen = true;
+                return;
+            }
+        });
+        return seen;
     }
 }

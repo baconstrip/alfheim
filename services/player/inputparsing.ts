@@ -7,6 +7,7 @@ import nlp from 'compromise';
 import { Instance } from '../../types/game/worldinstance';
 import _ from 'lodash';
 import { verbose } from 'sqlite3';
+import { EntityTypeToTag } from '../../types/game/worldentitytype';
 
 type LanguageExtension = (doc: nlp.Document, world: nlp.World) => void;
 
@@ -59,7 +60,7 @@ export class LanguagePart {
  * Generally attempts to treat proper nouns of the world as one word.
  */
 class WordTree {
-    rootTerm?: nlp.ExtendedDocument<{}, nlp.World, nlp.Phrase>;
+    rootTerm: nlp.ExtendedDocument<{}, nlp.World, nlp.Phrase>;
     modifiers: nlp.Term[] = [];
 
     gameObject: boolean;
@@ -310,11 +311,8 @@ function breakSentences(input: nlp.ExtendedDocument<{}, nlp.World, nlp.Phrase>, 
 function tagWorldObjects(ply: Player, input: nlp.ExtendedDocument<{}, nlp.World, nlp.Phrase>, cb: (x: nlp.ExtendedDocument<{}, nlp.World, nlp.Phrase>) => void) {
     const lexicon = ply.location?.fromWorld.WorldLexicon();
     input.forEach(x => {
-        ply.location?.fromWorld.players().forEach(otherPly => {
-            x.match(otherPly.authUser.displayname).tag("#Player");
-        })
         lexicon?.forEach((v, k) =>{
-            x.match(k).canBe("#Noun? #Adjective?").tag("GameObject");
+            x.match(k).canBe("#Noun? #Adjective?").tag("GameObject").tag(`#${EntityTypeToTag(v.t)}`);
         });
         cb(x);
     });

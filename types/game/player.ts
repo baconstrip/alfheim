@@ -2,11 +2,14 @@ import { AuthUser } from "../../models/User";
 import * as Messages from '../messages';
 import RoomInstance from "./roominstance";
 import { entManager } from "../../loaders/sql";
+import Inventory from "./inventory";
 
 export default class Player {
     authUser!: AuthUser;
     soc!: WebSocket | undefined;
     location!: RoomInstance | undefined;
+    // Default size is 4, worlds can change this.
+    inventory: Inventory = new Inventory(2);
 
     /**
      * Sends a raw HTML message to the client to be displayed in the 

@@ -14,7 +14,7 @@ export default new World({
             description: "The cave's entrance is unusually green, " +
                 "moss creeping up the small crevice the cave lies in. " +
                 "You can smell something coming from inside the cave...",
-            id: 0,
+            id: 1,
             img: '/static/images/cave_entrance.jpg',
         }),
         new Room({
@@ -24,14 +24,14 @@ export default new World({
                 "observe would have anticipated, anyway. The cavern is half " +
                 "filled with water, and it seems the lower tunnels are " +
                 "impassible.",
-            id: 1,
+            id: 2,
             img: '/static/images/cavern.jpg',
         }),
     ),
     paths: new Array<Path>(
         new Path({
-            source: 0,
-            dest: 1,
+            source: 1,
+            dest: 2,
             direction: PathDirection.DOWN_UP,
             hidden: false
         }),
@@ -39,40 +39,49 @@ export default new World({
     objects: new Array<GameObject>(
         new GameObject({
             name: "bucket",
-            id: 0,
-            inRoom: 0,
+            id: 1,
+            inRoom: 1,
             portable: true,
             description: "It's a half full bucket, you're not sure what's in it.",
         }),
         new GameObject({
             name: "chest",
-            id: 1,
-            inRoom: 1,
+            id: 2,
+            inRoom: 2,
             portable: false,
-            contains: [2,3],
             description: "An oversized chest, carelessly tossed asunder in to the cavern, presumably by some forgetful pirate",
         }),
         new GameObject({
             name: "gold",
-            id: 2,
+            id: 3,
+            inContainer: 2,
             portable: true,
             infinite: true,
             description: "Yep, it's the real thing. An unbeliveable amount of gold."
         }),
         new GameObject({
             name: "diamond",
-            id: 3,
+            id: 4,
+            inContainer: 2,
             portable: true,
             description: "A massive diamond, brilliant cut and clear",
         }),
         new GameObject({
             name: "dead snake",
             portable: true,
-            id: 4,
+            id: 5,
+            inRoom: 2,
             hidden: true,
             description: "It gives you a scare at first, but you quickly realise it has already perished....more than a few days ago.",
+        }),
+        new GameObject({
+            name: "Orb of Power",
+            portable: true,
+            id: 6,
+            description: "Its overwhelming aura flows through you, you feel like you could fly.",
         })
     ),
-    defaultRoom: 0,
+    defaultRoom: 1,
     unrestrictedMovement: false,
+    defaultInventorySize: 1,
 });
