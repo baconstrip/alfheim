@@ -28,6 +28,7 @@ export default ({}) =>{
                 }
                 a.ply.inventory.transferTo(a.ply.location?.inventory, obj);
                 a.ply.sendMessage(`You set down ${obj.forObject.name} where you are.`)
+                a.ply.updateInventory();
                 return;
             }
 

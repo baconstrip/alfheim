@@ -9,7 +9,6 @@ export default ({}) =>{
                 a.ply.sendMessage('What are you trying to grab? I don\'t think there\'s anything like that around here');
                 return;
             }
-
             const obj = a.ply.location?.fromWorld.objectByName(a.probableSubject.rootTerm.text());
             if (!obj || obj.forObject.hidden) {
                 a.ply.sendMessage('I don\'t know what you\'re trying to grab.');
@@ -36,6 +35,7 @@ export default ({}) =>{
                     return;
                 }
                 a.ply.sendMessage(`You take ${obj.forObject.name} and place it in your inventory...`);
+                a.ply.updateInventory();
                 return;
             }
 

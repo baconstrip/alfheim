@@ -6,7 +6,6 @@ import { replacePunctuation } from '../../lib/util';
 import nlp from 'compromise';
 import { Instance } from '../../types/game/worldinstance';
 import _ from 'lodash';
-import { verbose } from 'sqlite3';
 import { EntityTypeToTag } from '../../types/game/worldentitytype';
 
 type LanguageExtension = (doc: nlp.Document, world: nlp.World) => void;

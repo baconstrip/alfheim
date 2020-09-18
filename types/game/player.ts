@@ -3,12 +3,13 @@ import * as Messages from '../messages';
 import RoomInstance from "./roominstance";
 import { entManager } from "../../loaders/sql";
 import Inventory from "./inventory";
+import { update } from "lodash";
 
 export default class Player {
     authUser!: AuthUser;
     soc!: WebSocket | undefined;
     location!: RoomInstance | undefined;
-    // Default size is 4, worlds can change this.
+    // Default size is 2, worlds can change this.
     inventory: Inventory = new Inventory(2);
 
     /**
@@ -48,6 +49,15 @@ export default class Player {
     }
 
     /**
+     * Refreshes the view of the player's inventory on the UI
+     */
+    updateInventory() {
+        this.soc?.send(
+            JSON.stringify(Messages.BuildMessage(Messages.ServerMessage.SEND_INVENTORY, this.inventory.toClientMessage()))
+        );
+    }
+
+    /**
      * Internal use only, inserts a player into a room unconditionally.
      * 
      * Use the addplayer and removeplayer methods on Instance instead.
@@ -70,6 +80,7 @@ export default class Player {
                 img: this.location?.forRoom.img,
             }))
         );
+        this.updateInventory();
     }
     
     ___reset() {

@@ -8,7 +8,8 @@ export enum ServerMessage {
     PUBLISH_TEXT = 1000,
     CLEAR_TEXT,
     UPDATE_LOCATION,
-    UPDATE_MEDIA
+    UPDATE_MEDIA,
+    SEND_INVENTORY,
 }
 
 // ------ Base Message Type ------- //
@@ -52,7 +53,23 @@ export class UpdateMedia {
     /**
      * A URL that specifies an image to display in the media area.
      */
-    img!: string
+    img!: string;
+}
+
+export enum InventoryType {
+    PLAYER = 1,
+    OBJECT = 2,
+}
+
+export class InventoryObject {
+    name!: string;
+    description!: string;
+}
+
+export class SendInventory {
+    type!: InventoryType;
+    size!: number;
+    items!: InventoryObject[];
 }
 
 // ---------- Utilities ---------- //

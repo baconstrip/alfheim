@@ -42,3 +42,10 @@ img.sample {
 
 .ooc-prefix {
   font-weight: bold; }
+
+.inventory-container {
+  background-color: #4b545c; }
+
+.inventory-space {
+  background-color: #626d78;
+  height: 4rem; }

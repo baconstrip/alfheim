@@ -115,8 +115,8 @@ export class Instance {
      */
     addPlayer(ply: Player) {
         ply.sendMessage(this.forWorld.joinMessage);
-        ply.___spawnPlayer(this.rooms.get(this.forWorld.defaultRoom));
         ply.inventory.size = this.forWorld.defaultInventorySize;
+        ply.___spawnPlayer(this.rooms.get(this.forWorld.defaultRoom));
     }
 
     removePlayer(ply: Player) {
@@ -182,7 +182,6 @@ export class Instance {
             return true;
         }
 
-        console.log("location's inventory: %O", ply.location?.inventory.contents);
         // Next, check if it's out on the floor in the room with them, 
         // and that the object isn't hidden.
         if (ply.location?.inventory.contents.some(x => (x.forObject.id == id) && !x.forObject.hidden)) {

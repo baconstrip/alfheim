@@ -1,5 +1,5 @@
 <template>
-  <div class="container my-3">
+  <div class="container-fluid d-flex flex-column my-3 ">
     <div class="row">
       <h3>Status:</h3>
       <ul>
@@ -7,9 +7,18 @@
         <li>rooms available:</li>
       </ul>
     </div>
+    <div class="row">
+      <inventory></inventory>
+    </div>
   </div>
 </template>
 
 <script>
-export default {}
+import inventory from "./inventory.vue";
+
+export default {
+  components: {
+    inventory,
+  }
+}
 </script>

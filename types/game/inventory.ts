@@ -1,4 +1,5 @@
 import GameObjectInstance from "./gameobjectinstance";
+import { SendInventory, InventoryObject} from "../messages";
 
 /**
  * Represents the current contents of something, may be a player, room, or 
@@ -49,5 +50,18 @@ export default class Inventory {
 
     isFull(): boolean {
         return this.size == this.contents.length;
+    }
+
+    toClientMessage(): SendInventory {
+        const inv = new SendInventory();
+        inv.size = this.size;
+
+        inv.items = this.contents.map((x): InventoryObject => {
+            const obj = new InventoryObject();
+            obj.name = x.forObject.name;
+            obj.description = x.forObject.description;
+            return obj;
+        });
+        return inv;
     }
 }

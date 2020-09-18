@@ -61,3 +61,12 @@
  .ooc-prefix {
     font-weight: bold;
  }
+
+ .inventory-container {
+     background-color: lighten($dark, 10%);
+ }
+
+ .inventory-space {
+     background-color: lighten($dark, 20%);
+     height: 4rem;
+ }
