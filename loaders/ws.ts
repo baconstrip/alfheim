@@ -1,8 +1,8 @@
 import ws from 'ws';
 import { Server, ClientRequest } from 'http';
 import { Duplex } from 'stream';
-import { AlfEvent } from '../types/events';
-import { EventBus } from '../services/eventbus';
+import { AlfInternalEvent } from '../types/events';
+import { InternalEventBus } from '../services/internalevents';
 import { TimedWebSocket } from '../types/timedwebsocket';
 import players, { LookupPlayerId } from '../services/players';
 
@@ -30,14 +30,14 @@ export default async ({ wsServer, httpServer, sessions } :
     wsServer.on('connection', (soc: TimedWebSocket, req: any) =>{
         console.log('new connection');
         const id = req.session.passport.user;
-        EventBus.dispatch(AlfEvent.PLAYER_JOIN_LIVE, {id: id, soc: soc});
+        InternalEventBus.dispatch(AlfInternalEvent.PLAYER_JOIN_LIVE, {id: id, soc: soc});
 
-        EventBus.dispatch(AlfEvent.POST_PLAYER_JOIN_LIVE, LookupPlayerId(id));
+        InternalEventBus.dispatch(AlfInternalEvent.POST_PLAYER_JOIN_LIVE, LookupPlayerId(id));
 
         // Add message reciever behaviour
         soc.on('message', (message: string) => {
             const ply = LookupPlayerId(id);
-            EventBus.dispatch(AlfEvent.RAW_MESSAGE_IN, {ply: ply, message: message});
+            InternalEventBus.dispatch(AlfInternalEvent.RAW_MESSAGE_IN, {ply: ply, message: message});
             soc.lastMessage = new Date();
             try {
                 var data = JSON.parse(message);
@@ -49,7 +49,7 @@ export default async ({ wsServer, httpServer, sessions } :
                 }
                 // Only transmit events with type set.
                 if (data['type'] !== undefined){
-                    EventBus.dispatch(AlfEvent.MESSAGE_IN, {ply: ply, message: data});
+                    InternalEventBus.dispatch(AlfInternalEvent.MESSAGE_IN, {ply: ply, message: data});
                 }
                 console.log('message from client: ' + message);
             } catch (e) {
@@ -62,17 +62,17 @@ export default async ({ wsServer, httpServer, sessions } :
         });
 
         soc.on('close', () => {
-            EventBus.dispatch(AlfEvent.PLAYER_DISCONNECT_LIVE, LookupPlayerId(id));
+            InternalEventBus.dispatch(AlfInternalEvent.PLAYER_DISCONNECT_LIVE, LookupPlayerId(id));
             console.log('Player disconnected: ' + id);
             const userTimeout = 10 * 1000;
             // Set a timer to clean up the user and reset them.
             const cancel = setTimeout(() => {
                 console.log('Forgetting user: ' + id);
-                EventBus.dispatch(AlfEvent.PLAYER_CLEANUP, id);
+                InternalEventBus.dispatch(AlfInternalEvent.PLAYER_CLEANUP, id);
             }, userTimeout);
             // Cancel the timer if the user rejoins quickly enough by adding
             // another listener.
-            const eventCancel = EventBus.onEvent(AlfEvent.PLAYER_JOIN_LIVE, (x: any) => {
+            const eventCancel = InternalEventBus.onEvent(AlfInternalEvent.PLAYER_JOIN_LIVE, (x: any) => {
                 clearTimeout(cancel);
             });
             // Cancel the above listener after the timeout to avoid creating

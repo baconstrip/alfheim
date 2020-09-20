@@ -1,6 +1,6 @@
 import * as Messages from '../../types/messages';
-import { EventBus } from '../eventbus';
-import { AlfEvent } from '../../types/events';
+import { InternalEventBus } from '../internalevents';
+import { AlfInternalEvent } from '../../types/events';
 import Player from '../../types/game/player';
 import { replacePunctuation } from '../../lib/util';
 import nlp from 'compromise';
@@ -205,7 +205,7 @@ class InputManager {
             verb.handler({
                 sentence: s,
                 ply: ply,
-                instance: ply.location?.fromWorld,
+                instance: ply.world(),
                 probableSubject: s.pickProbableSubject(),
             });
         }
@@ -308,7 +308,7 @@ function breakSentences(input: nlp.ExtendedDocument<{}, nlp.World, nlp.Phrase>, 
  * the WorldLexicon() of the player's instance.
  */
 function tagWorldObjects(ply: Player, input: nlp.ExtendedDocument<{}, nlp.World, nlp.Phrase>, cb: (x: nlp.ExtendedDocument<{}, nlp.World, nlp.Phrase>) => void) {
-    const lexicon = ply.location?.fromWorld.WorldLexicon();
+    const lexicon = ply.world()?.WorldLexicon();
     input.forEach(x => {
         lexicon?.forEach((v, k) =>{
             x.match(k).canBe("#Noun? #Adjective?").tag("GameObject").tag(`#${EntityTypeToTag(v.t)}`);
@@ -357,7 +357,7 @@ export function registerGlobalVerb(s: LanguagePart) {
 export default async ({ }) => {
     ___inst = new InputManager();
     console.log('Created input module');
-    EventBus.onEvent(AlfEvent.MESSAGE_IN, ({ ply, message }: { ply: Player, message: Messages.Msg }) => {
+    InternalEventBus.onEvent(AlfInternalEvent.MESSAGE_IN, ({ ply, message }: { ply: Player, message: Messages.Msg }) => {
         if (message.type == Messages.ClientMessage.TEXT_INPUT) {
             const body = (message.body as any).input as string;
             if (ignoreCommands(body)) {

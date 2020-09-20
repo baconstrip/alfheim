@@ -9,7 +9,7 @@ export default ({}) =>{
                 a.ply.sendMessage('What are you trying to grab? I don\'t think there\'s anything like that around here');
                 return;
             }
-            const obj = a.ply.location?.fromWorld.objectByName(a.probableSubject.rootTerm.text());
+            const obj = a.ply.world()?.objectByName(a.probableSubject.rootTerm.text());
             if (!obj || obj.forObject.hidden) {
                 a.ply.sendMessage('I don\'t know what you\'re trying to grab.');
                 return;
@@ -20,7 +20,7 @@ export default ({}) =>{
                 return;
             }
 
-            if (a.ply.location?.fromWorld.PlayerCanReachObject(obj.forObject.id, a.ply)) {
+            if (a.ply.world()?.PlayerCanReachObject(obj.forObject.id, a.ply)) {
                 const otherInv = a.ply.location.fromWorld.findObjectHolder(obj.forObject.id);
                 if (!otherInv)  {
                     throw new Error("Can't manage inventory when not found");

@@ -1,4 +1,4 @@
-export enum AlfEvent {
+export enum AlfInternalEvent {
     // Unimplemented
     PLAYER_REGISTER = 0,
     /**

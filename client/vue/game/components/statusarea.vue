@@ -1,7 +1,7 @@
 <template>
   <div>
     <h2>{{ world }}</h2>
-    <h4 class="pl-3"><em>{{ room }}</em></h4>
+    <h4 class="pl-3"><em>{{ room }}</em><em v-if="zone"> ({{ zone }})</em></h4>
   </div>
 </template>
 <script>
@@ -13,6 +13,7 @@ export default {
     return {
       world: "",
       room: "",
+      zone: "",
     };
   },
   mounted: function () {
@@ -20,6 +21,7 @@ export default {
     EventBus.$on("update-location", (msg) => {
       localThis.world = msg.world;
       localThis.room = msg.room;
+      localThis.zone = msg.zone;
     });
   },
 };

@@ -2,6 +2,7 @@ import Room, { MutableRoom } from "./room";
 import Path, { MutablePath } from "./path";
 import GameObject, { MutableGameObject } from "./gameobject";
 import _ from "lodash";
+import Zone from "./zone";
 
 export default class World {
     /**
@@ -44,6 +45,11 @@ export default class World {
     readonly loadable: boolean;
 
     /**
+     * List of zones available in the world.
+     */
+    readonly zones: Zone[];
+
+    /**
      * Default inventory size of players, if not set, this value is 2.
      */
     readonly defaultInventorySize: number;
@@ -54,6 +60,7 @@ export default class World {
         name: string,
         shortName: string,
         rooms: Room[],
+        zones?: Zone[],
         joinMessage: string,
         defaultRoom: number,
         unrestrictedMovement?: boolean,
@@ -65,6 +72,7 @@ export default class World {
         this.name = s.name;
         this.shortName = s.shortName;
         this.rooms = s.rooms;
+        this.zones = s.zones ?? [];
         this.joinMessage = s.joinMessage;
         this.defaultRoom = s.defaultRoom;
         this.unrestrictedMovement = s.unrestrictedMovement ?? false;

@@ -9,12 +9,10 @@ export function matchesPuncuation(input: string): boolean {
 /**
  * Replaces all but commonly used punctuation with spaces.
  * 
- * Currently allows ! ? . , without modification. Special cases '
- * by deleting them.
+ * Currently allows ! ? . , ' without modification.
  * 
  * @param input Input to scrub 
  */
 export function replacePunctuation(input: string): string {
-    const aposless = input.replace('\'', '');
     return input.replace(commonPunctuationMatcher, ' ');
 }

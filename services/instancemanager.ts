@@ -1,5 +1,5 @@
-import { EventBus } from "./eventbus"
-import { AlfEvent } from "../types/events"
+import { InternalEventBus } from "./internalevents"
+import { AlfInternalEvent } from "../types/events"
 import Player from "../types/game/player"
 import { Instance } from "../types/game/worldinstance";
 import World from "../types/game/world";
@@ -19,35 +19,40 @@ var inst: InstanceManager;
 export default async (defaultWorld: Instance) => {
     inst = new InstanceManager(defaultWorld);
     // Default world binding adds a player to a world as soon as they join.
-    EventBus.onEvent(AlfEvent.POST_PLAYER_JOIN_LIVE, (ply: Player) => {
+    InternalEventBus.onEvent(AlfInternalEvent.POST_PLAYER_JOIN_LIVE, (ply: Player) => {
         // If the player is returning, skip adding to default world.
         if (___findPlayer(ply.authUser.id)) {
             console.log('Player returning: ' + ply.authUser.id);
             ply.___refreshUI();
             ply.sendMessage("Welcome back, we hope you enjoyed your hiatus");
-            ply.sendMessage(ply.location?.fromWorld.forWorld.joinMessage ?? '');
+            ply.sendMessage(ply.world()?.forWorld.joinMessage ?? '');
             return;
         }
         console.log('Adding player to default world: ' + ply.authUser.id);
         inst.defaultWorld.addPlayer(ply);
     });
 
-    EventBus.onEvent(AlfEvent.PLAYER_CLEANUP, (id: number) => {
+    InternalEventBus.onEvent(AlfInternalEvent.PLAYER_CLEANUP, (id: number) => {
         console.log('removing player from instances: ' + id);
         let ply = ___findPlayer(id);
         if (ply) {
-            ply.location?.fromWorld.removePlayer(ply);
+            ply.world()?.removePlayer(ply);
             ply.location = undefined;
         }
     });
 }
 
+export function FindInstance(name: string): Instance | undefined {
+    return inst.instances.get(name.toLowerCase());
+}
+ 
+
 export function CreateInstance(w: World, name: string): Instance {
-    if (inst.instances.get(name)) {
+    if (inst.instances.get(name.toLowerCase())) {
         throw new Error("Duplicate instance name");
     }
     const newInst = new Instance(w, name);
-    inst.instances.set(name, newInst);
+    inst.instances.set(name.toLowerCase(), newInst);
     return newInst;
 }
 

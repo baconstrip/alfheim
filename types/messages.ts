@@ -46,6 +46,7 @@ export class ClearText {}
 export class UpdateLocation {
     world!: string;
     room!: string;
+    zone!: string;
 }
 
 export class UpdateMedia {

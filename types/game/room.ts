@@ -18,16 +18,23 @@ export default class Room {
      */
     readonly img: string;
 
+    /**
+     * ID of the zone this room is in, may be left unset.
+     */
+    readonly zone: number;
+
     constructor(s : {
         name: string, 
         id: number, 
         img: string,
         description: string,
+        zone?: number,
     }) {
         this.name = s.name;
         this.id = s.id;
         this.img = s.img;
         this.description = s.description;
+        this.zone = s.zone ?? -1;
     }
 }
 

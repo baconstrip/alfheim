@@ -1,3 +1,5 @@
+import { Lock } from "./locking";
+
 /**
  * GameObjects represent all interactable objects within a room.
  */
@@ -46,6 +48,13 @@ export default class GameObject {
      */
     readonly hidden: boolean;
 
+    /**
+     * A lock that specifies whether or not a player can open this, if it is a
+     * container. Has no effect if this is not a container. See Lock for usage.
+     * 
+     * Defaults to a function that always returns true if not set.
+     */
+    readonly lock: Lock;
 
     /**
      * URL that contains an optional sprite for the object.
@@ -62,6 +71,7 @@ export default class GameObject {
         infinite?: boolean,
         hidden?: boolean,
         description: string,
+        lock?: Lock;
     }) {
         if (s.inRoom && s.inContainer) {
             throw new Error("Both inRoom and inContainer declared, objects must have one or zero parents.");
@@ -75,6 +85,7 @@ export default class GameObject {
         this.infinite = s.infinite ?? false;
         this.hidden = s.hidden ?? false;
         this.description = s.description;
+        this.lock = s.lock ?? function() {return true;};
     }
 }
 

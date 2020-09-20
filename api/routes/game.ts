@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { userFromRequest } from '../../services/userdb';
-import { AlfEvent } from '../../types/events';
-import { EventBus } from '../../services/eventbus';
+import { AlfInternalEvent } from '../../types/events';
+import { InternalEventBus } from '../../services/internalevents';
 const loggedin = require('connect-ensure-login');
 
 const gameRoute = Router();

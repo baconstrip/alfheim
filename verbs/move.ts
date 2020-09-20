@@ -48,7 +48,7 @@ export default ({}) =>{
 
             // If we guess they mentioned a room
             if (roomName.wordCount() ?? 0 > 0) {
-                let room = a.ply.location?.fromWorld.roomByName(roomName.text());
+                let room = a.ply.world()?.roomByName(roomName.text());
 
                 if (!room) {
                     a.ply.sendMessage("I couldn't find that room in the world.");
@@ -56,7 +56,7 @@ export default ({}) =>{
                 } 
 
                 // If the world has unrestricted movement
-                if (a.ply.location?.fromWorld.forWorld.unrestrictedMovement) {
+                if (a.ply.world()?.forWorld.unrestrictedMovement) {
                     movePlayer(room, a.ply);
                     return;
                 } 

@@ -5,6 +5,7 @@ import GameObjectInstance from "./gameobjectinstance";
 import { PathDirection, GetSourceDirection, GetDestinationDirection } from "./direction";
 import { WorldEntityType } from "./worldentitytype";
 import Inventory from "./inventory";
+import ZoneInstance from "./zoneinstance";
 
 export class Instance {
     readonly instName: string;
@@ -12,18 +13,23 @@ export class Instance {
     readonly rooms: Map<number, RoomInstance>;
     // This needs to be reworked to support inifinte items properly.
     readonly objects: Map<number, GameObjectInstance>;
+    readonly zones: Map<number, ZoneInstance>;
 
     constructor(w: World, instName: string) {
         this.instName = instName;
         this.forWorld = w.toMutable();
         this.rooms = new Map();
         this.objects = new Map();
+        this.zones = new Map();
 
         this.forWorld.rooms.forEach((x) => {
             this.rooms.set(x.id, new RoomInstance(x, this));
         });
         this.forWorld.objects.forEach(x => {
-            this.objects.set(x.id, new GameObjectInstance(x, this))
+            this.objects.set(x.id, new GameObjectInstance(x, this));
+        });
+        this.forWorld.zones.forEach(x => {
+            this.zones.set(x.id, new ZoneInstance(x, this));
         });
 
         // Put objects in the place after rooms and objects, so order doesn't 
@@ -65,6 +71,13 @@ export class Instance {
 
     objectByID(id: number): GameObjectInstance | undefined {
         return this.objects.get(id);
+    }
+
+    zoneByName(name: string): ZoneInstance | undefined {
+        return [...this.zones.entries()].map((x) => x[1]).find((x) => x.forZone.name.toLowerCase() == name.toLowerCase());
+    }
+    zoneByID(id: number): ZoneInstance | undefined {
+        return this.zones.get(id);
     }
 
     findObjectHolder(id: number): Inventory | undefined {
@@ -148,6 +161,7 @@ export class Instance {
         let lexi: Map<string, {v: Object, t: WorldEntityType}> = new Map();
         lexi.set(this.forWorld.name, {v: this, t: WorldEntityType.WORLD});
         this.rooms.forEach(x => lexi.set(x.forRoom.name, {v: x, t: WorldEntityType.ROOM}));
+        this.zones.forEach(x => lexi.set(x.forZone.name, {v: x, t: WorldEntityType.ZONE}));
         this.objects.forEach(x => lexi.set(x.forObject.name, {v: x, t: WorldEntityType.OBJECT}));
         this.players().forEach(x => lexi.set(x.authUser.displayname, {v: x, t:WorldEntityType.PLAYER}));
         return lexi;

@@ -1,12 +1,11 @@
 import * as Messages from '../../types/messages';
-import { EventBus } from '../eventbus';
-import { AlfEvent } from '../../types/events';
+import { InternalEventBus } from '../internalevents';
+import { AlfInternalEvent } from '../../types/events';
 import Player from '../../types/game/player';
 import validator from 'validator';
-import players from '../players';
 import { AllWorlds } from '../../loaders/worlds';
-import { matchesPuncuation } from '../../lib/util';
-import { CreateInstance, DefaultInstance } from '../instancemanager';
+import { matchesPuncuation, replacePunctuation } from '../../lib/util';
+import { CreateInstance, DefaultInstance, FindInstance } from '../instancemanager';
 
 const wsRe = /.*\s+.*/;
 
@@ -37,7 +36,8 @@ function handleCommand(ply: Player, msg: { cmd: string, args: string | undefined
         if (!msg.args) {
             return;
         } else {
-            ply.location?.fromWorld.Broadcast('<span class="ooc"><span class="ooc-prefix">' + ply.authUser.displayname + ' to all:</span> ' + msg.args + '</span>');
+            const cleaned = replacePunctuation(msg.args);
+            ply.world()?.Broadcast('<span class="ooc"><span class="ooc-prefix">' + ply.authUser.displayname + ' to all:</span> ' + cleaned + '</span>');
         }
     } else if (msg.cmd == 'dname' || msg.cmd == 'displayname') {
         if (!msg.args) {
@@ -76,7 +76,7 @@ function handleCommand(ply: Player, msg: { cmd: string, args: string | undefined
         
         const found = AllWorlds().filter((x) => x.loadable).filter(x => x.shortName.toLowerCase() == args[0]).some(x => {
             const inst = CreateInstance(x, args[1]);
-            ply.location?.fromWorld.removePlayer(ply);
+            ply.world()?.removePlayer(ply);
             inst.addPlayer(ply);
             console.log("With lexicon %O", inst.WorldLexicon());
             return true;
@@ -88,12 +88,25 @@ function handleCommand(ply: Player, msg: { cmd: string, args: string | undefined
             ply.sendMessage('<span class="command-error">No createable instance with that name found.</span>');
         }
     } else if (msg.cmd == 'exit') {
-        if (ply.location?.fromWorld == DefaultInstance()) {
+        if (ply.world() == DefaultInstance()) {
             ply.sendMessage('<span class="command-error">You can\'t back out of the base instance.</span>');
         }
 
-        ply.location?.fromWorld.removePlayer(ply);
+        ply.world()?.removePlayer(ply);
         DefaultInstance().addPlayer(ply);
+    } else if (msg.cmd == 'join') {
+        if (!args || args.length != 1) {
+            ply.sendMessage('<span class="command-error">Join instance expects exactly one word, the name of the instance to join.</span>');
+            return;
+        }
+        const inst = FindInstance(args[0]);
+        if (!inst) {
+            ply.sendMessage(`<span class="command-error">Could not find an instance called "${args[0]}".</span>`);
+            return;
+        }
+        ply.world()?.removePlayer(ply);
+        inst.addPlayer(ply);
+        ply.sendMessage(`Joining instance ${args[0]}`);
     } else if (msg.cmd == 'echo') {
         const reply = msg.args?.trim();
         ply.sendMessage('> <i>' + reply + '</i>');
@@ -112,7 +125,7 @@ function handleCommand(ply: Player, msg: { cmd: string, args: string | undefined
 };
 
 export default async ({ }) => {
-    EventBus.onEvent(AlfEvent.MESSAGE_IN, ({ ply, message }: { ply: Player, message: Messages.Msg }) => {
+    InternalEventBus.onEvent(AlfInternalEvent.MESSAGE_IN, ({ ply, message }: { ply: Player, message: Messages.Msg }) => {
         if (message.type == Messages.ClientMessage.TEXT_INPUT) {
             const body = ((message.body as any).input as string).trim().toLowerCase();
             if (body.startsWith('/')) {

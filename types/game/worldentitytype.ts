@@ -3,6 +3,7 @@ export enum WorldEntityType {
     OBJECT,
     ROOM,
     WORLD,
+    ZONE,
 }
 
 export function EntityTypeFromTags(tags: string[]) {
@@ -16,6 +17,8 @@ export function EntityTypeFromTags(tags: string[]) {
                 return WorldEntityType.ROOM;
             case "World":
                 return WorldEntityType.WORLD;
+            case "Zone":
+                return WorldEntityType.ZONE;
         }
     }
 }
@@ -30,6 +33,8 @@ export function EntityTypeToTag(e: WorldEntityType): string {
             return "Room";
         case WorldEntityType.WORLD:
             return "World";
+        case WorldEntityType.ZONE:
+            return "Zone";
     }
 
     return "";

@@ -3,6 +3,7 @@ import Room from "../types/game/room";
 import Path from "../types/game/path";
 import { PathDirection } from "../types/game/direction";
 import GameObject from "../types/game/gameobject";
+import Zone from "../types/game/zone";
 
 export default new World({
     name: "Green Dungeon",
@@ -15,6 +16,7 @@ export default new World({
                 "moss creeping up the small crevice the cave lies in. " +
                 "You can smell something coming from inside the cave...",
             id: 1,
+            zone: 1,
             img: '/static/images/cave_entrance.jpg',
         }),
         new Room({
@@ -25,7 +27,22 @@ export default new World({
                 "filled with water, and it seems the lower tunnels are " +
                 "impassible.",
             id: 2,
+            zone: 2,
             img: '/static/images/cavern.jpg',
+        }),
+    ),
+    zones: new Array<Zone>(
+        new Zone({
+            name: "Surface",
+            id: 1,
+            description: "Surface area of the cave",
+            defaultRoom: 1,
+        }),
+        new Zone({
+            name: "Underground",
+            id: 2,
+            description: "Under the ground, inside the cave",
+            defaultRoom: 2,
         }),
     ),
     paths: new Array<Path>(

@@ -17,13 +17,13 @@ export default ({}) => {
                 return;
             }
 
-            const obj = a.ply.location?.fromWorld.objectByName(a.probableSubject.rootTerm.text());
+            const obj = a.ply.world()?.objectByName(a.probableSubject.rootTerm.text());
             if (!obj || obj.forObject.hidden) {
                 a.ply.sendMessage('I don\'t know what you\'re trying to look at');
                 return;
             }
 
-            if (a.ply.location?.fromWorld.PlayerCanSeeObject(obj.forObject.id, a.ply)) {
+            if (a.ply.world()?.PlayerCanSeeObject(obj.forObject.id, a.ply)) {
                 a.ply.sendMessage(`You take a closer look at ${obj.forObject.name}...`);
                 a.ply.sendMessage(`<span class="examine-text">${obj.forObject.description}</span>`);
                 return;

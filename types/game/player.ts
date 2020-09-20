@@ -4,6 +4,7 @@ import RoomInstance from "./roominstance";
 import { entManager } from "../../loaders/sql";
 import Inventory from "./inventory";
 import { update } from "lodash";
+import { Instance } from "./worldinstance";
 
 export default class Player {
     authUser!: AuthUser;
@@ -71,8 +72,9 @@ export default class Player {
     ___refreshUI() {
         this.soc?.send(
             JSON.stringify(Messages.BuildMessage(Messages.ServerMessage.UPDATE_LOCATION, {
-                world: this.location?.fromWorld.forWorld.name,
+                world: this.world()?.forWorld.name,
                 room: this.location?.forRoom.name,
+                zone: this.world()?.zoneByID(this.location?.forRoom.zone ?? -1)?.forZone.name,
             }))
         );
         this.soc?.send(
@@ -89,6 +91,10 @@ export default class Player {
 
     ___save() {
         entManager().save(this.authUser).then(x => console.log('Saved user: ' + x.id))
+    }
+
+    world(): Instance | undefined {
+        return this.location?.fromWorld;
     }
 }
 
