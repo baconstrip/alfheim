@@ -1,12 +1,15 @@
 import * as Messages from '../../types/messages';
 import { InternalEventBus } from '../internalevents';
-import { AlfInternalEvent } from '../../types/events';
+import { InternalEvent } from '../../types/internalevent';
 import Player from '../../types/game/player';
 import validator from 'validator';
 import { AllWorlds } from '../../loaders/worlds';
 import { matchesPuncuation, replacePunctuation } from '../../lib/util';
 import { CreateInstance, DefaultInstance, FindInstance } from '../instancemanager';
 import players, { LookupPlayer, LookupPlayerByDisplayname } from '../players';
+import { GameEventBus } from '../gameevents';
+import { GameEvent } from '../../types/gameevent';
+import { ProcessingStage } from '../../types/processingstage';
 
 const wsRe = /.*\s+.*/;
 
@@ -83,12 +86,35 @@ function handleCommand(ply: Player, msg: { cmd: string, args: string | undefined
             ply.sendMessage('<span class="command-error">Create instance expects exactly two words, the world type and an instance name.</span>');
             return
         }
+
         
         const found = AllWorlds().filter((x) => x.loadable).filter(x => x.shortName.toLowerCase() == args[0]).some(x => {
+            if (GameEventBus.dispatch(GameEvent.CREATE_INSTANCE, ProcessingStage.PRE, {
+                ply: ply,
+                inst: ply.world(),
+
+                msg: {
+                    name: args[1],
+                    type: args[0],
+                },
+            })) {
+                console.log('Instance creation cancelled');
+                return;
+            }
             const inst = CreateInstance(x, args[1]);
             ply.world()?.removePlayer(ply);
             inst.addPlayer(ply);
-            console.log("With lexicon %O", inst.WorldLexicon());
+            GameEventBus.dispatch(GameEvent.CREATE_INSTANCE, ProcessingStage.POST, {
+                ply: ply,
+                inst: ply.world(),
+
+                msg: {
+                    name: args[1],
+                    type: args[0],
+
+                    inst: inst,
+                },
+            });
             return true;
         });
 
@@ -135,7 +161,7 @@ function handleCommand(ply: Player, msg: { cmd: string, args: string | undefined
 };
 
 export default async ({ }) => {
-    InternalEventBus.onEvent(AlfInternalEvent.MESSAGE_IN, ({ ply, message }: { ply: Player, message: Messages.Msg }) => {
+    InternalEventBus.onEvent(InternalEvent.MESSAGE_IN, ({ ply, message }: { ply: Player, message: Messages.Msg }) => {
         if (message.type == Messages.ClientMessage.TEXT_INPUT) {
             const body = ((message.body as any).input as string).trim().toLowerCase();
             if (body.startsWith('/')) {

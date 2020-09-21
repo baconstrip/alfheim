@@ -35,7 +35,6 @@ export default ({}) =>{
                     return;
                 }
                 const dest = a.ply.location?.paths.get(direction);
-                a.ply.sendMessage(`direction from word: ${direction}`);
 
                 if (!dest) {
                     a.ply.sendMessage("There's nothing over in that direction.")

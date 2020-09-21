@@ -1,20 +1,18 @@
-import { AlfInternalEvent } from '../types/events';
+import { InternalEvent } from '../types/internalevent';
 import { $enum } from 'ts-enum-util';
 
-type __eventDict = Map<AlfInternalEvent, Function[] | undefined>;
+type __eventDict = Map<InternalEvent, Function[] | undefined>;
 
 class __eventBusType { 
-    listeners!: __eventDict;
+    listeners: __eventDict = new Map();
 
     constructor() {
-        this.listeners = new Map();
-        
-        $enum(AlfInternalEvent).map(v => {
+        $enum(InternalEvent).map(v => {
             this.listeners.set(v, new Array());
         });
     }
 
-    onEvent(e: AlfInternalEvent, cb: Function): Function {
+    onEvent(e: InternalEvent, cb: Function): Function {
         this.listeners.get(e)?.push(cb);
 
         return () => {
@@ -25,8 +23,8 @@ class __eventBusType {
         }
     }
 
-    dispatch(e: AlfInternalEvent, args: any) {
-        if (e != AlfInternalEvent.RAW_MESSAGE_IN) {
+    dispatch(e: InternalEvent, args: any) {
+        if (e != InternalEvent.RAW_MESSAGE_IN) {
             console.log('dispatching event ' + e);
         }
         this.listeners.get(e)?.forEach((x) => {
@@ -50,7 +48,7 @@ export namespace InternalEventBus {
      * 
      * @returns a callback that will remove the listener when called.
      */
-    export function onEvent(e: AlfInternalEvent, cb: Function): Function {
+    export function onEvent(e: InternalEvent, cb: Function): Function {
         return _x.onEvent(e, cb);
     }
 
@@ -63,7 +61,7 @@ export namespace InternalEventBus {
      * @param e 
      * @param args 
      */
-    export function dispatch(e: AlfInternalEvent, args?: any) {
+    export function dispatch(e: InternalEvent, args?: any) {
         return _x.dispatch(e, args);
     }
 }

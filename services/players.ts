@@ -1,6 +1,6 @@
 import Player from "../types/game/player";
 import { InternalEventBus } from "./internalevents";
-import { AlfInternalEvent } from "../types/events";
+import { InternalEvent } from "../types/internalevent";
 import { AuthUser } from "../models/User";
 import _, { zip } from "lodash";
 
@@ -19,14 +19,14 @@ export default async ({ }) => {
     ___inst = new PlyManager();
     console.log('created players')
 
-    InternalEventBus.onEvent(AlfInternalEvent.PLAYER_LOGIN, (u: AuthUser) => {
+    InternalEventBus.onEvent(InternalEvent.PLAYER_LOGIN, (u: AuthUser) => {
         const ply = new Player();
         ply.authUser = u;
         ___inst.players.set(u.username, ply);
         ___inst.playersById.set(u.id, ply);
     });
 
-    InternalEventBus.onEvent(AlfInternalEvent.PLAYER_JOIN_LIVE, (info: any) => {
+    InternalEventBus.onEvent(InternalEvent.PLAYER_JOIN_LIVE, (info: any) => {
         const id = info.id;
         const ply = ___inst.playersById.get(id);
         if (!ply) {
@@ -36,11 +36,11 @@ export default async ({ }) => {
         ply.soc = info.soc;
     });
 
-    InternalEventBus.onEvent(AlfInternalEvent.PLAYER_DISCONNECT_LIVE, (ply: Player) => {
+    InternalEventBus.onEvent(InternalEvent.PLAYER_DISCONNECT_LIVE, (ply: Player) => {
         ply.soc = undefined;
     })
 
-    InternalEventBus.onEvent(AlfInternalEvent.PLAYER_CLEANUP, (id: number) => {
+    InternalEventBus.onEvent(InternalEvent.PLAYER_CLEANUP, (id: number) => {
         const ply = ___inst.playersById.get(id);
         const name = ply?.authUser.username;
         // TODO: Add event priority so this can be handled properly

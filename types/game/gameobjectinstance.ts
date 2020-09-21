@@ -14,8 +14,16 @@ export default class GameObjectInstance {
      */
     open: boolean = false;
 
+    /**
+     * Whether this container is currently locked. A container that is locked
+     * cannot be opened by players. If a module modifies this, a player will be
+     * able to open the object, even if they cannot pass the lock() check.
+     */
+    locked: boolean;
+
     constructor(obj: MutableGameObject, world: Instance) {
         this.forObject = obj;
         this.fromWorld = world;
+        this.locked = obj.startsLocked;
     }
 }

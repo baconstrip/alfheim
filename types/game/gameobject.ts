@@ -57,6 +57,18 @@ export default class GameObject {
     readonly lock: Lock;
 
     /**
+     * Whether or not this item can contain other objects. Defaults to false if
+     * not provided.
+     */
+    readonly container: boolean;
+
+    /**
+     * Whether the container will start locked. If lock is specified, defaults
+     * to true, otherwise false. Has no meaning if this is not a container.
+     */
+    readonly startsLocked: boolean;
+
+    /**
      * URL that contains an optional sprite for the object.
      */
     readonly img?: string;
@@ -71,6 +83,8 @@ export default class GameObject {
         infinite?: boolean,
         hidden?: boolean,
         description: string,
+        container?: boolean,
+        startsLocked?: boolean,
         lock?: Lock;
     }) {
         if (s.inRoom && s.inContainer) {
@@ -83,9 +97,13 @@ export default class GameObject {
         this.inContainer = s.inContainer;
         this.portable = s.portable ?? false;
         this.infinite = s.infinite ?? false;
+        this.container = s.container ?? false;
         this.hidden = s.hidden ?? false;
         this.description = s.description;
         this.lock = s.lock ?? function() {return true;};
+        // Pick s.startsLocked, if it is present, otherwise if s.lock is
+        // defined, use that. Otherwise, this is false.
+        this.startsLocked = s.startsLocked ?? s.lock != undefined ? true : false;
     }
 }
 

@@ -1,12 +1,14 @@
 import * as Messages from '../../types/messages';
 import { InternalEventBus } from '../internalevents';
-import { AlfInternalEvent } from '../../types/events';
+import { InternalEvent } from '../../types/internalevent';
 import Player from '../../types/game/player';
 import { replacePunctuation } from '../../lib/util';
 import nlp from 'compromise';
 import { Instance } from '../../types/game/worldinstance';
 import _ from 'lodash';
 import { EntityTypeToTag } from '../../types/game/worldentitytype';
+import { ActionEventBus } from '../actionevents';
+import { ProcessingStage } from '../../types/processingstage';
 
 type LanguageExtension = (doc: nlp.Document, world: nlp.World) => void;
 
@@ -213,7 +215,17 @@ class InputManager {
         const ran = this.globalVerbs.some(verb => {
             return verb.___alternatives.some(x => {
                 if (x == s.verb?.text) {
+                    if (!ply.world()) {
+                        return true;
+                    }
+                    // TODO add object here by extracting from probable subject.
+                    // We dispatch the event, if it gets cancelled, return here
+                    // before processing the verb callback.
+                    if (ActionEventBus.dispatch(verb.semanticName, ProcessingStage.PRE, {ply: ply, inst: ply.world() as Instance})) {
+                        return true;
+                    }
                     verbCallback(verb);
+                    ActionEventBus.dispatch(verb.semanticName, ProcessingStage.POST, {ply: ply, inst: ply.world() as Instance});
                     return true;
                 }
                 return false;
@@ -325,7 +337,7 @@ function handleTextInput(ply: Player, input: string) {
 
     breakSentences(nlp(normalised), (x) => {
         tagWorldObjects(ply, x, (statement) => {
-            //ply.sendMessage("I think you said " + statement.text(), statement.termList())
+            ply.sendMessage("I think you said " + statement.text(), statement.termList())
 
             const sentence = new Sentence(statement);
             const success = sentence.build();
@@ -356,7 +368,7 @@ export function registerGlobalVerb(s: LanguagePart) {
 export default async ({ }) => {
     ___inst = new InputManager();
     console.log('Created input module');
-    InternalEventBus.onEvent(AlfInternalEvent.MESSAGE_IN, ({ ply, message }: { ply: Player, message: Messages.Msg }) => {
+    InternalEventBus.onEvent(InternalEvent.MESSAGE_IN, ({ ply, message }: { ply: Player, message: Messages.Msg }) => {
         if (message.type == Messages.ClientMessage.TEXT_INPUT) {
             const body = (message.body as any).input as string;
             if (ignoreCommands(body)) {

@@ -3,8 +3,10 @@ import * as Messages from '../messages';
 import RoomInstance from "./roominstance";
 import { entManager } from "../../loaders/sql";
 import Inventory from "./inventory";
-import { update } from "lodash";
 import { Instance } from "./worldinstance";
+import { GameEventBus } from "../../services/gameevents";
+import { GameEvent } from "../gameevent";
+import { ProcessingStage } from "../processingstage";
 
 export default class Player {
     authUser!: AuthUser;
@@ -38,15 +40,36 @@ export default class Player {
         if (!this.location) {
             throw new Error('Cannot move a player who isn\'t in an instance');
         }
-
         if (this.location.fromWorld !== room?.fromWorld) {
             throw new Error('Cannot move a player between instances');
+        }
+
+        if (!room) {
+            throw new Error('Can\'t move a player to undefined');
+        }
+
+        if (GameEventBus.dispatch(GameEvent.PLAYER_MOVE, ProcessingStage.PRE, {
+            ply: this,
+            inst: this.world(),
+
+            msg: {
+                src: this.location,
+                dst: room,
+                betweenZones: this.location.forRoom.zone !== room.forRoom.zone,
+            },
+        })) {
+            return;
         }
 
         this.location.players.delete(this);
         this.location = room;
         this.location.players.add(this);
         this.___refreshUI();
+
+        GameEventBus.dispatch(GameEvent.PLAYER_MOVE, ProcessingStage.POST, {
+            ply: this,
+            inst: this.world(),
+        })
     }
 
     /**
@@ -71,11 +94,7 @@ export default class Player {
 
     ___refreshUI() {
         this.soc?.send(
-            JSON.stringify(Messages.BuildMessage(Messages.ServerMessage.UPDATE_LOCATION, {
-                world: this.world()?.forWorld.name,
-                room: this.location?.forRoom.name,
-                zone: this.world()?.zoneByID(this.location?.forRoom.zone ?? -1)?.forZone.name,
-            }))
+            JSON.stringify(Messages.BuildMessage(Messages.ServerMessage.UPDATE_LOCATION, {loc: this.___locationSummary()}))
         );
         this.soc?.send(
             JSON.stringify(Messages.BuildMessage(Messages.ServerMessage.UPDATE_MEDIA, {
@@ -83,6 +102,20 @@ export default class Player {
             }))
         );
         this.updateInventory();
+        const list = this.world()?.___computePlayerSummary();
+        if (list) {
+            this.soc?.send(
+                    JSON.stringify(Messages.BuildMessage(Messages.ServerMessage.SEND_PLAYERS, list))
+            )
+        }
+    }
+
+    ___locationSummary(): Messages.LocationSummary {
+        return {
+            world: this.world()?.forWorld.name ?? "",
+            room: this.location?.forRoom.name ?? "",
+            zone: this.world()?.zoneByID(this.location?.forRoom.zone ?? -1)?.forZone.name ?? "",
+        }
     }
     
     ___reset() {

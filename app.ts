@@ -10,6 +10,8 @@ import instancemanager from './services/instancemanager';
 
 // Required for TypeORM
 import "reflect-metadata"
+import { ActionEventBus } from './services/actionevents';
+import { ProcessingStage } from './types/processingstage';
 
 const PORT = 8054;
 
@@ -28,7 +30,7 @@ async function startServer() {
     });
     
     // Create Overworld landing.
-    const overworldInstance = new Instance(overworld, 'overworld');
+    const overworldInstance = new Instance(overworld, 'overworld', 1);
     await instancemanager(overworldInstance);
 
     server.listen(PORT, () => {

@@ -1,25 +1,29 @@
 import { InternalEventBus } from "./internalevents"
-import { AlfInternalEvent } from "../types/events"
+import { InternalEvent } from "../types/internalevent"
 import Player from "../types/game/player"
 import { Instance } from "../types/game/worldinstance";
 import World from "../types/game/world";
+import { GameEventBus } from "./gameevents";
+import { ActionEventBus } from "./actionevents";
 
 // Singleton manager.
 class InstanceManager {
-    instances: Map<string, Instance>;
+    instances: Map<string, Instance> = new Map();
     defaultWorld: Instance;
+    // TODO: make this monotomic across restarts
+    highestIndex: number = 2;
+
     constructor(defaultWorld: Instance) {
-        this.instances = new Map();
         this.defaultWorld = defaultWorld;
         this.instances.set('default', defaultWorld);
     }
 }
-var inst: InstanceManager;
+var ___inst: InstanceManager;
 
 export default async (defaultWorld: Instance) => {
-    inst = new InstanceManager(defaultWorld);
+    ___inst = new InstanceManager(defaultWorld);
     // Default world binding adds a player to a world as soon as they join.
-    InternalEventBus.onEvent(AlfInternalEvent.POST_PLAYER_JOIN_LIVE, (ply: Player) => {
+    InternalEventBus.onEvent(InternalEvent.POST_PLAYER_JOIN_LIVE, (ply: Player) => {
         // If the player is returning, skip adding to default world.
         if (___findPlayer(ply.authUser.id)) {
             console.log('Player returning: ' + ply.authUser.id);
@@ -29,10 +33,10 @@ export default async (defaultWorld: Instance) => {
             return;
         }
         console.log('Adding player to default world: ' + ply.authUser.id);
-        inst.defaultWorld.addPlayer(ply);
+        ___inst.defaultWorld.addPlayer(ply);
     });
 
-    InternalEventBus.onEvent(AlfInternalEvent.PLAYER_CLEANUP, (id: number) => {
+    InternalEventBus.onEvent(InternalEvent.PLAYER_CLEANUP, (id: number) => {
         console.log('removing player from instances: ' + id);
         let ply = ___findPlayer(id);
         if (ply) {
@@ -43,25 +47,36 @@ export default async (defaultWorld: Instance) => {
 }
 
 export function FindInstance(name: string): Instance | undefined {
-    return inst.instances.get(name.toLowerCase());
+    return ___inst.instances.get(name.toLowerCase());
+}
+
+export function FindInstanceByID(id: number): Instance | undefined {
+    const found = [...___inst.instances].find(x => {
+        return x[1].id == id;
+    });
+    return found ? found[1] : undefined;
 }
  
 
 export function CreateInstance(w: World, name: string): Instance {
-    if (inst.instances.get(name.toLowerCase())) {
+    if (___inst.instances.get(name.toLowerCase())) {
         throw new Error("Duplicate instance name");
     }
-    const newInst = new Instance(w, name);
-    inst.instances.set(name.toLowerCase(), newInst);
+    const newInst = new Instance(w, name, ___inst.highestIndex);
+    ___inst.highestIndex++;
+    ___inst.instances.set(name.toLowerCase(), newInst);
+
+    GameEventBus.___addInstance(newInst.id);
+    ActionEventBus.___addInstance(newInst.id);
     return newInst;
 }
 
 export function DefaultInstance(): Instance {
-    return inst.defaultWorld;
+    return ___inst.defaultWorld;
 }
 
 function ___findPlayer(id: number): Player | undefined {
-    for (let instance of inst.instances) {
+    for (let instance of ___inst.instances) {
         for (let room of instance[1].rooms) {
             for (let ply of room[1].players) {
                 if (ply.authUser.id === id) {

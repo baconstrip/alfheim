@@ -19,9 +19,9 @@ export default {
   mounted: function () {
     let localThis = this;
     EventBus.$on("update-location", (msg) => {
-      localThis.world = msg.world;
-      localThis.room = msg.room;
-      localThis.zone = msg.zone;
+      localThis.world = msg.loc.world;
+      localThis.room = msg.loc.room;
+      localThis.zone = msg.loc.zone;
     });
   },
 };

@@ -1,4 +1,5 @@
 import World, { MutableWorld } from "./world";
+import * as Messages from '../messages';
 import Player from "./player";
 import RoomInstance from "./roominstance";
 import GameObjectInstance from "./gameobjectinstance";
@@ -6,8 +7,13 @@ import { PathDirection, GetSourceDirection, GetDestinationDirection } from "./di
 import { WorldEntityType } from "./worldentitytype";
 import Inventory from "./inventory";
 import ZoneInstance from "./zoneinstance";
+import _ from "lodash";
+import { GameEventBus } from "../../services/gameevents";
+import { GameEvent } from "../gameevent";
+import { ProcessingStage } from "../processingstage";
 
 export class Instance {
+    readonly id: number;
     readonly instName: string;
     readonly forWorld: MutableWorld;
     readonly rooms: Map<number, RoomInstance>;
@@ -15,7 +21,8 @@ export class Instance {
     readonly objects: Map<number, GameObjectInstance>;
     readonly zones: Map<number, ZoneInstance>;
 
-    constructor(w: World, instName: string) {
+    constructor(w: World, instName: string, id: number) {
+        this.id = id;
         this.instName = instName;
         this.forWorld = w.toMutable();
         this.rooms = new Map();
@@ -127,12 +134,38 @@ export class Instance {
      * @param ply The player to add to the instance
      */
     addPlayer(ply: Player) {
+        GameEventBus.dispatch(GameEvent.PLAYER_JOIN_INSTANCE, ProcessingStage.PRE, {
+            ply: ply,
+            inst: this,
+
+            msg: {
+                name: this.instName,
+            },
+        });
         ply.sendMessage(this.forWorld.joinMessage);
         ply.inventory.size = this.forWorld.defaultInventorySize;
         ply.___spawnPlayer(this.rooms.get(this.forWorld.defaultRoom));
+
+        this.___updatePlayersLists();
+        GameEventBus.dispatch(GameEvent.PLAYER_JOIN_INSTANCE, ProcessingStage.POST, {
+            ply: ply,
+            inst: this,
+
+            msg: {
+                name: this.instName,
+            },
+        });
     }
 
     removePlayer(ply: Player) {
+        GameEventBus.dispatch(GameEvent.PLAYER_LEAVE_INSTANCE, ProcessingStage.PRE, {
+            ply: ply,
+            inst: this,
+
+            msg: {
+                name: this.instName,
+            },
+        });
         ply.sendMessage("Leaving this world...");
         // When a player leaves the world, drop their inventory in the room
         // they were in.
@@ -143,6 +176,38 @@ export class Instance {
             ply.inventory.transferTo(ply.location.inventory, x);
         })
         ply.location?.players.delete(ply);
+
+        this.___updatePlayersLists();
+        GameEventBus.dispatch(GameEvent.PLAYER_LEAVE_INSTANCE, ProcessingStage.POST, {
+            ply: ply,
+            inst: this,
+
+            msg: {
+                name: this.instName,
+            },
+        });
+    }
+
+    /**
+     * Creates thes SendPlayers object that contains a summary of all players
+     * in the instance.
+     */
+    ___computePlayerSummary(): Messages.SendPlayers {
+        return {players: _.map([...this.players()], (ply) => {
+            return {dname: ply.authUser.displayname, loc: ply.___locationSummary()};
+        })} as Messages.SendPlayers;
+    }
+
+    /**
+     * Sends updates to all players containing the player list.
+     */
+    ___updatePlayersLists() {
+        const list = this.___computePlayerSummary();
+        this.players().forEach((ply) => {
+            ply.soc?.send(
+                JSON.stringify(Messages.BuildMessage(Messages.ServerMessage.SEND_PLAYERS, list))
+            );
+        });
     }
 
     /**
@@ -204,8 +269,8 @@ export class Instance {
 
         let found = false;
         // Next, check all unlocked containers in the room, that 
-        // aren't themselves hidden.
-        ply.location?.inventory.contents.filter(x => !x.forObject.hidden).forEach(x => {
+        // aren't themselves hidden and are open.
+        ply.location?.inventory.contents.filter(x => !x.forObject.hidden && x.open).forEach(x => {
             found = x.inventory.contents.filter(x => !x.forObject.hidden).some(x => x.forObject.id == id);
         });
         if (found) {

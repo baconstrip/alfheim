@@ -48,8 +48,9 @@
      outline: 0 !important;
  }
 
- img.sample {
-     max-height: 60vh;
+ img.room-image {
+     max-height: 55vh;
+     max-width: 69vw;
      display: block;
  }
 
@@ -69,4 +70,21 @@
  .inventory-space {
      background-color: lighten($dark, 20%);
      height: 4rem;
+ }
+
+ .player-container {
+     background-color: lighten($dark, 10%);
+ }
+
+ .player-space {
+     background-color: lighten($dark, 20%);
+     border: 0.2rem;
+     border-color: $dark;
+     font-weight: bold;
+     font-size: 1.2rem;
+ }
+
+ .alf-sidebar > .row {
+     padding-top: 1rem;
+     padding-bottom: 1rem;
  }

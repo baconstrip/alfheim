@@ -32,8 +32,9 @@
 #text-input:focus {
   outline: 0 !important; }
 
-img.sample {
-  max-height: 60vh;
+img.room-image {
+  max-height: 55vh;
+  max-width: 69vw;
   display: block; }
 
 .ooc {
@@ -49,3 +50,17 @@ img.sample {
 .inventory-space {
   background-color: #626d78;
   height: 4rem; }
+
+.player-container {
+  background-color: #4b545c; }
+
+.player-space {
+  background-color: #626d78;
+  border: 0.2rem;
+  border-color: #343a40;
+  font-weight: bold;
+  font-size: 1.2rem; }
+
+.alf-sidebar > .row {
+  padding-top: 1rem;
+  padding-bottom: 1rem; }

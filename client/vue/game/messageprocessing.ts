@@ -21,6 +21,9 @@ function processMessage(msg: any) {
     if (msg.type === Messages.ServerMessage.SEND_INVENTORY) {
         EventBus.$emit('send-inventory', msg.body);
     }
+    if (msg.type === Messages.ServerMessage.SEND_PLAYERS) {
+        EventBus.$emit('send-players', msg.body);
+    }
 }
 
 export default({}) => {

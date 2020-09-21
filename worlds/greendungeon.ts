@@ -66,6 +66,7 @@ export default new World({
             id: 2,
             inRoom: 2,
             portable: false,
+            container: true,
             description: "An oversized chest, carelessly tossed asunder in to the cavern, presumably by some forgetful pirate",
         }),
         new GameObject({
@@ -96,6 +97,45 @@ export default new World({
             portable: true,
             id: 6,
             description: "Its overwhelming aura flows through you, you feel like you could fly.",
+        }),
+        new GameObject({
+            name: "Box",
+            inRoom: 1,
+            id: 7,
+            container: true,
+            lock: (lockArgs) => {
+                lockArgs.ply.sendMessage("The box scowls at you as you open it.");
+                return true;
+            },
+            description: "A simple cardboard box.",
+        }), 
+        new GameObject({
+            name: "lump",
+            inContainer: 7,
+            id: 8,
+            description: "A small, indistinct lump of...<em>something</em>.",
+        }), 
+        new GameObject({
+            name: "Shipping crate",
+            inRoom: 1,
+            id: 9,
+            container: true,
+            portable: true,
+            lock: (lockArgs) => {
+                if (lockArgs.ply.location?.forRoom.id == 2) {
+                    return true;
+                }
+                lockArgs.ply.sendMessage("You get the feeling this crate will only open in the cavern.");
+                return false;
+            },
+            description: "A small non-descript shipping box. It doesn't have any indentifying marks.",
+        }),
+        new GameObject({
+            name: "McGuffin",
+            inContainer: 9,
+            id: 10,
+            portable: true,
+            description: "The magical McGuffin that will surely drive this plot forward",
         })
     ),
     defaultRoom: 1,

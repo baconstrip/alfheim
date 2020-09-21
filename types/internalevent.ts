@@ -1,6 +1,6 @@
-export enum AlfInternalEvent {
+export enum InternalEvent {
     // Unimplemented
-    PLAYER_REGISTER = 0,
+    PLAYER_REGISTER = 1,
     /**
      * Emitted when a player joins the interactive game session.
      */

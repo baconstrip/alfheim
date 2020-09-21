@@ -10,6 +10,7 @@ export enum ServerMessage {
     UPDATE_LOCATION,
     UPDATE_MEDIA,
     SEND_INVENTORY,
+    SEND_PLAYERS,
 }
 
 // ------ Base Message Type ------- //
@@ -43,10 +44,14 @@ export class PublishText {
 
 export class ClearText {}
 
-export class UpdateLocation {
+export class LocationSummary {
     world!: string;
     room!: string;
     zone!: string;
+}
+
+export class UpdateLocation {
+    loc!: LocationSummary;
 }
 
 export class UpdateMedia {
@@ -71,6 +76,15 @@ export class SendInventory {
     type!: InventoryType;
     size!: number;
     items!: InventoryObject[];
+}
+
+export class PlayerSummary {
+    dname!: string;
+    loc!: LocationSummary;
+}
+
+export class SendPlayers {
+    players!: PlayerSummary[];
 }
 
 // ---------- Utilities ---------- //

@@ -1,6 +1,6 @@
 <template>
   <div class="row">
-    <img class="sample" v-bind:src="backgroundimg" />
+    <img class="room-image mx-auto" v-bind:src="backgroundimg" />
   </div>
 </template>
 
