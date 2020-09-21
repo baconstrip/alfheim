@@ -177,7 +177,6 @@ class Sentence {
     }
 
     debugPrint() {
-        console.log("Sentence with verb %O:", this.verb?.text);
         this.trees.forEach(x => {
             x.debugPrint();
         });
@@ -326,11 +325,11 @@ function handleTextInput(ply: Player, input: string) {
 
     breakSentences(nlp(normalised), (x) => {
         tagWorldObjects(ply, x, (statement) => {
-            ply.sendMessage("I think you said " + statement.text(), statement.termList())
+            //ply.sendMessage("I think you said " + statement.text(), statement.termList())
 
             const sentence = new Sentence(statement);
             const success = sentence.build();
-            ply.sendMessage(`The verb was ${sentence.verb?.text}: ${success}`);
+            //ply.sendMessage(`The verb was ${sentence.verb?.text}: ${success}`);
 
             sentence.debugPrint();
 

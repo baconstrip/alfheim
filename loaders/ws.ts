@@ -4,7 +4,7 @@ import { Duplex } from 'stream';
 import { AlfInternalEvent } from '../types/events';
 import { InternalEventBus } from '../services/internalevents';
 import { TimedWebSocket } from '../types/timedwebsocket';
-import players, { LookupPlayerId } from '../services/players';
+import players, { LookupPlayerID } from '../services/players';
 
 
 export default async ({ wsServer, httpServer, sessions } : 
@@ -32,11 +32,11 @@ export default async ({ wsServer, httpServer, sessions } :
         const id = req.session.passport.user;
         InternalEventBus.dispatch(AlfInternalEvent.PLAYER_JOIN_LIVE, {id: id, soc: soc});
 
-        InternalEventBus.dispatch(AlfInternalEvent.POST_PLAYER_JOIN_LIVE, LookupPlayerId(id));
+        InternalEventBus.dispatch(AlfInternalEvent.POST_PLAYER_JOIN_LIVE, LookupPlayerID(id));
 
         // Add message reciever behaviour
         soc.on('message', (message: string) => {
-            const ply = LookupPlayerId(id);
+            const ply = LookupPlayerID(id);
             InternalEventBus.dispatch(AlfInternalEvent.RAW_MESSAGE_IN, {ply: ply, message: message});
             soc.lastMessage = new Date();
             try {
@@ -62,7 +62,7 @@ export default async ({ wsServer, httpServer, sessions } :
         });
 
         soc.on('close', () => {
-            InternalEventBus.dispatch(AlfInternalEvent.PLAYER_DISCONNECT_LIVE, LookupPlayerId(id));
+            InternalEventBus.dispatch(AlfInternalEvent.PLAYER_DISCONNECT_LIVE, LookupPlayerID(id));
             console.log('Player disconnected: ' + id);
             const userTimeout = 10 * 1000;
             // Set a timer to clean up the user and reset them.

@@ -46,7 +46,12 @@ export default (route: Router) => {
         [
             body('user')
                 .notEmpty().withMessage("Username must be provided")
+                .isAlphanumeric().withMessage("Username must consist only of letters and numbers, no symbols, spaces, or punctuation"),
                 //.isLength({ min: 4, max: 20}).withMessage("Username must be between 4 and 20 characters."),
+            body('displayname')
+                .notEmpty().withMessage("Display name must be provided")
+                .isLength({ min: 4, max: 20}).withMessage("Display name must be between 4 and 20 characters.")
+                .isAlpha().withMessage("Display name must only contain letters, and may not contain numbers, punctuation, symbols, or spaces."),
             //body('pass').isLength({ min: 5 })
         ],
         async (req: Request, res: Response, next: NextFunction) => {

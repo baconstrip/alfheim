@@ -6,6 +6,7 @@ import validator from 'validator';
 import { AllWorlds } from '../../loaders/worlds';
 import { matchesPuncuation, replacePunctuation } from '../../lib/util';
 import { CreateInstance, DefaultInstance, FindInstance } from '../instancemanager';
+import players, { LookupPlayer, LookupPlayerByDisplayname } from '../players';
 
 const wsRe = /.*\s+.*/;
 
@@ -30,7 +31,6 @@ function handleCommand(ply: Player, msg: { cmd: string, args: string | undefined
         return;
     }
 
-
     const args = fixWhitespace(msg.args)?.toLowerCase().split(' ');
     if (msg.cmd == '/' || msg.cmd == 'ooc') {
         if (!msg.args) {
@@ -52,15 +52,25 @@ function handleCommand(ply: Player, msg: { cmd: string, args: string | undefined
             ply.sendMessage('<span class="command-error">Names should not contain control characters or punctuation.</span>');
             return;
         }
+
+        if (!validator.isAlpha(msg.args)) {
+            ply.sendMessage('<span class="command-error">Names must be comprised of letters only.</span>');
+            return;
+        }
         // FOR TESTING ONLY
         if (!validator.isLength(msg.args, { max: 20, min: 1 })) {
             ply.sendMessage('<span class="command-error">Names should be between 5 and 20 characters.</span>');
             return;
         }
 
+        if (LookupPlayerByDisplayname(msg.args)) {
+            ply.sendMessage('<span class="command-error">A player with that name already exists.</span>');
+            return;
+        }
+
         ply.authUser.displayname = validator.escape(msg.args);
         ply.___save();
-        ply.sendMessage('<span class="command-output">You\'ve changed your display name to: ' + ply.authUser.displayname + '</span>');
+        ply.sendMessage('<span class="command-output">You\'ve changed your display name to "' + ply.authUser.displayname + '"</span>');
 
     } else if (msg.cmd == 'allworlds' || msg.cmd == 'worlds' || msg.cmd == 'availableworlds') {
         const filteredWorlds = AllWorlds().filter((x) => x.loadable);

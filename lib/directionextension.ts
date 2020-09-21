@@ -13,7 +13,6 @@ export default ({}) => {
             }
         }
         const directionMatcher = "(" + directions.join('|') + ")";
-        console.log('%O', directionMatcher);
         world.postProcess(doc => {
             // If a direction ends a phrase, assume it is always a direction.
             doc.match(directionMatcher + '$')

@@ -2,6 +2,7 @@ import Player from "../types/game/player";
 import { InternalEventBus } from "./internalevents";
 import { AlfInternalEvent } from "../types/events";
 import { AuthUser } from "../models/User";
+import _, { zip } from "lodash";
 
 // Singleton manager.
 class PlyManager {
@@ -48,10 +49,24 @@ export default async ({ }) => {
 }
 
 export function LookupPlayer(name: string): Player | undefined {
-    return ___inst.players.get(name);
+    for (let [_, ply] of ___inst.players) {
+        if (ply.authUser.username.toLowerCase() == name.toLowerCase()) {
+            return ply;
+        }
+    }
+    return undefined;
 }
 
-export function LookupPlayerId(id: number): Player | undefined {
+export function LookupPlayerByDisplayname(name: string): Player | undefined {
+    for (let [_, ply] of ___inst.players) {
+        if (ply.authUser.displayname.toLowerCase() == name.toLowerCase()) {
+            return ply;
+        }
+    }
+    return undefined;
+}
+
+export function LookupPlayerID(id: number): Player | undefined {
     return ___inst.playersById.get(id);
 }
 

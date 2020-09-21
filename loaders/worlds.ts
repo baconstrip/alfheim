@@ -18,7 +18,6 @@ export default async ({}): Promise<Map<string, World>> => {
             worlds.set(world.name, world);
             byName.set(world.name, world);
             byID.set(world.id, world);
-            console.log(JSON.stringify(world));
         } catch (e) {
             console.log('Error loading world definition from: ' + file);
         }

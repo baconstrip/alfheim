@@ -21,7 +21,7 @@ export default ({}) =>{
             }
 
             if (a.ply.world()?.PlayerCanReachObject(obj.forObject.id, a.ply)) {
-                const otherInv = a.ply.location.fromWorld.findObjectHolder(obj.forObject.id);
+                const otherInv = a.ply.world()?.findObjectHolder(obj.forObject.id);
                 if (!otherInv)  {
                     throw new Error("Can't manage inventory when not found");
                 }
