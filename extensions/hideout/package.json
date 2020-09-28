@@ -1,0 +1,10 @@
+{
+    "name": "hideout-alfheim",
+    "version": "0.0.1",
+    "main": "hideout.ts",
+    "private": true,
+    "plugin": {
+        "features": ["hideout"],
+        "requires": ["daynight"]
+    }
+}

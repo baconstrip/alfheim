@@ -3,7 +3,7 @@ import { InternalEventBus } from '../internalevents';
 import { InternalEvent } from '../../types/internalevent';
 import Player from '../../types/game/player';
 import validator from 'validator';
-import { AllWorlds } from '../../loaders/worlds';
+import { AllWorlds } from '../worlds';
 import { matchesPuncuation, replacePunctuation } from '../../lib/util';
 import { CreateInstance, DefaultInstance, FindInstance } from '../instancemanager';
 import players, { LookupPlayer, LookupPlayerByDisplayname } from '../players';
@@ -86,7 +86,6 @@ function handleCommand(ply: Player, msg: { cmd: string, args: string | undefined
             ply.sendMessage('<span class="command-error">Create instance expects exactly two words, the world type and an instance name.</span>');
             return
         }
-
         
         const found = AllWorlds().filter((x) => x.loadable).filter(x => x.shortName.toLowerCase() == args[0]).some(x => {
             if (GameEventBus.dispatch(GameEvent.CREATE_INSTANCE, ProcessingStage.PRE, {

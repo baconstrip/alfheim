@@ -1,0 +1,9 @@
+{
+    "name": "daynight-alfheim",
+    "version": "0.0.1",
+    "main": "daynight.ts",
+    "private": true,
+    "plugin": {
+        "features": ["daynight"]
+    }
+}

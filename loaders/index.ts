@@ -8,8 +8,9 @@ import passport from './passport';
 import services from './services';
 import { Server } from 'http';
 import basicgame from './basicgame';
-import worlds from './worlds';
+import worlds from '../services/worlds';
 import compromise from './compromise';
+import modules from './modules';
 
 export default async ({ expressApp, wsServer, httpServer } : 
     { 
@@ -32,7 +33,9 @@ export default async ({ expressApp, wsServer, httpServer } :
     await worlds({});
     console.log('Loaded worlds from definitions');
     await compromise({});
-    console.log('Loaded natural language processor')
+    console.log('Loaded natural language processor');
+    await modules({});
+    console.log('Loaded extension modules');
 
     return {
         db: db,

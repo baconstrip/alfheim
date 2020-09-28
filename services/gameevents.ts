@@ -18,7 +18,7 @@ function ___deriveKey(arg: GameEventArgs, e: GameEvent): string {
     return `${e}-${arg.ply?.authUser.username}-${arg.obj?.forObject.name}-${arg.inst?.id}`;
 }
 
-type GameEventHandlerArgs = {
+export type GameEventHandlerArgs = {
     stage: ProcessingStage,
     event: GameEvent,
 } & GameEventArgs;

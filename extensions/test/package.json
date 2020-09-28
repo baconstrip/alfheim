@@ -1,0 +1,9 @@
+{
+    "name": "test-alfheim",
+    "version": "0.0.1",
+    "main": "test.ts",
+    "private": true,
+    "plugin": {
+        "features": ["test"]
+    }
+}

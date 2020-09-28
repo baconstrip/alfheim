@@ -9,13 +9,13 @@ import { ActionEventBus } from "./actionevents";
 // Singleton manager.
 class InstanceManager {
     instances: Map<string, Instance> = new Map();
-    defaultWorld: Instance;
+    defaultInstance: Instance;
     // TODO: make this monotomic across restarts
     highestIndex: number = 2;
 
-    constructor(defaultWorld: Instance) {
-        this.defaultWorld = defaultWorld;
-        this.instances.set('default', defaultWorld);
+    constructor(defaultInstance: Instance) {
+        this.defaultInstance = defaultInstance;
+        this.instances.set('default', defaultInstance);
     }
 }
 var ___inst: InstanceManager;
@@ -33,7 +33,7 @@ export default async (defaultWorld: Instance) => {
             return;
         }
         console.log('Adding player to default world: ' + ply.authUser.id);
-        ___inst.defaultWorld.addPlayer(ply);
+        ___inst.defaultInstance.addPlayer(ply);
     });
 
     InternalEventBus.onEvent(InternalEvent.PLAYER_CLEANUP, (id: number) => {
@@ -72,7 +72,7 @@ export function CreateInstance(w: World, name: string): Instance {
 }
 
 export function DefaultInstance(): Instance {
-    return ___inst.defaultWorld;
+    return ___inst.defaultInstance;
 }
 
 function ___findPlayer(id: number): Player | undefined {
