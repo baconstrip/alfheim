@@ -54,6 +54,14 @@ export default class World {
      */
     readonly defaultInventorySize: number;
 
+    /**
+     * A list of extensions that the World requires to work correctly. Can
+     * be left unset, all Worlds will have global extensions applied.
+     * 
+     * The world will fail to load if any of these are not found.
+     */
+    readonly requiredExtensions: string[];
+
     readonly id!: string;
 
     constructor(s: {
@@ -68,6 +76,7 @@ export default class World {
         loadable?: boolean
         objects?: GameObject[],
         defaultInventorySize?: number,
+        requiredExtensions?: string[],
     }) {
         this.name = s.name;
         this.shortName = s.shortName;
@@ -80,6 +89,7 @@ export default class World {
         this.paths = s.paths;
         this.objects = s.objects ?? [];
         this.defaultInventorySize = s.defaultInventorySize ?? 2;
+        this.requiredExtensions = s.requiredExtensions ?? [];
     }
 
     toMutable(): MutableWorld {

@@ -29,6 +29,10 @@ In addition to the required fields listed by NodeJS (currently `name` and
     name, so that other extensions may depend on it.
     * `requires`: a list of plugins/features that this extension relies on, it
     will fail to load if any of these are not met. This extension is guarenteed to be loaded after the extensions in this list.
+    * `all-instances`: boolean indicating if this extension should apply to 
+    all instances, if it is true, `newInstance()` will be invoked for each
+    instance that is created. Otherwise, it is only invoked when a world
+    requests this extension by name.
 
 *A note about the names*: The name must be of the form `.*-alfheim`, e.g. 
 `great-extension-alfheim`, and it must provide a feature with the name of the
@@ -44,6 +48,7 @@ An example bare minimum extension declaration:
     "main": "index.ts",
     "plugin": {
         "features": ["example"],
+        "all-instances": false,
     }
 }
 ```
@@ -81,19 +86,35 @@ features are described in the next heading*
 
 ### `setup()`
 
-`setup()` is invoked exactly once per instance, at the first time the extension
+`setup()` is invoked exactly once per extension, at the first time the extension
 is loaded. In this, the extension can do things like register global listeners,
 create information it needs to store, and load information that has been saved.
 
+If this extension relies on features from another extension, it will be 
+initialized after that one.
+
 ### `newInstance(inst: Instance)`
 
-`newInstance(inst: Instance)` is invoked whenever a new instance is created, and is invoked
-before any players are spawned into the instance.
+`newInstance(inst: Instance)` is invoked whenever a new instance that requires
+this extension is created, and is invoked
+before any players are spawned into the instance. Altenatively, if the
+extension's `plugin.all-instances` is `true`, this will be invoked for *all*
+instances created.
 
 It is invoked with a single argument, the `Instance` that represents the
 instance that was created.
 
 *Note: This is never invoked for the default instance, if you need a listener
 for the default instance, register and instance listener in the setup()
-function, as it is guarenteed to be invoked before any players are spawned into
-the default instance.*
+function*
+
+### `worlds(): []World`
+
+`worlds(): []World` is invoked exactly once per extension, at the first time
+the extension is loaded. It should return a list of worlds that the extension
+is providing, as World objects. Generally, these are hard coded inside an
+extension, rather than being generated. This method may or may not be defined.
+
+Worlds returned from this method are added to a pool of worlds that players can
+create instances on, with the information in the world fully defining how the
+world should behave.

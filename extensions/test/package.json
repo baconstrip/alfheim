@@ -4,6 +4,7 @@
     "main": "test.ts",
     "private": true,
     "plugin": {
-        "features": ["test"]
+        "features": ["test"],
+        "all-instances": true
     }
 }

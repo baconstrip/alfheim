@@ -5,6 +5,7 @@
     "private": true,
     "plugin": {
         "features": ["hideout"],
-        "requires": ["daynight"]
+        "requires": ["daynight"],
+        "all-instances": false
     }
 }

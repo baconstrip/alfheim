@@ -4,6 +4,7 @@
     "main": "daynight.ts",
     "private": true,
     "plugin": {
-        "features": ["daynight"]
+        "features": ["daynight"],
+        "all-instances": false
     }
 }
