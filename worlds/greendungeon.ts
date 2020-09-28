@@ -9,6 +9,10 @@ export default new World({
     name: "Green Dungeon",
     shortName: "dungeon",
     joinMessage: "<em>You find yourself at the watery entrance to a verdant cave. You can't immediately tell how deep the cave goes...</em>",
+    defaultRoom: 1,
+    unrestrictedMovement: false,
+    defaultInventorySize: 1,
+
     rooms: new Array<Room>(
         new Room({
             name: "Cave entrance", 
@@ -138,7 +142,4 @@ export default new World({
             description: "The magical McGuffin that will surely drive this plot forward",
         })
     ),
-    defaultRoom: 1,
-    unrestrictedMovement: false,
-    defaultInventorySize: 1,
 });
