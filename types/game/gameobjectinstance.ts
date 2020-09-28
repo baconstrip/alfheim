@@ -7,6 +7,7 @@ export default class GameObjectInstance {
     readonly fromWorld: Instance;
     // Every object could potentially hold 10,000 other objects.
     readonly inventory: Inventory = new Inventory(10000);
+    readonly moduleData: Map<string, any> = new Map();
 
     /**
      * Whether or not this container is open. Has no meaning if this is not

@@ -1,10 +1,14 @@
 import { GameEventBus, GameEventHandlerArgs } from "../../services/gameevents"
+import { ModuleData } from "../../services/moduledata";
 import { GameEvent } from "../../types/gameevent"
 import { ProcessingStage } from "../../types/processingstage"
 
-export function setup() {
+export function setup(data: ModuleData) {
+    console.log("setting up test");
     GameEventBus.globalOnEvent(GameEvent.PLAYER_MOVE, ProcessingStage.POST, (a: GameEventHandlerArgs) => {
-        console.log("Loaded test module, " + a.ply?.authUser.displayname);
+        const count = data.getForPlayer(a.ply!, "movecount") ?? 0;
+        data.setOnPlayer(a.ply!, "movecount",  count + 1)
+        console.log(`Player has moved: ${count + 1}`)
         return false;
     })
 }

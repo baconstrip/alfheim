@@ -8,21 +8,22 @@ const normalizedPath = path.join(__dirname + '/../worlds');
 const byName: Map<string, World> = new Map();
 const byID: Map<string, World> = new Map();
 
-export default async ({}): Promise<Map<string, World>> => {
-    const worlds = new Map<string, World>();
+export default async ({}) => {
     fs.readdirSync(normalizedPath).forEach((file) => {
         try { 
             const world = require('../worlds/' + file).default as World;
             // Cast away read only to set this field, never set again.
-            (world as any).id = md5(world.name);
-            worlds.set(world.name, world);
-            byName.set(world.name, world);
-            byID.set(world.id, world);
+            ___addWorld(world);
         } catch (e) {
             console.log('Error loading world definition from: ' + file);
         }
     });
-    return worlds;
+}
+
+export function ___addWorld(w: World) {
+    (w as any).id = md5(w.name);
+    byName.set(w.name, w);
+    byID.set(w.id, w);
 }
 
 export function WorldByName(name: string): World | undefined {

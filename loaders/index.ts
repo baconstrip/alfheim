@@ -30,12 +30,12 @@ export default async ({ expressApp, wsServer, httpServer } :
     console.log('Loaded services');
     await basicgame({});
     console.log('Loaded base game components');
-    await worlds({});
-    console.log('Loaded worlds from definitions');
     await compromise({});
     console.log('Loaded natural language processor');
     await modules({});
     console.log('Loaded extension modules');
+    await worlds({});
+    console.log('Loaded worlds from definitions');
 
     return {
         db: db,

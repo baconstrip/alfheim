@@ -20,6 +20,7 @@ export class Instance {
     // This needs to be reworked to support inifinte items properly.
     readonly objects: Map<number, GameObjectInstance>;
     readonly zones: Map<number, ZoneInstance>;
+    readonly moduleData: Map<string, any> = new Map();
 
     constructor(w: World, instName: string, id: number) {
         this.id = id;

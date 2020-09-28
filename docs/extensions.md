@@ -84,14 +84,20 @@ features are described in the next heading*
 
 ## Extension API
 
-### `setup()`
+### `setup(data: ModuleData)`
 
-`setup()` is invoked exactly once per extension, at the first time the extension
-is loaded. In this, the extension can do things like register global listeners,
-create information it needs to store, and load information that has been saved.
+`setup(data: ModuleData)` is invoked exactly once per extension, at the first 
+time the extension is loaded. In this, the extension can do things like 
+register global listeners, create information it needs to store, and load 
+information that has been saved.
 
-If this extension relies on features from another extension, it will be 
-initialized after that one.
+If this extension relies on features from another extension, this will be
+called after `setup()` for the extension it depends on.
+
+`setup()` is passed one parameter, a ModuleData instance that can be used to
+attach extension specific data to players, rooms, instances, and game objects.
+Extensions should save a reference to their ModuleData object, and re-use it 
+to retrieve and store information associated to various in-game entities.
 
 ### `newInstance(inst: Instance)`
 

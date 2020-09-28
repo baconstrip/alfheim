@@ -15,6 +15,8 @@ export default class Player {
     // Default size is 2, worlds can change this.
     inventory: Inventory = new Inventory(2);
 
+    moduleData: Map<string, any> = new Map();
+
     alive: boolean = true;
 
     /**

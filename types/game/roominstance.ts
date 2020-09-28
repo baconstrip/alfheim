@@ -9,6 +9,7 @@ export default class RoomInstance {
     readonly fromWorld: Instance;
     players: Set<Player> = new Set();
     paths: Map<Direction, RoomInstance> = new Map();
+    moduleData: Map<string, any> = new Map();
 
     // Every room could potentially hold 10,000 objects.
     readonly inventory: Inventory = new Inventory(10000);
