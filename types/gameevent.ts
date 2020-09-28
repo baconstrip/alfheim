@@ -37,4 +37,14 @@ export enum GameEvent {
      * cancelled.
      */
     CREATE_INSTANCE,
+
+    /**
+     * When a player is killed. Can be cancelled.
+     */
+    PLAYER_DEATH,
+
+    /**
+     * When a player is made re-corporeal. Can be cancelled.
+     */
+    PLAYER_REVIVE,
  }

@@ -3,14 +3,21 @@ import Player from "../types/game/player";
 import { Instance } from "../types/game/worldinstance";
 import { ProcessingStage } from "../types/processingstage";
 
-type ActionEventHandlerArgs = {
+type ActionEventArgs = {
     ply: Player,
     obj?: GameObjectInstance,
     inst: Instance,
-    stage: ProcessingStage,
-
     msg?: any,
 }
+
+function ___deriveKey(arg: ActionEventArgs, e: string): string {
+    return `${e}-${arg.ply.authUser.username}-${arg.obj?.forObject.name}-${arg.inst.id}`;
+}
+
+type ActionEventHandlerArgs = {
+    stage: ProcessingStage,
+    action: string,
+} & ActionEventArgs;
 
 type ActionEventCallback = (a: ActionEventHandlerArgs) => boolean;
 
@@ -20,6 +27,8 @@ type __eventDict = Map<string, __callbackEntry[] | undefined>;
 class __eventBusType { 
     globalListeners: __eventDict = new Map();
     instanceListeners: Map<number, __eventDict> = new Map();
+
+    recursionGuard: Set<string> = new Set();
 
     constructor() {
     }
@@ -64,7 +73,40 @@ class __eventBusType {
         };
     }
 
-    dispatch(e: string, stage: ProcessingStage, args: {ply: Player, obj?: GameObjectInstance, inst: Instance, msg?: any}): boolean {
+    dispatch(e: string, stage: ProcessingStage, args: ActionEventArgs): boolean {
+        // If we already are in an event handler for this event, return.
+        const key = ___deriveKey(args, e);
+        if (this.recursionGuard.has(key)) {
+            console.log("WARNING: event called recursively!");
+            console.log(`\t${key}`);
+            return false;
+        }
+        this.recursionGuard.add(key);
+        const outcome = this.dispatch(e, stage, args);
+        this.recursionGuard.delete(key);
+        return outcome;
+    }
+
+    __swallowException(cb: ActionEventCallback, arg: ActionEventHandlerArgs): boolean {
+        let cancel = false;
+        try {
+            cancel = cb(arg);
+        } catch (e) {
+            // Trim the internal portion of the stack trace, as it's likely 
+            // not intersting.
+            const stack = e.stack as string;
+            let idx = stack.indexOf("at __eventBusType");
+            if (idx == -1) {
+                idx = stack.length;
+            }
+            const trimmedStack = stack.substr(0, idx);
+            console.log(`Error in processing event handler, event with key ${___deriveKey(arg, arg.action)}: ${e}\n\n${trimmedStack}`);
+        }
+
+        return cancel;
+    }
+
+    dispatchInternal(e: string, stage: ProcessingStage, args: ActionEventArgs): boolean {
         const cbArgs = {
             ply: args.ply,
             obj: args.obj,
@@ -72,11 +114,12 @@ class __eventBusType {
             stage: stage,
 
             msg: args.msg,
+            action: e,            
         };
         const name = e.toLowerCase();
-        console.log("Verb being dispatched")
+
         const globalCancel = this.globalListeners.get(name)?.filter(x => x.stage == stage).some((x) => {
-            return x.cb(cbArgs) && stage == ProcessingStage.PRE;
+            return this.__swallowException(x.cb, cbArgs) && stage == ProcessingStage.PRE;
         }) ?? false;
 
         if (globalCancel) {
@@ -84,7 +127,7 @@ class __eventBusType {
         }
 
         return this.instanceListeners.get(args.inst.id)?.get(name)?.filter(x => x.stage == stage).some((x) => {
-            return x.cb(cbArgs) && stage == ProcessingStage.PRE;
+            return this.__swallowException(x.cb, cbArgs) && stage == ProcessingStage.PRE;
         }) ?? false;
     }
 
@@ -120,7 +163,7 @@ export namespace ActionEventBus {
      * This function will return true if it should be cancelled. Return can be
      * ignored for POST handler.
      */
-    export function dispatch(e: string, stage: ProcessingStage, args: {ply: Player, obj?: GameObjectInstance, inst: Instance, msg?: any}): boolean {
+    export function dispatch(e: string, stage: ProcessingStage, args: ActionEventArgs): boolean {
         return _x.dispatch(e, stage, args);
     }
 

@@ -7,15 +7,17 @@ import overworld from './worlds/overworld';
 import { Instance } from './types/game/worldinstance';
 import instancemanager from './services/instancemanager';
 
-
 // Required for TypeORM
 import "reflect-metadata"
-import { ActionEventBus } from './services/actionevents';
-import { ProcessingStage } from './types/processingstage';
+import testing from './testing';
 
 const PORT = 8054;
 
 async function startServer() {
+    const dev = process.env.NODE_ENV === "development";
+    if (dev) {
+        testing({});
+    }
     console.log('Overworld name: ' + overworld.name);
 
     const app = express();

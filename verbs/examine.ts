@@ -9,6 +9,10 @@ export default ({}) => {
             if (a.sentence.parsed.match("(around|room)").some(_=> true)) {
                 a.ply.sendMessage(`You look around ${a.ply.location?.forRoom.name}, you find:`);
                 a.ply.sendMessage(a.ply.location?.forRoom.description ?? "");
+                const objs = a.ply.location?.inventory.contents.map(x => x.forObject.name).join(", ");
+                if (objs) {
+                    a.ply.sendMessage(`In the room there's: ${objs}`);
+                }
                 return;
             }
 

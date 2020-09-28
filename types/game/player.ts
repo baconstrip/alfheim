@@ -15,6 +15,8 @@ export default class Player {
     // Default size is 2, worlds can change this.
     inventory: Inventory = new Inventory(2);
 
+    alive: boolean = true;
+
     /**
      * Sends a raw HTML message to the client to be displayed in the 
      * textwindow.
@@ -34,9 +36,10 @@ export default class Player {
     /**
      * Moves a player to a new room. Must be a room within the same instance, or 
      * an error will be thrown. 
-     * @param room 
+     * 
+     * @returns true if the player was moved, false if not.
      */
-    move(room: RoomInstance | undefined) {
+    move(room: RoomInstance | undefined): boolean {
         if (!this.location) {
             throw new Error('Cannot move a player who isn\'t in an instance');
         }
@@ -48,17 +51,20 @@ export default class Player {
             throw new Error('Can\'t move a player to undefined');
         }
 
+        const msg = {
+                src: this.location,
+                dst: room,
+                betweenZones: this.location.forRoom.zone !== room.forRoom.zone,
+        };
+
+
         if (GameEventBus.dispatch(GameEvent.PLAYER_MOVE, ProcessingStage.PRE, {
             ply: this,
             inst: this.world(),
 
-            msg: {
-                src: this.location,
-                dst: room,
-                betweenZones: this.location.forRoom.zone !== room.forRoom.zone,
-            },
+            msg: msg,
         })) {
-            return;
+            return false;
         }
 
         this.location.players.delete(this);
@@ -69,7 +75,9 @@ export default class Player {
         GameEventBus.dispatch(GameEvent.PLAYER_MOVE, ProcessingStage.POST, {
             ply: this,
             inst: this.world(),
+            msg: msg,
         })
+        return true;
     }
 
     /**
@@ -128,6 +136,79 @@ export default class Player {
 
     world(): Instance | undefined {
         return this.location?.fromWorld;
+    }
+
+    /**
+     * Turns the player into a ghost,
+     * 
+     * Cause is a string that provides a rough description of why they died,
+     * optional.
+     * 
+     * @returns whether or not they were actually killed. If the player is 
+     * already dead, returns true.
+     */
+    kill(cause?: string): boolean {
+        if (!this.alive) {
+            return true;
+        }
+
+        if (GameEventBus.dispatch(GameEvent.PLAYER_DEATH, ProcessingStage.PRE, {
+            ply: this,
+            inst: this.world(),
+
+            msg: {
+                cause: cause,
+            },
+        })) {
+            return false;
+        }
+
+        this.alive = false;
+
+
+        GameEventBus.dispatch(GameEvent.PLAYER_DEATH, ProcessingStage.POST, {
+            ply: this,
+            inst: this.world(),
+            msg: {
+                cause: cause,
+            },
+        })
+        return true;
+    }
+
+    /**
+     * Revies the player in question. Takes an optional string that describes
+     * the reason the player is being resurrected. 
+     * 
+     * @returns true if the player was successfully resurrected, or if they are
+     * already alive.
+     */
+    resurrect(cause?: string): boolean {
+        if (this.alive) {
+            return true;
+        }
+
+        if (GameEventBus.dispatch(GameEvent.PLAYER_REVIVE, ProcessingStage.PRE, {
+            ply: this,
+            inst: this.world(),
+
+            msg: {
+                cause: cause,
+            },
+        })) {
+            return false;
+        }
+
+        this.alive = true;
+
+        GameEventBus.dispatch(GameEvent.PLAYER_REVIVE, ProcessingStage.POST, {
+            ply: this,
+            inst: this.world(),
+            msg: {
+                cause: cause,
+            },
+        })
+        return true;
     }
 }
 
