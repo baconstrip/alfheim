@@ -11,6 +11,7 @@ import basicgame from './basicgame';
 import worlds from '../services/worlds';
 import compromise from './compromise';
 import modules from './modules';
+import assetresolver from './assetresolver';
 
 export default async ({ expressApp, wsServer, httpServer } : 
     { 
@@ -32,10 +33,11 @@ export default async ({ expressApp, wsServer, httpServer } :
     console.log('Loaded base game components');
     await compromise({});
     console.log('Loaded natural language processor');
-    await modules({});
-    console.log('Loaded extension modules');
     await worlds({});
     console.log('Loaded worlds from definitions');
+    await modules({});
+    console.log('Loaded extension modules');
+    await assetresolver({app: expressApp});
 
     return {
         db: db,

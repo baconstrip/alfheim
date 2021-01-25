@@ -1,4 +1,5 @@
-let gulp = require('gulp')
+let gulp = require('gulp');
+let typedoc = require('gulp-typedoc');
 let sass = require('gulp-sass');
 let webpack = require('webpack-stream');
 let rename = require('gulp-rename');
@@ -32,6 +33,15 @@ gulp.task('pages-pack', () => {
         .pipe(gulp.dest('static/js/'));
 });
 
+gulp.task('typedoc', () => {
+    return gulp.src(["client/*"]).pipe(
+        typedoc({
+            out: "docs/api",
+            name: "Alfheim docs"
+        })
+    );
+})
+
 gulp.task('serve-sass', gulp.series('sass', () => {
     gulp.watch('scss/*', gulp.series('sass'));
 }));
@@ -44,4 +54,4 @@ gulp.task('serve-pages', gulp.series('pages-pack', () => {
 }));
 
 
-gulp.task('default', gulp.parallel('js', 'serve-sass', 'serve-game', 'serve-pages'));
+gulp.task('default', gulp.parallel('js', 'serve-sass', 'serve-game', 'serve-pages', 'typedoc'));

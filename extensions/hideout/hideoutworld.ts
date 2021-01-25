@@ -7,10 +7,10 @@ import Zone from "../../types/game/zone";
 export default new World({
     name: "Hideout",
     shortName: "hideout",
-    joinMessage: "<em>You find yourself at the top of a small next to a stream, you can tell there's something hidden nearby</em>",
+    joinMessage: "<em>You find yourself at the top of a small mountain next to a stream, you can tell there's something hidden nearby</em>",
     defaultRoom: 1,
     unrestrictedMovement: false,
-    defaultInventorySize: 2,
+    defaultInventorySize: 4,
 
     rooms: new Array<Room>(
         new Room({
@@ -25,6 +25,13 @@ export default new World({
             name: "Hillside",
             description: "Walking from the river, you find the side of the hill you're on. You don't feel as if there's anything over here.",
             img: "imgs/hillside.jpg",
+            zone: 1,
+        }),
+        new Room({
+            id: 10,
+            name: "Treewatch",
+            description: "You stand on the mountain, overlooking trees shrouded in fog.",
+            img: "$test$/trees.jpg",
             zone: 1,
         }),
         new Room({
@@ -116,6 +123,12 @@ export default new World({
             direction: PathDirection.EAST_WEST,
             hidden: false,
         }),
+        new Path({
+            source: 1, 
+            dest: 10,
+            direction: PathDirection.NORTH_SOUTH,
+            hidden: false,
+        })
     ),
     zones: new Array<Zone>(
         new Zone({

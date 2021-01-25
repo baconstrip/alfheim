@@ -20,7 +20,8 @@ export default async ({}) => {
     });
 }
 
-export function ___addWorld(w: World) {
+export function ___addWorld(w: World, assetModule?: string) {
+    w.___assetModule = assetModule;
     (w as any).id = md5(w.name);
     byName.set(w.name, w);
     byID.set(w.id, w);

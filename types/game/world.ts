@@ -62,6 +62,13 @@ export default class World {
      */
     readonly requiredExtensions: string[];
 
+    /**
+     * INTERNAL USE ONLY
+     * 
+     * Used to resolve the module that contains the assets.
+     */
+    ___assetModule?: string;
+
     readonly id!: string;
 
     constructor(s: {

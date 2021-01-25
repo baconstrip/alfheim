@@ -124,3 +124,34 @@ extension, rather than being generated. This method may or may not be defined.
 Worlds returned from this method are added to a pool of worlds that players can
 create instances on, with the information in the world fully defining how the
 world should behave.
+
+## Assets
+
+Extensions may require assets (e.g. pictures, sounds), binary data that should 
+be delivered to clients. 
+
+To add assets to your extension, create a folder in the extension folder (at 
+the same level as package.json) named `assets`. This must be a directory, and
+can contain arbitrary assets and subdirectories. To use assets in your extension
+simply refer to your asset with a relative path anywhere an asset is expected
+(for example, splash art for rooms). For example, if you wrote the extension 
+`awesome-thing` (diagram below), and were trying to use `trees.jpg`, you would
+write simply `trees.jpg`, or for the mountain, `img/mountain.jpg`.
+
+If you need to refer to assets added by another extension, use the name of that
+extension between `$`, followed by the path inside that extension. For example,
+if you were trying to load the image located at (rooted from the extension 
+folder) `/awesome-thing/assets/img/moutain.jpg`, you should write 
+`$awesome-thing$/img/mountain.jpg` as a *relative* path in your extension. 
+
+```
+# Example file structure for an extension.
+awesome-thing
+├── assets
+│   ├── img
+│   │   └── mountain.jpg
+│   └── trees.jpg
+├── package.json
+└── main.ts
+
+```

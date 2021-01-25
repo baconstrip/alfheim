@@ -7,6 +7,7 @@ import { Instance } from "./worldinstance";
 import { GameEventBus } from "../../services/gameevents";
 import { GameEvent } from "../gameevent";
 import { ProcessingStage } from "../processingstage";
+import { resolve as assetResolve } from "../../loaders/assetresolver";
 
 export default class Player {
     authUser!: AuthUser;
@@ -108,7 +109,7 @@ export default class Player {
         );
         this.soc?.send(
             JSON.stringify(Messages.BuildMessage(Messages.ServerMessage.UPDATE_MEDIA, {
-                img: this.location?.forRoom.img,
+                img: assetResolve(this.location?.forRoom.img ?? "error", this.location?.fromWorld.forWorld.___assetModule),
             }))
         );
         this.updateInventory();

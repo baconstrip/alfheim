@@ -6,13 +6,27 @@ import { ModuleData } from "../services/moduledata";
 
 const normalizedPath = path.join(__dirname + '/../extensions');
 
-class ___extensionManager {
+export class ___extensionManager {
     extensionDescriptions = new Map<string, any>();
     loadedPlugins = new Map<string, any>();
     loadedFeatures = new Map<string, any>();
+    assetsPaths = new Map<string, string>();
+
+    public assetInExtension(assetPath: string, extension: string): string {
+        let filepath = this.assetsPaths.get(extension.toLowerCase());
+        if (filepath === undefined) {
+            throw new Error(`Failed to find extension: ${extension.toLowerCase()}`)
+        }
+
+        return path.join(filepath, assetPath);
+    }
 }
 
 const ___inst = new ___extensionManager();
+
+export function assetInExtension(assetPath: string, extension: string): string {
+    return ___inst.assetInExtension(assetPath, extension);
+}
 
 export default ({}) => {
     console.log('Loading extensions:');
@@ -36,12 +50,35 @@ export default ({}) => {
         });
         if (!module) {
             console.log(`Discarding extension without package.json: ${name}`);
+            return;
         }
         // Attach the baseDir to the module
         module.__baseDir = name;
 
-        ___inst.extensionDescriptions.set(module.name.toLowerCase(), module);
-        console.log(`\tFound extension: ${module.name}`);
+        let moduleNameRegex: RegExp = /([a-z]*)-alfheim/;
+
+        if (!moduleNameRegex.test(module.name)) {
+            console.log(`Failed to load module ${module}, module names should be all lower case and end in '-alfheim'`);
+            return;
+        }
+        let normalizedName = (module.name.match(moduleNameRegex) as Array<string>)[1];
+
+        ___inst.extensionDescriptions.set(normalizedName, module);
+        console.log(`\tFound extension: ${module.name} (a.k.a. ${normalizedName})`);
+
+        const assetDir = path.join(name, "assets");
+        try {
+            if(!fs.statSync(assetDir).isDirectory) {
+                console.log(`module ${normalizedName} has 'assets' file, 'assets' must be a directory.`);
+                return;
+            }
+
+            ___inst.assetsPaths.set(normalizedName, assetDir);
+        } catch (e) {
+            if (e.code !== 'ENOENT') {
+                console.log(`error loading assets for module ${module.name} (${normalizedName}): ${e}`);
+            } 
+        }
     });
 
     // Run setup on all the extensions we found.
@@ -91,11 +128,15 @@ export default ({}) => {
         }
     }
 
-    ___inst.loadedPlugins.forEach((x: any) => {
-        const worldFunc = x['worlds'];
+    ___inst.loadedPlugins.forEach((x: any, name: string) => {
+        let worldFunc = x['worlds'];
         if (worldFunc) {
-            worldFunc().forEach((w: World) => {
-                ___addWorld(w);
+            let worlds = worldFunc();
+            if (!Array.isArray(worlds)) { 
+                console.log(`Error in module ${name}, worlds() should return an array of World objects.`);
+            }
+            (worldFunc() as Array<World>).forEach((world) => {
+                ___addWorld(world, name);
             });
         }
     });

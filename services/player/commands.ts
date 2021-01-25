@@ -100,21 +100,26 @@ function handleCommand(ply: Player, msg: { cmd: string, args: string | undefined
                 console.log('Instance creation cancelled');
                 return;
             }
-            const inst = CreateInstance(x, args[1]);
-            ply.world()?.removePlayer(ply);
-            inst.addPlayer(ply);
-            GameEventBus.dispatch(GameEvent.CREATE_INSTANCE, ProcessingStage.POST, {
-                ply: ply,
-                inst: ply.world(),
+            try {
+                const inst = CreateInstance(x, args[1]);
+                ply.world()?.removePlayer(ply);
+                inst.addPlayer(ply);
+                GameEventBus.dispatch(GameEvent.CREATE_INSTANCE, ProcessingStage.POST, {
+                    ply: ply,
+                    inst: ply.world(),
 
-                msg: {
-                    name: args[1],
-                    type: args[0],
+                    msg: {
+                        name: args[1],
+                        type: args[0],
 
-                    inst: inst,
-                },
-            });
-            return true;
+                        inst: inst,
+                    },
+                });
+                return true;
+            } catch (e) {
+                ply.sendMessage(`<span class="command-error">Failed to create instance, ${e}</span>`);
+                return false;
+            }
         });
 
         if (found) {

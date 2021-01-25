@@ -1,5 +1,7 @@
 import { registerGlobalVerb, LanguagePart } from "../services/player/inputparsing";
 
+const ___defaultMessage = `I don't know what you want to look at, I don't think there's anything like that around here`
+
 export default ({}) => {
     const verbExamine = new LanguagePart({
         semanticName: 'examine',
@@ -17,13 +19,13 @@ export default ({}) => {
             }
 
             if (!a.probableSubject) {
-                a.ply.sendMessage('I don\'t know what you want to look at, I don\'t think there\'s anything like that around here');
+                a.ply.sendMessage(___defaultMessage);
                 return;
             }
 
             const obj = a.ply.world()?.objectByName(a.probableSubject.rootTerm.text());
             if (!obj || obj.forObject.hidden) {
-                a.ply.sendMessage('I don\'t know what you\'re trying to look at');
+                a.ply.sendMessage(___defaultMessage);
                 return;
             }
 
@@ -32,6 +34,8 @@ export default ({}) => {
                 a.ply.sendMessage(`<span class="examine-text">${obj.forObject.description}</span>`);
                 return;
             }
+            
+            a.ply.sendMessage(___defaultMessage);
         },
     });
     registerGlobalVerb(verbExamine);
