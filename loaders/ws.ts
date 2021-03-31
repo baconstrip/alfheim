@@ -89,10 +89,6 @@ export default async ({ wsServer, httpServer, sessions } :
         soc.on('pong', () => {
             soc.lastMessage = new Date();
         });
-
-        // Greet the client
-        soc.send(JSON.stringify({greeting: 'Connected to server. Welcome' }));
-        console.log("greeting client");
     });
 
     setInterval(() => {

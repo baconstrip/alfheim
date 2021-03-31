@@ -9,11 +9,13 @@ export default ({}) => {
         handler: a => {
             // This is stupid and will need to go at some point.
             if (a.sentence.parsed.match("(around|room)").some(_=> true)) {
-                a.ply.sendMessage(`You look around ${a.ply.location?.forRoom.name}, you find:`);
+                a.ply.sendMessage(`You look around ${a.ply.location?.forRoom.name}...`);
                 a.ply.sendMessage(a.ply.location?.forRoom.description ?? "");
-                const objs = a.ply.location?.inventory.contents.map(x => x.forObject.name).join(", ");
+                const objs = a.ply.location?.inventory.contents.filter(x => !x.forObject.hidden).map(x => x.forObject.name).join(", ");
                 if (objs) {
                     a.ply.sendMessage(`In the room there's: ${objs}`);
+                } else {
+                    a.ply.sendMessage("But you don't find anything of note.")
                 }
                 return;
             }

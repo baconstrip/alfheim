@@ -5,7 +5,7 @@ const path = require('path');
 
 const gameConfig = {
   mode: 'development',
-  name: "webpagesconfig",
+  name: "gameconfig",
   entry: [
     'client/vue/game/index.js'
   ],

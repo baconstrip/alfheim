@@ -1,6 +1,11 @@
+import { Dialog, DialogElement } from "./dialog";
+
 export enum ClientMessage {
     // Start at 1 so enum is truthy
     TEXT_INPUT = 1,
+    UPDATE_NOTEBOOK,
+    DISMISS_DIALOG,
+    DIALOG_INTERACT,
 }
 
 export enum ServerMessage {
@@ -11,6 +16,9 @@ export enum ServerMessage {
     UPDATE_MEDIA,
     SEND_INVENTORY,
     SEND_PLAYERS,
+    CREATE_DIALOG,
+    REMOVE_DIALOG,
+    UPDATE_DIALOG,
 }
 
 // ------ Base Message Type ------- //
@@ -31,6 +39,15 @@ export class Msg {
 
 export class TextInput {
     input!: string;
+}
+
+export class DismissDialog {}
+
+export class DialogInteract {
+    /* Contains arbitrary input from the client */
+    input!: string;
+    /* Contains the name of a button that the client pressed */
+    buttonPressed!: string;
 }
 
 // -------- Server Messages ------- //
@@ -85,6 +102,19 @@ export class PlayerSummary {
 
 export class SendPlayers {
     players!: PlayerSummary[];
+}
+
+export class CreateDialog {
+    dialog!: Dialog;
+}
+
+export class RemoveDialog {}
+
+export class UpdateDialog {
+    /** Element to add */
+    addComponent!: DialogElement;
+    /** Elements to remove, elements with children will be removed if their parents are removed */
+    removeComponents!: string[];
 }
 
 // ---------- Utilities ---------- //

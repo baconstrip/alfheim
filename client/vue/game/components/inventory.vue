@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { EventBus } from './eventbus.js'
+import { EventBus } from '../../../eventbus.ts'
 
 export default {
   data: function() {

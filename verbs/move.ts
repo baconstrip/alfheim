@@ -25,7 +25,6 @@ export default ({}) =>{
                 return;
             }
 
-            a.ply.sendMessage('Attempting to move.');
             const roomName = a.probableSubject.rootTerm?.match("#Room");
 
             if (a.probableSubject.rootTerm?.match("#Direction").wordCount() ?? 0 > 0) {

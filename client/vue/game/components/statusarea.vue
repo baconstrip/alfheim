@@ -5,7 +5,7 @@
   </div>
 </template>
 <script>
-import { EventBus } from "./eventbus.js";
+import { EventBus } from "../../../eventbus.ts";
 import * as Messages from "../../../../types/messages.ts";
 
 export default {

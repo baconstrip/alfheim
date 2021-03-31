@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import App from './components/main.vue';
 import _ from 'lodash';
-import { EventBus } from './components/eventbus.js';
+import { EventBus } from '../../eventbus';
 import messageprocessing from './messageprocessing.ts';
 
 let socs = require('socs.ts');

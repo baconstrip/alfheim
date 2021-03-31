@@ -1,5 +1,16 @@
-const EventBus = require('./components/eventbus.js').EventBus;
+const EventBus = require('../../eventbus').EventBus;
 import * as Messages from '../../../types/messages';
+
+let msgTypeMap = new Map([
+    [Messages.ServerMessage.CLEAR_TEXT, 'clear-textlog'],
+    [Messages.ServerMessage.UPDATE_LOCATION, 'update-location'],
+    [Messages.ServerMessage.UPDATE_MEDIA, 'update-media'],
+    [Messages.ServerMessage.SEND_INVENTORY, 'send-inventory'],
+    [Messages.ServerMessage.SEND_PLAYERS, 'send-players'],
+    [Messages.ServerMessage.CREATE_DIALOG, 'create-dialog'],
+    [Messages.ServerMessage.UPDATE_DIALOG, 'update-dialog'],
+    [Messages.ServerMessage.REMOVE_DIALOG, 'remove-dialog'],
+]);
 
 function processMessage(msg: any) {
     if (msg.type === Messages.ServerMessage.PUBLISH_TEXT) {
@@ -8,21 +19,14 @@ function processMessage(msg: any) {
         if (debugMessage){
             console.log(debugMessage);
         }
+        return;
     }
-    if (msg.type === Messages.ServerMessage.CLEAR_TEXT) {
-        EventBus.$emit('clear-textlog');
-    }
-    if (msg.type === Messages.ServerMessage.UPDATE_LOCATION) {
-        EventBus.$emit('update-location', msg.body);
-    }
-    if (msg.type === Messages.ServerMessage.UPDATE_MEDIA) {
-        EventBus.$emit('update-media', msg.body);
-    }
-    if (msg.type === Messages.ServerMessage.SEND_INVENTORY) {
-        EventBus.$emit('send-inventory', msg.body);
-    }
-    if (msg.type === Messages.ServerMessage.SEND_PLAYERS) {
-        EventBus.$emit('send-players', msg.body);
+
+    let eventName = msgTypeMap.get(msg.type);
+    if (eventName) {
+        EventBus.$emit(eventName, msg.body);
+    } else {
+        console.error(`Unknown event type from server: ${msg.type}`)
     }
 }
 

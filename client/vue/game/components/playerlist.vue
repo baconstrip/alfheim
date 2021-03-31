@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { EventBus } from './eventbus.js'
+import { EventBus } from '../../../eventbus.ts'
 
 export default {
   data: function() {
@@ -23,7 +23,6 @@ export default {
   mounted: function () {
     let localThis = this;
     EventBus.$on("send-players", (msg) => {
-        console.log("hooray players");
         this.players = msg.players;
     });
   },

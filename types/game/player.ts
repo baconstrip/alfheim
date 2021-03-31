@@ -8,6 +8,7 @@ import { GameEventBus } from "../../services/gameevents";
 import { GameEvent } from "../gameevent";
 import { ProcessingStage } from "../processingstage";
 import { resolve as assetResolve } from "../../loaders/assetresolver";
+import { Dialog } from "../dialog";
 
 export default class Player {
     authUser!: AuthUser;
@@ -33,6 +34,28 @@ export default class Player {
                 html: true,
                 debug: debug,
             }))
+        );
+    }
+
+    /**
+     * Shows a dialog object to a player. Will replace the dialog the player is
+     * currently seeing, if one is being displayed.
+     * @param dialog dialog to display
+     */
+    createDialog(dialog: Dialog) {
+        this.soc?.send(
+            JSON.stringify(Messages.BuildMessage(Messages.ServerMessage.CREATE_DIALOG, {
+                dialog: dialog,
+            }))
+        );
+    }
+
+    /**
+     * Clears a dialog from the player, if one is displayed.
+     */
+    clearDialog() {
+        this.soc?.send(
+            JSON.stringify(Messages.BuildMessage(Messages.ServerMessage.REMOVE_DIALOG, {}))
         );
     }
 

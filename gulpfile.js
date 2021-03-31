@@ -54,4 +54,4 @@ gulp.task('serve-pages', gulp.series('pages-pack', () => {
 }));
 
 
-gulp.task('default', gulp.parallel('js', 'serve-sass', 'serve-game', 'serve-pages', 'typedoc'));
+gulp.task('default', gulp.parallel('js', 'serve-sass', 'serve-game', 'serve-pages'));

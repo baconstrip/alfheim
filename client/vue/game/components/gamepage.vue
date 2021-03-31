@@ -12,7 +12,7 @@
     <div class="row d-flex flex-grow-1">
       <div class="container-flex d-flex flex-grow-1">
         <!-- Main game window -->
-        <div class="col-3 flex-grow-1 sidebar text-light">
+        <div class="col-3 flex-grow-1 sidebar text-light d-flex flex-column">
           <sidebar></sidebar>
         </div>
         <div class="col-9 flex-grow-1 d-flex">
@@ -23,6 +23,7 @@
         </div>
       </div>
     </div>
+    <notebook></notebook>
   </div>
 </template>
 
@@ -32,7 +33,7 @@ import mediawindow from "./mediadwindow.vue";
 import sidebar from "./sidebar.vue";
 import statusarea from "./statusarea.vue";
 import topbar from "./topbar.vue";
-import { EventBus } from './eventbus.js';
+import notebook from "./notebook.vue";
 
 export default {
   components: {
@@ -41,6 +42,7 @@ export default {
     sidebar,
     statusarea,
     topbar,
+    notebook,
   },
 };
 </script>
