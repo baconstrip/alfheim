@@ -10,5 +10,7 @@ export class AuthUser {
     username: string = "";
     @Column()
     password: string = "";
+    @Column()
+    discordname: string = "";
 }
 

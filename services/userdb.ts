@@ -37,7 +37,7 @@ export function comparePassword(clear: string, hashed: string): boolean {
     return bcrypt.compareSync(clear, hashed);
 }
 
-export async function addUser(username: string, password: string, displayName: string) {
+export async function addUser(username: string, password: string, displayName: string, discordName: string) {
     let found = false;
     await findOne(username, (x:any, y:any) => {
         if (y) {
@@ -52,6 +52,7 @@ export async function addUser(username: string, password: string, displayName: s
     user.username = username;
     user.password = bcrypt.hashSync(password, rounds);
     user.displayname = displayName;
+    user.discordname = discordName;
 
     return await entManager().save(user);
 };

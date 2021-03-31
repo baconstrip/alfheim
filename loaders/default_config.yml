@@ -1,0 +1,17 @@
+port: 8049
+# Allows disabling Discord functionality for faster testing.
+discord-connection: false
+# You can specify a Discord bot token here or in a file called "token.txt"
+discord-token: ""
+# Server ID to use as the game server. Can be found under 
+# settings > widget > server ID.
+discord-server: ""
+# Bot ID that this server should take control of.
+discord-bot-id: ""
+
+# A list of additional channels to allow on the Discord server. Alfheim
+# will remove any channels that are not on this list when it joins. If these
+# channels do not already exist, they will be created. Values determine the
+# type of channel that will be created, must be "text" or "voice".
+additional-channels:
+  rules: "text"

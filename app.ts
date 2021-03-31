@@ -11,8 +11,6 @@ import instancemanager from './services/instancemanager';
 import "reflect-metadata"
 import testing from './testing';
 
-const PORT = 8054;
-
 async function startServer() {
     const dev = process.env.NODE_ENV === "development";
     if (dev) {
@@ -24,19 +22,20 @@ async function startServer() {
     const server = http.createServer(app);
     const socketServer = new ws.Server({noServer: true});
 
+    // Create Overworld landing.
+    const overworldInstance = new Instance(overworld, 'overworld', 1);
+    await instancemanager(overworldInstance);
+
     // Load server infrastructure.
-    await loaders({ 
+    const loader = await loaders({ 
         expressApp: app, 
         wsServer: socketServer,
         httpServer: server
     });
     
-    // Create Overworld landing.
-    const overworldInstance = new Instance(overworld, 'overworld', 1);
-    await instancemanager(overworldInstance);
 
-    server.listen(PORT, () => {
-        console.log('Server is up...')
+    server.listen(loader.config.port, () => {
+        console.log(`Server is up on localhost:${loader.config.port}`)
     });
 }
 

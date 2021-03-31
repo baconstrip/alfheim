@@ -117,3 +117,7 @@ dist
 
 **/**.swp
 data/
+
+
+token.txt
+config.yml

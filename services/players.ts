@@ -70,6 +70,10 @@ export function LookupPlayerID(id: number): Player | undefined {
     return ___inst.playersById.get(id);
 }
 
+export function ListPlayers(): Player[] {
+    return Array.from(___inst.players.values());
+}
+
 /**
  * Broadcast is used to message all players connected, regardless of instance.
  *  

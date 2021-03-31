@@ -75,6 +75,10 @@ export function DefaultInstance(): Instance {
     return ___inst.defaultInstance;
 }
 
+export function ListInstances(): Instance[] {
+    return Array.from(___inst.instances.values());
+}
+
 function ___findPlayer(id: number): Player | undefined {
     for (let instance of ___inst.instances) {
         for (let room of instance[1].rooms) {

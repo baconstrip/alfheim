@@ -52,6 +52,10 @@ export default (route: Router) => {
                 .notEmpty().withMessage("Display name must be provided")
                 .isLength({ min: 4, max: 20}).withMessage("Display name must be between 4 and 20 characters.")
                 .isAlpha().withMessage("Display name must only contain letters, and may not contain numbers, punctuation, symbols, or spaces."),
+            body('discordname')
+                .notEmpty().withMessage("Discord name must be provided")
+                .matches(/^[a-z][a-z0-9]*\#[0-9]{4}$/i).withMessage('Provide your entire Discord name, including the four digits and #.')
+
             //body('pass').isLength({ min: 5 })
         ],
         async (req: Request, res: Response, next: NextFunction) => {
@@ -64,7 +68,7 @@ export default (route: Router) => {
             console.log('Creating user ' + req.body.user)
 
             try {
-                const u = await addUser(req.body.user, req.body.pass, req.body.displayname);
+                const u = await addUser(req.body.user, req.body.pass, req.body.displayname, req.body.discordname);
                 return res.status(200).json({
                     message: "Successfully registered " + u.displayname + " (" + u.username + ")."
                 });

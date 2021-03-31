@@ -33,3 +33,23 @@ export function stableHash(input: string, seed:number = 0): number {
     h2 = Math.imul(h2 ^ (h2>>>16), 2246822507) ^ Math.imul(h1 ^ (h1>>>13), 3266489909);
     return 4294967296 * (2097151 & h2) + (h1>>>0);
 };
+
+/**
+ * asPromise accepts a callback with arguments and returns a promise.
+ */
+export function asPromise(context: any, callbackFunction: any, ...args: any) {
+    return new Promise((resolve, reject) => {
+        args.push((err: any, data: any) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(data);
+            }
+        });
+        if (context) {
+            callbackFunction.call(context, ...args);
+        } else {
+            callbackFunction(...args);
+        }
+    });
+}

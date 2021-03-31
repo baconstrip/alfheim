@@ -12,6 +12,8 @@ import worlds from '../services/worlds';
 import compromise from './compromise';
 import modules from './modules';
 import assetresolver from './assetresolver';
+import configuration from './configuration';
+import discord_startup from './discord_startup';
 
 export default async ({ expressApp, wsServer, httpServer } : 
     { 
@@ -19,6 +21,7 @@ export default async ({ expressApp, wsServer, httpServer } :
         wsServer: ws.Server,
         httpServer: Server
      }) => {
+    let config = await configuration({});
     await passport({ app: expressApp });
     console.log('Passport started');
     let exp = await expressloader({ app: expressApp });
@@ -38,8 +41,20 @@ export default async ({ expressApp, wsServer, httpServer } :
     await modules({});
     console.log('Loaded extension modules');
     await assetresolver({app: expressApp});
+    console.log('Prepared to load assets dynamically');
+    if (config.discordEnabled) {
+        let success = await discord_startup({config: config}); 
+        if (success) {
+            console.log('Connected to Discord');
+        } else {
+            console.log('Failed to connect to Discord')
+        }
+    } else {
+        console.log('Not connecting to Discord');
+    }
 
     return {
         db: db,
+        config: config,
     }
 };
