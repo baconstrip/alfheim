@@ -24,6 +24,7 @@
       </div>
     </div>
     <notebook></notebook>
+    <dialogwindow></dialogwindow>
   </div>
 </template>
 
@@ -34,6 +35,7 @@ import sidebar from "./sidebar.vue";
 import statusarea from "./statusarea.vue";
 import topbar from "./topbar.vue";
 import notebook from "./notebook.vue";
+import dialogwindow from "./dialogwindow.vue";
 
 export default {
   components: {
@@ -43,6 +45,7 @@ export default {
     statusarea,
     topbar,
     notebook,
+    dialogwindow,
   },
 };
 </script>

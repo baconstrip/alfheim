@@ -8,8 +8,7 @@
             <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body">
-          {{ contents }}
+      <div class="modal-body" v-html="contents" v-on:click="capture" v-on:keyup="keystroke">
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -20,13 +19,14 @@
 </template>
 
 <script>
-import dialogbutton from './dialogbutton.vue'
 import { EventBus } from '../../../eventbus'
+import { HTMLForDialog } from '../../../dialogbuilder'
+//import VRuntimeTemplate from "v-runtime-template";
 
 export default {
-    components: [
-        dialogbutton,
-    ],
+    components: {
+        //VRuntimeTemplate,
+    },
     data: function() {
         return {
             contents: "",
@@ -35,10 +35,22 @@ export default {
     mounted: function() {
         let localThis = this;
         EventBus.$on('create-dialog', localThis.makeDialog);
+        $('#dialogModal').on('hidden.bs.modal', function (e) {
+          localThis.contents = "";
+        });
     },
-    makeDialog: function(msg) {
-        // msg is Message.ServerMessage.CreateDialog
-        
+    methods: {
+      makeDialog: function(msg) {
+          // msg is Message.ServerMessage.CreateDialog
+          this.contents = HTMLForDialog(msg.dialog);
+          $('#dialogModal').modal('show');
+      },
+      capture: function(e) {
+        console.log(e);
+      },
+      keystroke: function(e) {
+        console.log(e);
+      }
     }
 }
 </script>

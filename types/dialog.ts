@@ -1,5 +1,7 @@
 export class Dialog {
     contents!: DialogElement;
+
+    ___iden = "DIALOG";
 }
 
 export class DialogElement {
