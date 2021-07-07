@@ -1,6 +1,8 @@
+import { DialogManager } from "../../services/dialogmanager";
 import { GameEventBus, GameEventHandlerArgs } from "../../services/gameevents"
 import { ModuleData } from "../../services/moduledata";
-import { Button, Container, Dialog, Text, TextBox } from "../../types/dialog";
+import { Button, Container, Dialog, DialogEvent, Text, TextBox } from "../../types/dialog";
+import Player from "../../types/game/player";
 import { GameEvent } from "../../types/gameevent"
 import { ProcessingStage } from "../../types/processingstage"
 
@@ -19,6 +21,9 @@ export function setup(data: ModuleData) {
             message.body = "Hello!";
             message.indentifier = "hellotext";
             let button = new Button();
+            button.addEventListener(DialogEvent.CLICK, (ply: Player) => {
+                ply.sendMessage("Don't click on me!");
+            });
             button.indentifier = "hellobutton";
             button.label = "Clicccc";
             button.color = "primary";
@@ -28,10 +33,20 @@ export function setup(data: ModuleData) {
             contents.elements.push(message);
             contents.elements.push(button);
             contents.elements.push(textbox);
-            let dialog = new Dialog();
-            dialog.contents = contents;
-            
-            a.ply?.createDialog(dialog);
+            let dialog = DialogManager.createDialog(contents, data, a.ply, "testdialog");
+            dialog.dialog.addCloseListener((ply: Player) => {
+                ply.sendMessage("closed the dialog")
+            });
+
+            let reqText = textbox.getRequestFunc();
+            button.addEventListener(DialogEvent.CLICK, (ply: Player) => {
+                if (!reqText) {
+                    return;
+                }
+                let test = reqText((contents: string) => {
+                    ply.sendMessage(`I think you said ${contents}`);
+                });
+            });
         }
         return false;
     })

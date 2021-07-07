@@ -36,8 +36,6 @@ export default async ({ expressApp, wsServer, httpServer } :
     console.log('Loaded base game components');
     await compromise({});
     console.log('Loaded natural language processor');
-    await worlds({});
-    console.log('Loaded worlds from definitions');
     await modules({});
     console.log('Loaded extension modules');
     await assetresolver({app: expressApp});

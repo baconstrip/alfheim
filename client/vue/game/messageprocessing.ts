@@ -10,6 +10,7 @@ let msgTypeMap = new Map([
     [Messages.ServerMessage.CREATE_DIALOG, 'create-dialog'],
     [Messages.ServerMessage.UPDATE_DIALOG, 'update-dialog'],
     [Messages.ServerMessage.REMOVE_DIALOG, 'remove-dialog'],
+    [Messages.ServerMessage.READ_DIALOG, 'read-dialog'],
 ]);
 
 function processMessage(msg: any) {

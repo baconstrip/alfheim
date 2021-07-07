@@ -17,10 +17,10 @@ new Vue({
       EventBus.$emit('error', msg);
     });
     EventBus.$on('send-message', (x) => {
-      socCallback((x instanceof Object) ? x : {x});
+      socCallback((x instanceof Object) ? x : { x });
     });
     console.log('Connected!');
 
-    messageprocessing({}); 
+    messageprocessing({});
   }
 });

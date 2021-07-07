@@ -47,4 +47,17 @@ export enum GameEvent {
      * When a player is made re-corporeal. Can be cancelled.
      */
     PLAYER_REVIVE,
+
+    /**
+     * When a dialog is going to be shown to a player. Can be cancelled.
+     */
+    DIALOG_SHOWN,
+    /**
+     * When a player closes a dialog. Cannot be cancelled.
+     */
+    DIALOG_CLOSE,
+    /**
+     * When a player interacts with a dialog. Cannot be cancelled.
+     */
+    DIALOG_INTERACT,
  }

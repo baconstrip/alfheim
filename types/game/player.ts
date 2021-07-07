@@ -40,22 +40,41 @@ export default class Player {
     /**
      * Shows a dialog object to a player. Will replace the dialog the player is
      * currently seeing, if one is being displayed.
+     * 
+     * DO NOT CALL THIS! Call DialogManager.createDialog() instead.
      * @param dialog dialog to display
+     * @returns true if the dialog was shown to the player.
      */
-    createDialog(dialog: Dialog) {
+    createDialog(dialog: Dialog, name: string): boolean {
+        if (GameEventBus.dispatch(GameEvent.DIALOG_SHOWN, ProcessingStage.PRE, {
+            ply: this,
+            msg: name,
+        })) {
+            return false;
+        }
+
+
         this.soc?.send(
             JSON.stringify(Messages.BuildMessage(Messages.ServerMessage.CREATE_DIALOG, {
+                name: name,
                 dialog: dialog,
             }))
         );
+
+        GameEventBus.dispatch(GameEvent.DIALOG_SHOWN, ProcessingStage.POST, {
+            ply: this,
+            msg: name,
+        });
+
+        return true;
     }
 
     /**
-     * Clears a dialog from the player, if one is displayed.
+     * Clears a dialog from the player identified by name, if it is displayed.
      */
-    clearDialog() {
+    clearDialog(name: string) {
         this.soc?.send(
-            JSON.stringify(Messages.BuildMessage(Messages.ServerMessage.REMOVE_DIALOG, {}))
+            JSON.stringify(Messages.BuildMessage(Messages.ServerMessage.REMOVE_DIALOG, {name: name}))
         );
     }
 
@@ -87,7 +106,6 @@ export default class Player {
         if (GameEventBus.dispatch(GameEvent.PLAYER_MOVE, ProcessingStage.PRE, {
             ply: this,
             inst: this.world(),
-
             msg: msg,
         })) {
             return false;

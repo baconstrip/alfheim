@@ -14,7 +14,16 @@ export class ModuleData {
     }
 
     private key(k: string): string {
-        return this.name + "-k";
+        return this.name + `-${k}`;
+    }
+
+    /**
+     * identifier returns an identifier other parts of the program can use
+     * for this module.
+     * @returns an id
+     */
+    identifier(): string {
+        return this.name;
     }
 
     /**

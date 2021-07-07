@@ -68,7 +68,7 @@ function HTMLForContainer(container: Container): string {
         innerBlock += "<div class='p-2'>" + HTMLFor(element) + "</div>";
     });
     
-    return `<div class="d-flex flex-column">${innerBlock}</div>`;
+    return `<div class="d-flex flex-column" id="${container.indentifier}">${innerBlock}</div>`;
 }
 
 function HTMLForText(text: Text): string {

@@ -1,11 +1,12 @@
-import { Dialog, DialogElement } from "./dialog";
+import { Dialog, DialogElement, DialogEvent } from "./dialog";
 
 export enum ClientMessage {
     // Start at 1 so enum is truthy
     TEXT_INPUT = 1,
     UPDATE_NOTEBOOK,
-    DISMISS_DIALOG,
     DIALOG_INTERACT,
+    CLOSE_DIALOG,
+    DIALOG_CONTENTS,
 }
 
 export enum ServerMessage {
@@ -19,6 +20,7 @@ export enum ServerMessage {
     CREATE_DIALOG,
     REMOVE_DIALOG,
     UPDATE_DIALOG,
+    READ_DIALOG,
 }
 
 // ------ Base Message Type ------- //
@@ -41,13 +43,20 @@ export class TextInput {
     input!: string;
 }
 
-export class DismissDialog {}
-
 export class DialogInteract {
-    /* Contains arbitrary input from the client */
-    input!: string;
-    /* Contains the name of a button that the client pressed */
-    buttonPressed!: string;
+    action!: DialogEvent;
+    element!: string;
+    dialogName!: string;
+}
+
+export class CloseDialog {
+    name!: string;
+}
+
+export class DialogContents {
+    dialog!: string;
+    name!: string;
+    contents!: string;
 }
 
 // -------- Server Messages ------- //
@@ -105,16 +114,26 @@ export class SendPlayers {
 }
 
 export class CreateDialog {
+    name!: string;
     dialog!: Dialog;
 }
 
-export class RemoveDialog {}
+export class RemoveDialog {
+    name!: string;
+}
 
+// not implemented
 export class UpdateDialog {
+    name!: string;
     /** Element to add */
     addComponent!: DialogElement;
     /** Elements to remove, elements with children will be removed if their parents are removed */
     removeComponents!: string[];
+}
+
+export class ReadDialog {
+    name!: string;
+    component!: string;
 }
 
 // ---------- Utilities ---------- //
