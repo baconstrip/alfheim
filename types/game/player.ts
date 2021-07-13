@@ -9,6 +9,7 @@ import { GameEvent } from "../gameevent";
 import { ProcessingStage } from "../processingstage";
 import { resolve as assetResolve } from "../../loaders/assetresolver";
 import { Dialog } from "../dialog";
+import { UpdateDiscordUser, ___updateDiscordPlayerAndRooms } from "../../services/discord";
 
 export default class Player {
     authUser!: AuthUser;
@@ -116,6 +117,8 @@ export default class Player {
         this.location.players.add(this);
         this.___refreshUI();
 
+        UpdateDiscordUser(this).catch(x => console.log(`Failed to move Discord user: ${x}`));
+
         GameEventBus.dispatch(GameEvent.PLAYER_MOVE, ProcessingStage.POST, {
             ply: this,
             inst: this.world(),
@@ -142,6 +145,7 @@ export default class Player {
         this.location = room;
         room?.players.add(this);
         this.___refreshUI();
+        ___updateDiscordPlayerAndRooms(this).catch(x => console.log(`Failed to move Discord user: ${x}`));
     }
 
     ___refreshUI() {

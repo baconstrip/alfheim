@@ -1,7 +1,8 @@
 import * as discord from 'discord.js';
-import { every, xor } from 'lodash';
-import game from '../api/routes/game';
 import { AlfheimConfig, DiscordChannel } from '../loaders/configuration';
+import Player from '../types/game/player';
+import RoomInstance from '../types/game/roominstance';
+import { Instance } from '../types/game/worldinstance';
 import instancemanager, { ListInstances } from './instancemanager';
 import { ListPlayers } from './players';
 
@@ -29,21 +30,28 @@ class DiscordManager {
         return this.client.guilds.fetch(this.config.discordServer);
     }
 
-    async synchronizeRoles(): Promise<null> {
-        return new Promise<null>(async (resolve) => {
-            resolve(null);
+    async synchronizeRoles(): Promise<void> {
+        return new Promise<void>(async (resolve) => {
+            resolve();
         });
     }
 
-    async synchronizeChannels(): Promise<null> {
-        return new Promise<null>(async (resolve) => {
+    roomName(inst: Instance | undefined, room: RoomInstance | undefined): string {
+        if (!inst || !room) {
+            return 'ERROR-ERROR';
+        }
+        return `${inst?.instName}-${room?.forRoom.name}`;
+    }
+
+    async synchronizeChannels(): Promise<void> {
+        return new Promise<void>(async (resolve, reject) => {
             let requiredChannels: DiscordChannel[] = new Array();
             let gameChannels: DiscordChannel[] = new Array();
 
             ListInstances().forEach(inst => {
                 inst.rooms.forEach(room => {
                     gameChannels.push({
-                        name: `${inst.instName}-${room.forRoom.name}`,
+                        name: this.roomName(inst, room),
                         type: "voice",
                     });
                 });
@@ -55,80 +63,140 @@ class DiscordManager {
             gameChannels.forEach((x) => requiredChannels.push(x));
             let requiredNames = requiredChannels.map(x => x.name.toLowerCase());
             
-            let guild = await this.currentGuild();
+            let guild = await (this.currentGuild().catch(x => reject(`Failed to access discord, are you sure you've set up your connection properly? Error: ${JSON.stringify(x)}`))) as discord.Guild;
             let foundChannels: string[] = new Array();
-            guild.channels?.cache?.forEach(async (chan) => {
+
+            for (const [_, chan] of guild.channels.cache) {
                 if (!requiredNames.includes(chan.name.toLowerCase())) {
-                    chan.delete("Alfheim automatically deleting channel that is no longer required");
+                    await chan.delete("Alfheim automatically deleting channel that is no longer required").catch(x => reject(x));
                     console.log(`Deleting Discord channel ${chan.name}, as it is not required`);
-                    return;
                 }
 
                 let expectedType = requiredChannels.find(x => x.name.toLowerCase() == chan.name.toLowerCase())?.type;
                 if ((chan.isText() && expectedType == 'voice') || (chan.type == 'voice' && expectedType == 'text') || (chan.type != 'voice' && chan.type != 'text')) {
-                    await chan.delete("Alfheim deleting channel of incorrect type");
+                    await chan.delete("Alfheim deleting channel of incorrect type").catch(x => reject(x));
                     console.log(`Deleting discord channel ${chan.name}, as it is the incorrect type of channel.`)
-                    return;
                 }
 
                 foundChannels.push(chan.name.toLowerCase());
-            });
+            }
 
-            requiredChannels.forEach(async (chan) => {
+            const everyoneRole = guild.roles.cache?.find(x => x.name == '@everyone');
+            const botMember = guild.members.resolve(this.config.discordBotID);
+
+            if (!everyoneRole) {
+                throw new Error(`Couldn't find everyone role.`);
+            }
+
+            if (!botMember) {
+                throw new Error(`Couldn't find member for bot.`);
+            }
+
+            for (const chan of requiredChannels) {
                 if (!foundChannels.includes(chan.name.toLowerCase())) {
-                    guild.channels.create(chan.name, {
+                    await guild.channels.create(chan.name, {
                         type: chan.type,
                         position: 999,
                         reason: 'Alfheim automatically creating channel.',
-                    });
+                        permissionOverwrites: [
+                            {
+                                id: everyoneRole,
+                                deny: ['VIEW_CHANNEL', 'CONNECT'],
+                            },
+                            {
+                                id: botMember,
+                                allow: ['VIEW_CHANNEL', 'MANAGE_CHANNELS', 'SEND_MESSAGES', 'CONNECT'],
+                            }
+                        ],
+                    }).catch(x => reject(x));
                 }
-            });
+            }
 
             let gameChannelNames = gameChannels.map((x) => x.name.toLowerCase());
-            let everyoneRole = guild.roles.cache?.find(x => x.name == '@everyone');
-            guild.channels?.cache?.forEach(async (chan) => {
+
+            for (const [_, chan] of guild.channels.cache) {
                 if (everyoneRole) {
                     if (gameChannelNames.includes(chan.name.toLowerCase())) {
                         if (chan.permissionsFor(everyoneRole)?.has('VIEW_CHANNEL').valueOf() === false &&
-                            chan.permissionsFor(everyoneRole)?.has('CONNECT').valueOf() === false 
+                            chan.permissionsFor(everyoneRole)?.has('CONNECT').valueOf() === false
                         ) {
-                            return;
+                            continue;
                         }
-                        chan.updateOverwrite(everyoneRole, {'VIEW_CHANNEL': false, 'CONNECT': false})
+                        if (botMember){
+                            chan.updateOverwrite(botMember, { 'VIEW_CHANNEL': true, 'MANAGE_CHANNELS': true, 'SEND_MESSAGES': true, 'CONNECT': true}).then(_ => {
+                                if (everyoneRole) {
+                                    chan.updateOverwrite(everyoneRole, { 'VIEW_CHANNEL': false, 'CONNECT': false })
+                                }
+                            });
+                        }
+                        
                     }
                 }
-            });
+            }
             
-            resolve(null);
+            resolve();
         });
     }
 
-    async synchronizeUsers(): Promise<null> {
+    async synchronizeUsers(): Promise<void> {
         return new Promise(async resolve => {
-            let guild = await this.currentGuild();
+            // TODO: make this not suck for API calls and performance.
+            for (const ply of ListPlayers()) {
+                this.synchronizePlayer(ply);
+            }
+        });
+    }
 
-            let channels: discord.GuildChannel[] = new Array();
-            // Collect all the channels so we can search them.
-            guild.channels.cache.forEach(chan => {
-                channels.push(chan);
+    async locatePlayer(ply: Player): Promise<discord.GuildMember | undefined> {
+        return new Promise(async (resolve, reject) => {
+            await this.currentGuild().catch(x => reject(`Couldn't reach Discord`)).then(g => {
+                const guild = g as discord.Guild; 
+                const user = guild.members.cache.find(x => x.user.tag == ply.authUser.discordname);
+                if (user) {
+                    resolve(user);
+                } else {
+                    reject("User not found")
+                }
+                return;
             });
+        });
+    }
 
+    async synchronizePlayer(ply: Player): Promise<void> {
+        return new Promise(async (resolve, reject) => {
+            const user = await this.locatePlayer(ply);
+            if (!user) {
+                return reject('player not found on Discord');
+            } 
 
-            let users: discord.GuildMember[] = new Array();
-            (await guild.members.fetch()).forEach(member => users.push(member));
+            const roomName = this.roomName(ply.location?.fromWorld, ply.location);
+            if (!user?.voice.channel) {
+                return reject('player not in voice');
+            }
 
-            ListPlayers().forEach((ply) => {
-                const discordName = ply.authUser.discordname.toLowerCase();
+            if (user?.voice.channel?.name == roomName) {
+                return resolve();
+            }
 
-            })
-            
-            resolve(null);
+            await this.currentGuild().then(g => {
+                const guild = g as discord.Guild;
+                const chan = guild.channels.cache.find(x => x.name == roomName);
+                if (!chan) {
+                    return reject(`cannot find the appropriate channel ${roomName}`);
+                }
+                user?.voice.setChannel(chan);
+            });
         });
     }
 
     async synchronize() {
-        this.synchronizeRoles();
-        this.synchronizeChannels();
+        const roles = this.synchronizeRoles();
+        const channels = this.synchronizeChannels();
+        const users = this.synchronizeUsers();
+
+        await roles.catch(x => { console.log(`Failed to synchronize to discord: ${x}`) });
+        await channels.catch(x => { console.log(`Failed to synchronize channels to discord: ${JSON.stringify(x)}`) });
+        await users.catch(x => { console.log(`Failed to synchronize users to discord: ${x}`) });
     }
 }
 
@@ -143,9 +211,25 @@ export async function ___currentGuild() {
 }
 
 /**
- * Updates voice channels to the expected values immediately (although does not
- * wait for them to be updated). Returns an empty promise.
+ * Updates voice channels to the expected values immediately, returning a 
+ * promise that is resolved once the operations are completed.
  */
-export async function UpdateRooms(): Promise<null> {
+export async function UpdateDiscordRooms(): Promise<void> {
     return ___inst.synchronizeChannels();
+}
+
+/**
+ * Updates a player's location immediately, returning a promise that is
+ * resolved once they are moved. If there is a problem with the player, the
+ * promise will be rejected.
+ * 
+ * @param ply player object for the player in question
+ * @returns a promise that resolves once they are moved.
+ */
+export async function UpdateDiscordUser(ply: Player): Promise<void> {
+    return ___inst.synchronizePlayer(ply);
+}
+
+export async function ___updateDiscordPlayerAndRooms(ply: Player): Promise<void> {
+    return ___inst.synchronizeChannels().then(() => {___inst.synchronizePlayer(ply)});
 }
