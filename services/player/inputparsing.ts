@@ -308,7 +308,7 @@ function breakSentences(input: nlp.ExtendedDocument<{}, nlp.World, nlp.Phrase>, 
     //     }
     // });
 
-    splits.forEach(x => {
+    splits.forEach((x: any) => {
         cb(x);
     })
 }

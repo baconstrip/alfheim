@@ -14,7 +14,7 @@ const testRec = [
 export async function findOne(username: string, cb: Function) {
     username = username.toLowerCase();
     const repo = userRepository();
-    const user = await repo.findOne({username: username});
+    const user = await repo.findOneBy({username: username});
 
     if (user?.username === username) {
         return cb(null, user);
@@ -25,7 +25,7 @@ export async function findOne(username: string, cb: Function) {
 
 export async function findById(id: number, cb: Function) {
     const repo = userRepository();
-    const user = await repo.findOne(id);
+    const user = await repo.findOneBy({id: id});
     if (user?.id === id) {
         return cb(null, user);
     }

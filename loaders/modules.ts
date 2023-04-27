@@ -74,7 +74,7 @@ export default ({}) => {
             }
 
             ___inst.assetsPaths.set(normalizedName, assetDir);
-        } catch (e) {
+        } catch (e: any) {
             if (e.code !== 'ENOENT') {
                 console.log(`error loading assets for module ${module.name} (${normalizedName}): ${e}`);
             } 

@@ -72,7 +72,7 @@ export default (route: Router) => {
                 return res.status(200).json({
                     message: "Successfully registered " + u.displayname + " (" + u.username + ")."
                 });
-            } catch (e) {
+            } catch (e: any) {
                 return res.status(400).json({
                     errors: e.message,
                 });

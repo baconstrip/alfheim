@@ -5,6 +5,8 @@ import RoomInstance from '../types/game/roominstance';
 import { Instance } from '../types/game/worldinstance';
 import instancemanager, { ListInstances } from './instancemanager';
 import { ListPlayers } from './players';
+import { GuildTextBasedChannel } from 'discord.js';
+import { GuildChannel } from 'discord.js';
 
 // How often the Discord connector will refresh the server to ensure that 
 // everything is synchronized, in ms.
@@ -73,7 +75,7 @@ class DiscordManager {
                 }
 
                 let expectedType = requiredChannels.find(x => x.name.toLowerCase() == chan.name.toLowerCase())?.type;
-                if ((chan.isText() && expectedType == 'voice') || (chan.type == 'voice' && expectedType == 'text') || (chan.type != 'voice' && chan.type != 'text')) {
+                if ((chan.isTextBased() && expectedType == 'voice') || (chan.isVoiceBased() && expectedType == 'text') || (!chan.isVoiceBased() && !chan.isTextBased())) {
                     await chan.delete("Alfheim deleting channel of incorrect type").catch(x => reject(x));
                     console.log(`Deleting discord channel ${chan.name}, as it is the incorrect type of channel.`)
                 }
@@ -94,38 +96,44 @@ class DiscordManager {
 
             for (const chan of requiredChannels) {
                 if (!foundChannels.includes(chan.name.toLowerCase())) {
-                    await guild.channels.create(chan.name, {
-                        type: chan.type,
+                    var channelType = chan.type == 'voice' ? discord.ChannelType.GuildVoice : discord.ChannelType.GuildText;
+                    await guild.channels.create({
+                        name: chan.name,
+                        type: channelType,
                         position: 999,
                         reason: 'Alfheim automatically creating channel.',
-                        permissionOverwrites: [
-                            {
-                                id: everyoneRole,
-                                deny: ['VIEW_CHANNEL', 'CONNECT'],
-                            },
-                            {
-                                id: botMember,
-                                allow: ['VIEW_CHANNEL', 'MANAGE_CHANNELS', 'SEND_MESSAGES', 'CONNECT'],
-                            }
-                        ],
+                        // permissionOverwrites: [
+                        //     {
+                        //         id: everyoneRole,
+                        //         deny: ['VIEW_CHANNEL', 'CONNECT'],
+                        //     },
+                        //     {
+                        //         id: botMember,
+                        //         allow: ['VIEW_CHANNEL', 'MANAGE_CHANNELS', 'SEND_MESSAGES', 'CONNECT'],
+                        //     }
+                        // ],
                     }).catch(x => reject(x));
                 }
             }
 
             let gameChannelNames = gameChannels.map((x) => x.name.toLowerCase());
 
+            
+
             for (const [_, chan] of guild.channels.cache) {
                 if (everyoneRole) {
                     if (gameChannelNames.includes(chan.name.toLowerCase())) {
-                        if (chan.permissionsFor(everyoneRole)?.has('VIEW_CHANNEL').valueOf() === false &&
-                            chan.permissionsFor(everyoneRole)?.has('CONNECT').valueOf() === false
+                        var viewChannel = discord.PermissionsBitField.Flags.ViewChannel;
+                        var connect = discord.PermissionsBitField.Flags.Connect;
+                        if (chan.permissionsFor(everyoneRole)?.has(viewChannel).valueOf() === false &&
+                            chan.permissionsFor(everyoneRole)?.has(connect).valueOf() === false
                         ) {
                             continue;
                         }
                         if (botMember){
-                            chan.updateOverwrite(botMember, { 'VIEW_CHANNEL': true, 'MANAGE_CHANNELS': true, 'SEND_MESSAGES': true, 'CONNECT': true}).then(_ => {
+                            (chan as GuildChannel).permissionOverwrites.create(botMember, { ViewChannel: true, ManageChannels: true, SendMessages: true, Connect: true}).then(_ => {
                                 if (everyoneRole) {
-                                    chan.updateOverwrite(everyoneRole, { 'VIEW_CHANNEL': false, 'CONNECT': false })
+                                    (chan as GuildChannel).permissionOverwrites.create(everyoneRole, { ViewChannel: false, Connect: false })
                                 }
                             });
                         }
@@ -184,7 +192,8 @@ class DiscordManager {
                 if (!chan) {
                     return reject(`cannot find the appropriate channel ${roomName}`);
                 }
-                user?.voice.setChannel(chan);
+                
+                user?.voice.setChannel(chan as discord.GuildVoiceChannelResolvable);
             });
         });
     }

@@ -91,7 +91,7 @@ class __eventBusType {
         let cancel = false;
         try {
             cancel = cb(arg);
-        } catch (e) {
+        } catch (e: any) {
             // Trim the internal portion of the stack trace, as it's likely 
             // not intersting.
             const stack = e.stack as string;
