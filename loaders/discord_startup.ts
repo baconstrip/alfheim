@@ -5,7 +5,7 @@ import { ___initializeDiscord } from "../services/discord";
 
 
 export default async ({config}: {config: AlfheimConfig}): Promise<boolean> => {
-    const client = new discord.Client();
+    const client = new discord.Client({intents: []});
 
     client.login(config.discordToken);
 

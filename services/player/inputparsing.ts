@@ -119,7 +119,7 @@ class Sentence {
      */
     build(): boolean {
         // For now, a sentence has one verb or its invalid.
-        this.parsed.termList().forEach (w => {
+        this.parsed.termList().forEach((w: any) => {
             if (w.tags['Verb']) {
                 if (this.verb) {
                     return false;
@@ -133,7 +133,7 @@ class Sentence {
             // find a verb or noun, then stop. Each stage prepends a word to the
             // tree of the noun that appears after it.
             const tree = new WordTree(o, true);
-            o.lookBehind('.').reverse().some(x => {
+            o.lookBehind('.').reverse().some((x: any) => {
                 if ((x as any).match('(#Noun|#Verb)').some((_:any)=>true)) {
                     return true;
                 }
@@ -276,11 +276,11 @@ function normalisePunctuation(input: string): string {
  */
 function breakSentences(input: nlp.ExtendedDocument<{}, nlp.World, nlp.Phrase>, cb: (x: nlp.ExtendedDocument<{}, nlp.World, nlp.Phrase>) => void) {
     let sections = input.sentences();
-    input.sentences().forEach((y) => {
+    input.sentences().forEach((y: any) => {
         // This should probably do multiple nested clauses, but I can't be 
         // bothered.
         const matched = y.match('[<prev>#Verb .+? #Noun .+?] and [<next>.+? #Verb .+?]').splitAfter('and');
-        if (matched.some(_=>true)) {
+        if (matched.some(() => true)) {
             matched.lastTerms().delete('and');
             sections = matched;
         }
@@ -320,7 +320,7 @@ function breakSentences(input: nlp.ExtendedDocument<{}, nlp.World, nlp.Phrase>, 
  */
 function tagWorldObjects(ply: Player, input: nlp.ExtendedDocument<{}, nlp.World, nlp.Phrase>, cb: (x: nlp.ExtendedDocument<{}, nlp.World, nlp.Phrase>) => void) {
     const lexicon = ply.world()?.WorldLexicon();
-    input.forEach(x => {
+    input.forEach((x:any) => {
         lexicon?.forEach((v, k) =>{
             x.match(k).canBe("#Noun? #Adjective?").tag("GameObject").tag(`#${EntityTypeToTag(v.t)}`);
         });
