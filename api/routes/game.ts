@@ -10,7 +10,6 @@ export default (route: Router) => {
     gameRoute.get('/', 
         loggedin.ensureLoggedIn(),
         (req: Request, res: Response) => {
-            console.log((req as any).isAuthenticated())
             res.render('game', { 
                 part: "param", 
                 username: userFromRequest(req).username,

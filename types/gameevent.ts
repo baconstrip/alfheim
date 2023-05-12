@@ -14,7 +14,7 @@ export enum GameEvent {
      */
     PLAYER_JOIN_INSTANCE = 1001,
     /**
-     * Invoked when a player leaves and instance. Cannot be canceleld.
+     * Invoked when a player leaves an instance. Cannot be canceleld.
      */
     PLAYER_LEAVE_INSTANCE, 
 

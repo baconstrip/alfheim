@@ -47,6 +47,10 @@ export default async ({ wsServer, httpServer, sessions } :
                     }));
                     return;
                 }
+                if (!data) {
+                    console.log(`Bad message from player: ${data}`);
+                    return;
+                }
                 // Only transmit events with type set.
                 if (data['type'] !== undefined){
                     InternalEventBus.dispatch(InternalEvent.MESSAGE_IN, {ply: ply, message: data});

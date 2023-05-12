@@ -145,6 +145,8 @@ export class Instance {
         });
         ply.sendMessage(this.forWorld.joinMessage);
         ply.inventory.size = this.forWorld.defaultInventorySize;
+        ply.notebook = "";
+
         ply.___spawnPlayer(this.rooms.get(this.forWorld.defaultRoom));
 
         this.___updatePlayersLists();

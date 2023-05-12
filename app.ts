@@ -4,6 +4,7 @@ import http from 'http';
 import loaders from './loaders';
 // Include the static overworld
 import overworld from './worlds/overworld';
+import greendungeon from './worlds/greendungeon';
 import { Instance } from './types/game/worldinstance';
 import instancemanager from './services/instancemanager';
 
@@ -22,9 +23,13 @@ async function startServer() {
     const server = http.createServer(app);
     const socketServer = new ws.Server({noServer: true});
 
+
     // Create Overworld landing.
-    const overworldInstance = new Instance(overworld, 'overworld', 1);
-    await instancemanager(overworldInstance);
+//    const overworldInstance = new Instance(overworld, 'overworld', 1);
+//    await instancemanager(overworldInstance);
+
+    const testWorldInstance = new Instance(greendungeon, 'overworld', 1);
+    await instancemanager(testWorldInstance);
 
     // Load server infrastructure.
     const loader = await loaders({ 

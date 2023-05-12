@@ -19,6 +19,7 @@ export default class Player {
     inventory: Inventory = new Inventory(2);
 
     moduleData: Map<string, any> = new Map();
+    notebook: string = "";
 
     alive: boolean = true;
 
@@ -164,6 +165,12 @@ export default class Player {
                     JSON.stringify(Messages.BuildMessage(Messages.ServerMessage.SEND_PLAYERS, list))
             )
         }
+
+        this.soc?.send(
+            JSON.stringify(Messages.BuildMessage(Messages.ServerMessage.WRITE_NOTEBOOK, {
+                contents: this.notebook,
+            }))
+        );
     }
 
     ___locationSummary(): Messages.LocationSummary {

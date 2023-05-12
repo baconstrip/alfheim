@@ -9,7 +9,7 @@
         </button>
       </div>
       <div class="modal-body">
-          <textarea id="notebook" class="mx-auto w-100"></textarea>
+          <textarea id="notebook" class="mx-auto w-100" v-on:input="updateText"></textarea>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -20,10 +20,38 @@
 </template>
 
 <script>
+import { EventBus } from '../../../eventbus.ts'
+import * as Messages from '../../../../types/messages.ts';
+
 
 export default {
-    setup() {
-        
+    methods: {
+      async updateText(e) {
+        if (!this.updateScheduled) {
+          let localThis = this;
+          setTimeout(() => {
+            let contents = $("#notebook").val();
+            const msg = Messages.BuildMessage(Messages.ClientMessage.UPDATE_NOTEBOOK, { contents: contents });
+            EventBus.$emit('send-message', msg);
+            this.updateScheduled = false;
+          }, 5000);
+          this.updateScheduled = true;
+        }
+      },
     },
+    setup() {
+    },
+    mounted() {
+      EventBus.$on("write-notebook", (msg) => {
+        var doc = new DOMParser().parseFromString(msg.contents, "text/html");
+
+        $("#notebook").val(doc.documentElement.textContent);
+      });
+    },
+    data() {
+      return {
+        updateScheduled: false,
+      }
+    }
 }
 </script>

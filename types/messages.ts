@@ -21,6 +21,7 @@ export enum ServerMessage {
     REMOVE_DIALOG,
     UPDATE_DIALOG,
     READ_DIALOG,
+    WRITE_NOTEBOOK,
 }
 
 // ------ Base Message Type ------- //
@@ -56,6 +57,10 @@ export class CloseDialog {
 export class DialogContents {
     dialog!: string;
     name!: string;
+    contents!: string;
+}
+
+export class UpdateNotebook {
     contents!: string;
 }
 
@@ -134,6 +139,10 @@ export class UpdateDialog {
 export class ReadDialog {
     name!: string;
     component!: string;
+}
+
+export class WriteNotebook {
+    contents!: string;
 }
 
 // ---------- Utilities ---------- //

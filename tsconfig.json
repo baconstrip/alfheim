@@ -3,11 +3,12 @@
     "target": "es6",
     "module": "commonjs",
     "rootDir": "./",
-    "outDir": "./build",
+    "outDir": "./out",
     "esModuleInterop": true,
     "strict": true,
     "emitDecoratorMetadata": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "sourceMap": true
   },
   "exclude": [
     "node_modules/*",

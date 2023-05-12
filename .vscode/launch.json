@@ -1,16 +1,20 @@
 {
   "version": "0.2.0",
   "configurations": [
-    {
+     {
+      "name": "Debug with Node",
       "type": "node",
       "request": "launch",
-      "name": "Node: Nodemon",
-      "program": "./app.ts",
-      "runtimeExecutable": "nodemon",
+      "runtimeExecutable": "node",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
-      "restart": true,
-      "protocol": "inspector"
+      "runtimeArgs": ["--nolazy", "-r", "ts-node/register/transpile-only"],
+
+      "args": ["app.ts"],
+      
+      "cwd": "${workspaceRoot}",
+      "internalConsoleOptions": "openOnSessionStart",
+      "skipFiles": ["<node_internals>/**", "node_modules/**"]
     }
   ]
 }

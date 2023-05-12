@@ -1,8 +1,9 @@
 let gulp = require('gulp');
 let typedoc = require('gulp-typedoc');
-let sass = require('gulp-sass');
+let sass = require('gulp-sass')(require('sass'));
 let webpack = require('webpack-stream');
 let rename = require('gulp-rename');
+
 
 gulp.task('sass', () => {
     return gulp.src(['scss/alfbootstrap.scss', './scss/main.scss'])
