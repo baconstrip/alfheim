@@ -36,6 +36,13 @@ export default ({}) =>{
                 }
                 a.ply.sendMessage(`You take ${obj.forObject.name} and place it in your inventory...`);
                 a.ply.updateInventory();
+
+                const room = a.ply.location;
+                if (!room) {
+                    a.ply.sendMessage(`You can't grab something when I don't know where you are...`);
+                    return;
+                }
+                obj.forObject.grab({ ply: a.ply, room: room, inst: room.fromWorld, obj: obj });
                 return;
             }
 

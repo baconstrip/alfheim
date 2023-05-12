@@ -9,7 +9,7 @@ Basic extensions to the game reside in the folder `/extensions`, and each
 extension is a folder within. 
 
 Each extension is required to have at least two files, `package.json` and a
-Javascript/Typescript (of arbitrary name) that corressponds to the entry point
+Javascript/Typescript (of arbitrary name) that corresponds to the entry point
 of the extension.
 
 ### package.json
@@ -46,6 +46,7 @@ An example bare minimum extension declaration:
     "name": "example-alfheim",
     "version": "0.0.1",
     "main": "index.ts",
+    "private": true,
     "plugin": {
         "features": ["example"],
         "all-instances": false,

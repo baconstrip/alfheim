@@ -11,7 +11,7 @@ const gameConfig = {
   ],
   output: {
     path: __dirname + '/static/js',
-    filename: "webpages.js"
+    filename: "game.js"
   },
   module: {
     rules: [

@@ -175,6 +175,7 @@ export default class Player {
         this.soc?.send(
             JSON.stringify(Messages.BuildMessage(Messages.ServerMessage.UPDATE_METADATA, {
                 username: this.authUser.displayname,
+                alive: this.alive,
             }))
         );
     }
@@ -226,6 +227,7 @@ export default class Player {
 
         this.alive = false;
 
+        this.___refreshUI();
 
         GameEventBus.dispatch(GameEvent.PLAYER_DEATH, ProcessingStage.POST, {
             ply: this,
@@ -261,6 +263,7 @@ export default class Player {
         }
 
         this.alive = true;
+        this.___refreshUI();
 
         GameEventBus.dispatch(GameEvent.PLAYER_REVIVE, ProcessingStage.POST, {
             ply: this,

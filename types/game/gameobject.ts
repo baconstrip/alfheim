@@ -1,4 +1,5 @@
 import { Lock } from "./locking";
+import { Grab } from "./grabbing";
 
 /**
  * GameObjects represent all interactable objects within a room.
@@ -55,6 +56,11 @@ export default class GameObject {
      * Defaults to a function that always returns true if not set.
      */
     readonly lock: Lock;
+    
+    /**
+     * A callback to invoke when players grab an object.
+     */
+    readonly grab: Grab;
 
     /**
      * Whether or not this item can contain other objects. Defaults to false if
@@ -85,6 +91,7 @@ export default class GameObject {
         description: string,
         container?: boolean,
         startsLocked?: boolean,
+        grab?: Grab,
         lock?: Lock;
     }) {
         if (s.inRoom && s.inContainer) {
@@ -101,6 +108,7 @@ export default class GameObject {
         this.hidden = s.hidden ?? false;
         this.description = s.description;
         this.lock = s.lock ?? function() {return true;};
+        this.grab = s.grab ?? function () { };
         // Pick s.startsLocked, if it is present, otherwise if s.lock is
         // defined, use that. Otherwise, this is false.
         this.startsLocked = s.startsLocked ?? s.lock != undefined ? true : false;

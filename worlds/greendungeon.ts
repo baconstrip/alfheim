@@ -140,6 +140,17 @@ export default new World({
             id: 10,
             portable: true,
             description: "The magical McGuffin that will surely drive this plot forward",
+        }), 
+        new GameObject({
+            name: "knife",
+            inRoom: 1,
+            id: 10,
+            description: "probably pretty dangerous",
+            portable: true,
+            grab: (grabArgs) => {
+                grabArgs.ply.kill();
+                grabArgs.ply.sendMessage("The knife hurts really bad, and you die");
+            }
         })
     ),
 });

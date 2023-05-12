@@ -13,6 +13,10 @@
     height: 100%;
  }
 
+ .game-outer-dead {
+    background: darken($color: #FFF, $amount: 20%);
+ }
+
  .fixed-height-3 {
     height: 3px;
  }

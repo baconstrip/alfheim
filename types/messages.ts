@@ -150,6 +150,7 @@ export class WriteNotebook {
 
 export class UpdateMetadata {
     username!: string;
+    alive!: boolean;
 }
 
 // ---------- Utilities ---------- //

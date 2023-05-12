@@ -38,6 +38,7 @@
     "webpack-stream": "^7.0.0"
   },
   "dependencies": {
+    "@popperjs/core": "^2.11.7",
     "@types/express-handlebars": "^3.1.0",
     "@types/lodash": "^4.14.194",
     "@types/md5": "^2.3.1",

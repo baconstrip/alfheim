@@ -4,6 +4,9 @@ import _ from 'lodash';
 import { EventBus } from '../../eventbus';
 import messageprocessing from './messageprocessing.ts';
 
+import '@popperjs/core';
+import 'bootstrap';
+
 let socs = require('socs.ts');
 
 new Vue({
