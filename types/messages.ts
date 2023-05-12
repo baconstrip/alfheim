@@ -1,5 +1,6 @@
 import { Dialog, DialogElement, DialogEvent } from "./dialog";
 
+// Messages sent from the client to the server
 export enum ClientMessage {
     // Start at 1 so enum is truthy
     TEXT_INPUT = 1,
@@ -9,6 +10,7 @@ export enum ClientMessage {
     DIALOG_CONTENTS,
 }
 
+// Messages sent from the server to the client
 export enum ServerMessage {
     // Start at 1000 to provide namespace separation.
     PUBLISH_TEXT = 1000,
@@ -22,6 +24,7 @@ export enum ServerMessage {
     UPDATE_DIALOG,
     READ_DIALOG,
     WRITE_NOTEBOOK,
+    UPDATE_METADATA,
 }
 
 // ------ Base Message Type ------- //
@@ -143,6 +146,10 @@ export class ReadDialog {
 
 export class WriteNotebook {
     contents!: string;
+}
+
+export class UpdateMetadata {
+    username!: string;
 }
 
 // ---------- Utilities ---------- //

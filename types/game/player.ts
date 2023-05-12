@@ -171,6 +171,12 @@ export default class Player {
                 contents: this.notebook,
             }))
         );
+        
+        this.soc?.send(
+            JSON.stringify(Messages.BuildMessage(Messages.ServerMessage.UPDATE_METADATA, {
+                username: this.authUser.displayname,
+            }))
+        );
     }
 
     ___locationSummary(): Messages.LocationSummary {

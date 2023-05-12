@@ -1,3 +1,7 @@
+@font-face {
+  font-family: "Tangerine";
+  src: url("/static/fonts/Tangerine-Regular.ttf");
+}
 .login-fill {
   min-height: 100vh;
 }
@@ -85,4 +89,9 @@ img.room-image {
 
 #notebook {
   height: 40vh;
+}
+
+.greeting-message {
+  font-family: "Tangerine", "cursive";
+  font-size: 3rem;
 }

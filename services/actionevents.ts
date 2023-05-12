@@ -82,7 +82,7 @@ class __eventBusType {
             return false;
         }
         this.recursionGuard.add(key);
-        const outcome = this.dispatch(e, stage, args);
+        const outcome = this.dispatchInternal(e, stage, args);
         this.recursionGuard.delete(key);
         return outcome;
     }

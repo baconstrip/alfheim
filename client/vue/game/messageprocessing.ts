@@ -12,6 +12,7 @@ let msgTypeMap = new Map([
     [Messages.ServerMessage.REMOVE_DIALOG, 'remove-dialog'],
     [Messages.ServerMessage.READ_DIALOG, 'read-dialog'],
     [Messages.ServerMessage.WRITE_NOTEBOOK, 'write-notebook'],
+    [Messages.ServerMessage.UPDATE_METADATA, 'update-metadata'],
 ]);
 
 function processMessage(msg: any) {
