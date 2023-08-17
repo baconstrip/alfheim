@@ -1,8 +1,8 @@
-import { PathDirection } from "../../types/game/direction";
-import Path from "../../types/game/path";
-import Room from "../../types/game/room";
-import World from "../../types/game/world";
-import Zone from "../../types/game/zone";
+import { PathDirection } from "../../server/game/direction";
+import Path from "../../server/game/path";
+import Room from "../../server/game/room";
+import World from "../../server/game/world";
+import Zone from "../../server/game/zone";
 
 export default new World({
     name: "Hideout",

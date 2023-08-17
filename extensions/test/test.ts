@@ -1,10 +1,10 @@
-import { DialogManager } from "../../services/dialogmanager";
-import { GameEventBus, GameEventHandlerArgs } from "../../services/gameevents"
-import { ModuleData } from "../../services/moduledata";
-import { Button, Container, Dialog, DialogEvent, Text, TextBox } from "../../types/dialog";
-import Player from "../../types/game/player";
-import { GameEvent } from "../../types/gameevent"
-import { ProcessingStage } from "../../types/processingstage"
+import { DialogManager } from "../../server/services/dialogmanager";
+import { GameEventBus, GameEventHandlerArgs } from "../../server/events/gameevents"
+import { ModuleData } from "../../server/services/moduledata";
+import { Button, Container, Dialog, DialogEvent, Text, TextBox } from "../../common/dialog";
+import Player from "../../server/game/player";
+import { GameEvent } from "../../server/events/gameevent"
+import { ProcessingStage } from "../../server/events/processingstage"
 
 export function setup(data: ModuleData) {
     console.log("setting up test");

@@ -116,7 +116,7 @@ dist
 .pnp.*
 
 **/**.swp
-data/
+server/data/
 
 
 token.txt
