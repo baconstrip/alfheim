@@ -6,8 +6,7 @@
 </template>
 
 <script>
-import { EventBus } from "../../../eventbus.ts";
-import * as Messages from "../../../../types/messages.ts";
+import { EventBus } from "../eventbus.ts";
 
 export default {
   mounted: function() {

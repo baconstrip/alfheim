@@ -1,5 +1,5 @@
-const EventBus = require('../../eventbus').EventBus;
-import * as Messages from '../../../types/messages';
+import { EventBus } from './eventbus';
+import * as Messages from '../../common/messages';
 
 let msgTypeMap = new Map([
     [Messages.ServerMessage.CLEAR_TEXT, 'clear-textlog'],

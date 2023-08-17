@@ -19,10 +19,10 @@
 </template>
 
 <script>
-import { EventBus } from '../../../eventbus'
-import { HTMLForDialog } from '../../../dialogbuilder'
-import * as Messages from '../../../../types/messages.ts'
-import { DialogEvent } from '../../../../types/dialog'
+import { EventBus } from '../eventbus'
+import { HTMLForDialog } from '../dialogbuilder'
+import * as Messages from '../../../common/messages.ts'
+import { DialogEvent } from '../../../common/dialog'
 //import VRuntimeTemplate from "v-runtime-template";
 
 export default {

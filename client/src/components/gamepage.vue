@@ -39,8 +39,7 @@ import topbar from "./topbar.vue";
 import notebook from "./notebook.vue";
 import dialogwindow from "./dialogwindow.vue";
 
-import { EventBus } from "../../../eventbus.ts";
-import * as Messages from "../../../../types/messages.ts";
+import { EventBus } from "../eventbus.ts";
 
 export default {
   components: {

@@ -1,4 +1,4 @@
-import { Button, Container, Dialog, DialogElement, Text, TextBox } from "../types/dialog";
+import { Button, Container, Dialog, DialogElement, Text, TextBox } from "../../common/dialog";
 import { EventBus } from './eventbus';
 
 export function HTMLForDialog(dialog: Dialog): string {
