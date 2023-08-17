@@ -25,7 +25,7 @@ export default async ({ app } : { app: express.Application}) => {
     app.use(passport.initialize());
     app.use(passport.session());
 
-    app.use('/static', express.static('../client/static'));
+    app.use('/static', express.static('../client/js'), express.static('../client/static/out'));
     app.use('/', routes());
 
     return esSession

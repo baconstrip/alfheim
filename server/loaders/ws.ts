@@ -3,7 +3,7 @@ import { Server, ClientRequest } from 'http';
 import { Duplex } from 'stream';
 import { InternalEvent } from '../events/internalevent';
 import { InternalEventBus } from '../events/internalevents';
-import { TimedWebSocket } from '../../common/timedwebsocket';
+import { TimedWebSocket } from '../lib/timedwebsocket';
 import players, { LookupPlayerID } from '../services/players';
 
 

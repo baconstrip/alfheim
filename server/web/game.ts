@@ -1,4 +1,5 @@
 import { Router, Request, Response } from 'express';
+import * as express from 'express';
 import { userFromRequest } from '../services/userdb';
 const loggedin = require('connect-ensure-login');
 
@@ -9,12 +10,6 @@ export default (route: Router) => {
 
     gameRoute.get('/', 
         loggedin.ensureLoggedIn(),
-        (req: Request, res: Response) => {
-            res.render('game', { 
-                part: "param", 
-                username: userFromRequest(req).username,
-                gamejs: true
-            });
-        }
+        express.static('../client/static/out/game.html')
     );
 };

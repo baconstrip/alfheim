@@ -9,10 +9,22 @@ export default defineConfig({
   },
   minify: false,
   sourcemap: true,
+  base: "/static/",
   build: {
     // rollupOptions: {
     //   external: Object.keys(pkg.dependencies || {}),
     // },
+    rollupOptions: {
+      input: {
+        app: 'game.html',
+      },
+      output: {
+        assetFileNames: 'site.css',
+        entryFileNames: 'site.js',
+        chunkFileNames: 'chunks.js',
+        manualChunks: undefined,
+      },
+    },
     outDir: "static/out"
   },
   optimizeDeps: {
