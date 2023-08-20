@@ -7,7 +7,7 @@ import { GameEvent } from "../../server/events/gameevent"
 import { ProcessingStage } from "../../server/events/processingstage"
 
 export function setup(data: ModuleData) {
-    console.log("setting up test");
+    console.log("Loading test Module");
     GameEventBus.globalOnEvent(GameEvent.PLAYER_MOVE, ProcessingStage.POST, (a: GameEventHandlerArgs) => {
         const count = data.getForPlayer(a.ply!, "movecount") ?? 0;
         data.setOnPlayer(a.ply!, "movecount",  count + 1)

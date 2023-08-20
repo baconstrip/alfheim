@@ -6,6 +6,7 @@ import close from "./close";
 import open from "./open";
 import lock from "./lock";
 import unlock from "./unlock";
+import say from "./say";
 
 
 export default ({}) =>  {
@@ -17,4 +18,5 @@ export default ({}) =>  {
     open({});
     lock({});
     unlock({});
+    say({});
 }

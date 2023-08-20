@@ -34,7 +34,7 @@ export default (route: Router) => {
                     errors: errors,
                 })
             }
-            console.log('got auth req with body ' + req.body.user);
+            console.log('Logging in user: ' + req.body.user);
             // Used to load player into live sessions.
             InternalEventBus.dispatch(InternalEvent.PLAYER_LOGIN, userFromRequest(req));
 

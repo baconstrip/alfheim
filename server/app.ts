@@ -11,10 +11,10 @@ import instancemanager from './services/instancemanager';
 // Required for TypeORM
 import "reflect-metadata"
 import testing from './testing';
+import { runningDev } from './lib/util';
 
 async function startServer() {
-    const dev = process.env.NODE_ENV === "development";
-    if (dev) {
+    if (runningDev()) {
         testing({});
     }
     console.log('Overworld name: ' + overworld.name);

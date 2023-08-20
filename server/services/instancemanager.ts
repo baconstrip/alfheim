@@ -32,12 +32,10 @@ export default async (defaultWorld: Instance) => {
             ply.sendMessage(ply.world()?.forWorld.joinMessage ?? '');
             return;
         }
-        console.log('Adding player to default world: ' + ply.authUser.id);
         ___inst.defaultInstance.addPlayer(ply);
     });
 
     InternalEventBus.onEvent(InternalEvent.PLAYER_CLEANUP, (id: number) => {
-        console.log('removing player from instances: ' + id);
         let ply = ___findPlayer(id);
         if (ply) {
             ply.world()?.removePlayer(ply);

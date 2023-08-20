@@ -5,6 +5,7 @@ import { InternalEvent } from '../events/internalevent';
 import { InternalEventBus } from '../events/internalevents';
 import { TimedWebSocket } from '../lib/timedwebsocket';
 import players, { LookupPlayerID } from '../services/players';
+import { runningDev } from '../lib/util';
 
 
 export default async ({ wsServer, httpServer, sessions } : 
@@ -28,7 +29,6 @@ export default async ({ wsServer, httpServer, sessions } :
     });
     // When clients connect, greet them and register echo listener.
     wsServer.on('connection', (soc: TimedWebSocket, req: any) =>{
-        console.log('new connection');
         const id = req.session.passport.user;
         InternalEventBus.dispatch(InternalEvent.PLAYER_JOIN_LIVE, {id: id, soc: soc});
 
@@ -55,7 +55,10 @@ export default async ({ wsServer, httpServer, sessions } :
                 if (data['type'] !== undefined){
                     InternalEventBus.dispatch(InternalEvent.MESSAGE_IN, {ply: ply, message: data});
                 }
-                console.log('message from client: ' + message);
+
+                if (runningDev()){
+                    console.log('message from client: ' + message);
+                }
             } catch (e) {
                 if (e instanceof SyntaxError) { 
                     console.log('Failed to parse message from client as JSON: ' + message);

@@ -1,3 +1,4 @@
+import { runningDev } from '../lib/util';
 import { InternalEvent } from './internalevent';
 import { $enum } from 'ts-enum-util';
 
@@ -25,7 +26,9 @@ class __eventBusType {
 
     dispatch(e: InternalEvent, args: any) {
         if (e != InternalEvent.RAW_MESSAGE_IN) {
-            console.log('dispatching event ' + e);
+            if (runningDev()) {
+                console.log('Dispatching internal event ' + InternalEvent[e]);
+            }
         }
         this.listeners.get(e)?.forEach((x) => {
             x(args, e);
@@ -44,7 +47,8 @@ export namespace InternalEventBus {
      * Generally event listeners should only be added for integral server
      * behaviour, things like adding a player when they join, or input to the 
      * message proccessing pipeline. Addon modules should generally avoid using
-     * the event system, instead preferring to rely on callbacks.
+     * the internal events, instead preferring to use the game events or action
+     * events.
      * 
      * @returns a callback that will remove the listener when called.
      */

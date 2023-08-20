@@ -53,3 +53,7 @@ export function asPromise(context: any, callbackFunction: any, ...args: any) {
         }
     });
 }
+
+export function runningDev(): boolean {
+    return process.env.NODE_ENV === "development";
+}

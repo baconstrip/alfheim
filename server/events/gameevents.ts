@@ -1,12 +1,12 @@
 import { GameEvent } from './gameevent';
 import { $enum } from 'ts-enum-util';
-import { stableHash } from '../lib/util';
 import { Instance } from '../game/api/instance/worldinstance';
 import { ProcessingStage } from './processingstage';
 import Player from '../game/player';
 import GameObjectInstance from '../game/api/instance/gameobjectinstance';
+import { runningDev } from '../lib/util';
 
-type GameEventArgs = {
+export type GameEventArgs = {
     ply?: Player, 
     obj?: GameObjectInstance, 
     inst?: Instance, 
@@ -88,6 +88,10 @@ class __eventBusType {
         this.recursionGuard.add(key);
         const outcome = this.dispatchInternal(e, stage, args);
         this.recursionGuard.delete(key); 
+
+        if (runningDev()) {
+            console.log('Dispatching game event ' + GameEvent[e]);
+        }
         return outcome;
     }
 

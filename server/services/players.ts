@@ -32,7 +32,6 @@ export default async ({ }) => {
         if (!ply) {
             return;
         }
-        console.log('Assigning player soc')
         ply.soc = info.soc;
     });
 

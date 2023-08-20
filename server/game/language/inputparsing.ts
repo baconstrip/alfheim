@@ -374,10 +374,10 @@ export default async ({ }) => {
             if (ignoreCommands(body)) {
                 return;
             }
-            const start = new Date();
+            const start = performance.now();
             handleTextInput(ply, body);
-            const end = new Date();
-            console.log("Time to perform request %Oms", end.getTime() - start.getTime());
+            const end = performance.now();
+            console.log("Time to perform request %Oms", (end - start).toFixed(1));
         }
     });
 };
