@@ -1,5 +1,5 @@
 import Room, { MutableRoom } from "./room";
-import Path, { MutablePath } from "./path";
+import Path, { MutablePath } from "../../path";
 import GameObject, { MutableGameObject } from "./gameobject";
 import _ from "lodash";
 import Zone from "./zone";

@@ -1,6 +1,6 @@
 import { Instance } from "./worldinstance";
-import { MutableGameObject } from "./gameobject";
-import Inventory from "./inventory";
+import { MutableGameObject } from "../prototype/gameobject";
+import Inventory from "../../inventory";
 
 export default class GameObjectInstance {
     readonly forObject: MutableGameObject;

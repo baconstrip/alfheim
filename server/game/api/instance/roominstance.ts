@@ -1,8 +1,8 @@
-import { MutableRoom } from "./room";
-import Player from "./player";
+import { MutableRoom } from "../prototype/room";
+import Player from "../../player";
 import { Instance } from "./worldinstance";
-import { Direction } from "./direction";
-import Inventory from "./inventory";
+import { Direction } from "../../direction";
+import Inventory from "../../inventory";
 
 export default class RoomInstance {
     readonly forRoom: MutableRoom;

@@ -1,6 +1,6 @@
-import { GameEventBus } from "../services/gameevents"
-import { GameEvent } from "../types/gameevent"
-import { ProcessingStage } from "../types/processingstage"
+import { GameEventBus } from "../events/gameevents"
+import { GameEvent } from "../events/gameevent"
+import { ProcessingStage } from "../events/processingstage"
 
 export default ({}) => {
     console.log("Recursive event test loaded.");

@@ -4,9 +4,9 @@ import { InternalEvent } from '../../events/internalevent';
 import Player from '../player';
 import { replacePunctuation } from '../../lib/util';
 import nlp from 'compromise';
-import { Instance } from '../worldinstance';
+import { Instance } from '../api/instance/worldinstance';
 import _ from 'lodash';
-import { EntityTypeToTag } from '../worldentitytype';
+import { EntityTypeToTag } from '../api/worldentitytype';
 import { ActionEventBus } from '../../events/actionevents';
 import { ProcessingStage } from '../../events/processingstage';
 

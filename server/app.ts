@@ -1,11 +1,11 @@
 import express from 'express';
 import ws from 'ws';
 import http from 'http';
-import loaders from './loaders';
+import services from './services';
 // Include the static overworld
 import overworld from './worlds/overworld';
 import greendungeon from './worlds/greendungeon';
-import { Instance } from './game/worldinstance';
+import { Instance } from './game/api/instance/worldinstance';
 import instancemanager from './services/instancemanager';
 
 // Required for TypeORM
@@ -32,7 +32,7 @@ async function startServer() {
     await instancemanager(testWorldInstance);
 
     // Load server infrastructure.
-    const loader = await loaders({ 
+    const loader = await services({ 
         expressApp: app, 
         wsServer: socketServer,
         httpServer: server

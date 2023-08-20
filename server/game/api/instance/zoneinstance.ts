@@ -1,6 +1,6 @@
 import { Instance } from "./worldinstance";
-import Inventory from "./inventory";
-import { MutableZone } from "./zone";
+import Inventory from "../../inventory";
+import { MutableZone } from "../prototype/zone";
 
 export default class ZoneInstance {
     readonly forZone: MutableZone;

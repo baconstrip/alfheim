@@ -1,7 +1,7 @@
-import Player from "../player";
-import { InternalEventBus } from "../../events/internalevents";
-import { InternalEvent } from "../../events/internalevent";
-import { AuthUser } from "../../models/User";
+import Player from "../game/player";
+import { InternalEventBus } from "../events/internalevents";
+import { InternalEvent } from "../events/internalevent";
+import { AuthUser } from "../models/User";
 import _, { zip } from "lodash";
 
 // Singleton manager.

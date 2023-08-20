@@ -1,10 +1,10 @@
 import md5 from "md5";
-import GameObjectInstance from "../game/gameobjectinstance";
+import GameObjectInstance from "../game/api/instance/gameobjectinstance";
 import Player from "../game/player";
-import RoomInstance from "../game/roominstance";
-import { Instance } from "../game/worldinstance";
+import RoomInstance from "../game/api/instance/roominstance";
+import { Instance } from "../game/api/instance/worldinstance";
 import { FindInstanceByID } from "./instancemanager";
-import { LookupPlayerID } from "../game/player/players";
+import { LookupPlayerID } from "./players";
 
 export class ModuleData {
     private name: string;

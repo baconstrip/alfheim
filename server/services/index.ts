@@ -3,24 +3,26 @@ import ws from 'ws';
 
 import expressloader from '../web/express';
 import wsloader from '../web/ws';
-import sqlloader from '../services/sql';
+import sqlloader from './sql';
 import passport from './passport';
-import services from './services';
 import { Server } from 'http';
-import basicgame from '../game/language/textprocessing';
-import worlds from '../services/worlds';
+import textprocessing from '../game/language/textprocessing';
+import worlds from './worlds';
 import compromise from '../game/language/compromise';
 import modules from './modules';
 import assetresolver from './assetresolver';
 import configuration from './configuration';
-import discord_startup from './discord_startup';
+import { initDiscord } from './discord';
+import dialogmanager from './dialogmanager';
+import notebook from './notebook';
+import players from './players';
 
-export default async ({ expressApp, wsServer, httpServer } : 
-    { 
-        expressApp: Express.Application, 
+export default async ({ expressApp, wsServer, httpServer }:
+    {
+        expressApp: Express.Application,
         wsServer: ws.Server,
         httpServer: Server
-     }) => {
+    }) => {
     let config = await configuration({});
     await passport({ app: expressApp });
     console.log('Passport started');
@@ -30,18 +32,24 @@ export default async ({ expressApp, wsServer, httpServer } :
     console.log('WebSockets initialized');
     let db = await sqlloader({});
     console.log('DB initialized');
-    let s = await services({});
-    console.log('Loaded services');
-    await basicgame({});
+    await worlds({});
+    console.log('Loaded worlds from definitions');
+    await players({});
+    console.log('Loaded Player manager');
+    await dialogmanager();
+    console.log('Loaded dialog manager');
+    await notebook({});
+    console.log('Loaded notebook manager');
+    await textprocessing({});
     console.log('Loaded base game components');
     await compromise({});
     console.log('Loaded natural language processor');
     await modules({});
     console.log('Loaded extension modules');
-    await assetresolver({app: expressApp});
+    await assetresolver({ app: expressApp });
     console.log('Prepared to load assets dynamically');
     if (config.discordEnabled) {
-        let success = await discord_startup({config: config}); 
+        let success = await initDiscord({ config: config });
         if (success) {
             console.log('Connected to Discord');
         } else {

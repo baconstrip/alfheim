@@ -1,4 +1,4 @@
-import GameObjectInstance from "./gameobjectinstance";
+import GameObjectInstance from "./api/instance/gameobjectinstance";
 import { SendInventory, InventoryObject} from "../../common/messages";
 
 /**

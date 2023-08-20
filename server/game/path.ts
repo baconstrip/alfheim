@@ -1,5 +1,5 @@
 import { PathDirection } from "./direction";
-import { Lock } from "./locking";
+import { Lock } from "./api/locking";
 
 export default class Path {
     source: number;

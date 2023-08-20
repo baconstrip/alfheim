@@ -1,15 +1,15 @@
-import * as Messages from '../../../common/messages';
-import { InternalEventBus } from '../../events/internalevents';
-import { InternalEvent } from '../../events/internalevent';
-import Player from '../player';
+import * as Messages from '../../../../common/messages';
+import { InternalEventBus } from '../../../events/internalevents';
+import { InternalEvent } from '../../../events/internalevent';
+import Player from '../../player';
 import validator from 'validator';
-import { AllWorlds } from '../../services/worlds';
-import { matchesPuncuation, replacePunctuation } from '../../lib/util';
-import { CreateInstance, DefaultInstance, FindInstance } from '../../services/instancemanager';
-import players, { LookupPlayer, LookupPlayerByDisplayname } from './players';
-import { GameEventBus } from '../../events/gameevents';
-import { GameEvent } from '../../events/gameevent';
-import { ProcessingStage } from '../../events/processingstage';
+import { AllWorlds } from '../../../services/worlds';
+import { matchesPuncuation, replacePunctuation } from '../../../lib/util';
+import { CreateInstance, DefaultInstance, FindInstance } from '../../../services/instancemanager';
+import players, { LookupPlayer, LookupPlayerByDisplayname } from '../../../services/players';
+import { GameEventBus } from '../../../events/gameevents';
+import { GameEvent } from '../../../events/gameevent';
+import { ProcessingStage } from '../../../events/processingstage';
 
 const wsRe = /.*\s+.*/;
 

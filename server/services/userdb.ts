@@ -1,4 +1,4 @@
-import passport from "../loaders/passport";
+import passport from "./passport";
 
 import { entManager, userRepository } from "./sql"
 import { AuthUser } from "../models/User";

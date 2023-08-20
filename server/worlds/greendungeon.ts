@@ -1,9 +1,9 @@
-import World from "../game/world";
-import Room from "../game/room";
+import World from "../game/api/prototype/world";
+import Room from "../game/api/prototype/room";
 import Path from "../game/path";
 import { PathDirection } from "../game/direction";
-import GameObject from "../game/gameobject";
-import Zone from "../game/zone";
+import GameObject from "../game/api/prototype/gameobject";
+import Zone from "../game/api/prototype/zone";
 
 export default new World({
     name: "Green Dungeon",

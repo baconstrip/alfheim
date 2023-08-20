@@ -4,7 +4,7 @@ import { Duplex } from 'stream';
 import { InternalEvent } from '../events/internalevent';
 import { InternalEventBus } from '../events/internalevents';
 import { TimedWebSocket } from '../lib/timedwebsocket';
-import players, { LookupPlayerID } from '../game/player/players';
+import players, { LookupPlayerID } from '../services/players';
 
 
 export default async ({ wsServer, httpServer, sessions } : 

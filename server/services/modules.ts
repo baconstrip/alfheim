@@ -1,10 +1,10 @@
 import path from "path";
 import fs from 'fs';
-import World from "../game/world";
-import { ___addWorld } from "../services/worlds";
-import { ModuleData } from "../services/moduledata";
+import World from "../game/api/prototype/world";
+import { ___addWorld } from "./worlds";
+import { ModuleData } from "./moduledata";
 
-const normalizedPath = path.join(__dirname + '/../../extensions');
+const fullExtensionsDir = path.join(__dirname + '/../../extensions');
 
 export class ___extensionManager {
     extensionDescriptions = new Map<string, any>();
@@ -33,8 +33,8 @@ export default ({}) => {
 
     // Contains a map of a plugin's path to its descriptor, as a parsed JSON
     // object.
-    fs.readdirSync(normalizedPath).forEach((file) => {
-        const name = path.join(normalizedPath, file);
+    fs.readdirSync(fullExtensionsDir).forEach((file) => {
+        const name = path.join(fullExtensionsDir, file);
         if (!fs.statSync(name).isDirectory()) {
             // TODO: We should be able to load zips here.
             console.log(`Discarding individual file in plugins: ${name}`);

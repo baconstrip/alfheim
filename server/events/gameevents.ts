@@ -1,10 +1,10 @@
 import { GameEvent } from './gameevent';
 import { $enum } from 'ts-enum-util';
 import { stableHash } from '../lib/util';
-import { Instance } from '../game/worldinstance';
+import { Instance } from '../game/api/instance/worldinstance';
 import { ProcessingStage } from './processingstage';
 import Player from '../game/player';
-import GameObjectInstance from '../game/gameobjectinstance';
+import GameObjectInstance from '../game/api/instance/gameobjectinstance';
 
 type GameEventArgs = {
     ply?: Player, 

@@ -1,12 +1,13 @@
 import * as discord from 'discord.js';
-import { AlfheimConfig, DiscordChannel } from '../loaders/configuration';
+import { AlfheimConfig, DiscordChannel } from './configuration';
 import Player from '../game/player';
-import RoomInstance from '../game/roominstance';
-import { Instance } from '../game/worldinstance';
+import RoomInstance from '../game/api/instance/roominstance';
+import { Instance } from '../game/api/instance/worldinstance';
 import instancemanager, { ListInstances } from './instancemanager';
-import { ListPlayers } from '../game/player/players';
+import { ListPlayers } from './players';
 import { GuildTextBasedChannel } from 'discord.js';
 import { GuildChannel } from 'discord.js';
+import { asPromise } from "../lib/util";
 
 // How often the Discord connector will refresh the server to ensure that 
 // everything is synchronized, in ms.
@@ -214,6 +215,30 @@ let ___inst: DiscordManager;
 export function ___initializeDiscord(client: discord.Client, config: AlfheimConfig) {
     ___inst = new DiscordManager(client, config);
 }
+
+export async function initDiscord({config}: {config: AlfheimConfig}): Promise<boolean> {
+    const client = new discord.Client({intents: []});
+
+    client.login(config.discordToken);
+
+    await asPromise(client, client.on, 'ready');
+
+    if (!config.discordServer) {
+        console.log('No server specified, disabling Discord integration');
+        return false;
+    }
+    try {
+        let server = await client.guilds.fetch(config.discordServer);
+    } catch (e) {
+        console.log('Alfheim bot is not on the server in question, please click this link to add it, then restart Alfheim: ')
+        console.log(`\thttps://discordapp.com/oauth2/authorize?client_id=${config.discordBotID}&scope=bot&permissions=499653680`)
+        return false;
+    }
+
+    ___initializeDiscord(client, config);
+    return true;
+}
+
 
 export async function ___currentGuild() {
     return ___inst.currentGuild();

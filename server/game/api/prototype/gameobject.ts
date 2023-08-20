@@ -1,5 +1,5 @@
-import { Lock } from "./locking";
-import { Grab } from "./grabbing";
+import { Lock } from "../locking";
+import { Grab } from "../grabbing";
 
 /**
  * GameObjects represent all interactable objects within a room.

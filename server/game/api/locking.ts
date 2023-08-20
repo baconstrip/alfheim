@@ -1,7 +1,7 @@
-import { Instance } from "./worldinstance";
-import Player from "./player";
-import RoomInstance from "./roominstance";
-import GameObjectInstance from "./gameobjectinstance";
+import { Instance } from "./instance/worldinstance";
+import Player from "../player";
+import RoomInstance from "./instance/roominstance";
+import GameObjectInstance from "./instance/gameobjectinstance";
 
 /**
  * A lock function determines whether a player can open a container or pass a

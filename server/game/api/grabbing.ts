@@ -1,7 +1,7 @@
-import { Instance } from "./worldinstance";
-import Player from "./player";
-import RoomInstance from "./roominstance";
-import GameObjectInstance from "./gameobjectinstance";
+import { Instance } from "./instance/worldinstance";
+import Player from "../player";
+import RoomInstance from "./instance/roominstance";
+import GameObjectInstance from "./instance/gameobjectinstance";
 
 /**
  * A Grab function is a function that gets called when an object is grabbed.

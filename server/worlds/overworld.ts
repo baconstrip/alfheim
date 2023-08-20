@@ -1,5 +1,5 @@
-import World from "../game/world";
-import Room from "../game/room";
+import World from "../game/api/prototype/world";
+import Room from "../game/api/prototype/room";
 import Path from "../game/path";
 import { PathDirection } from "../game/direction";
 

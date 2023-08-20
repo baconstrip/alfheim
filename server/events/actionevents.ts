@@ -1,6 +1,6 @@
-import GameObjectInstance from "../game/gameobjectinstance";
+import GameObjectInstance from "../game/api/instance/gameobjectinstance";
 import Player from "../game/player";
-import { Instance } from "../game/worldinstance";
+import { Instance } from "../game/api/instance/worldinstance";
 import { ProcessingStage } from "./processingstage";
 
 type ActionEventArgs = {

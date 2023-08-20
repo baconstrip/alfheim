@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import World from '../game/world';
+import World from '../game/api/prototype/world';
 import md5 from 'md5';
 
 const normalizedPath = path.join(__dirname + '/../worlds');

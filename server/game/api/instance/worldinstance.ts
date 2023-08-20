@@ -1,16 +1,16 @@
-import World, { MutableWorld } from "./world";
-import * as Messages from '../../common/messages';
-import Player from "./player";
+import World, { MutableWorld } from "../prototype/world";
+import * as Messages from '../../../../common/messages';
+import Player from "../../player";
 import RoomInstance from "./roominstance";
 import GameObjectInstance from "./gameobjectinstance";
-import { PathDirection, GetSourceDirection, GetDestinationDirection } from "./direction";
-import { WorldEntityType } from "./worldentitytype";
-import Inventory from "./inventory";
+import { PathDirection, GetSourceDirection, GetDestinationDirection } from "../../direction";
+import { WorldEntityType } from "../worldentitytype";
+import Inventory from "../../inventory";
 import ZoneInstance from "./zoneinstance";
 import _ from "lodash";
-import { GameEventBus } from "../events/gameevents";
-import { GameEvent } from "../events/gameevent";
-import { ProcessingStage } from "../events/processingstage";
+import { GameEventBus } from "../../../events/gameevents";
+import { GameEvent } from "../../../events/gameevent";
+import { ProcessingStage } from "../../../events/processingstage";
 
 export class Instance {
     readonly id: number;

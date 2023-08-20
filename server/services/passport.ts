@@ -1,5 +1,5 @@
 import * as express from 'express';
-import { findOne, findById, comparePassword } from '../services/userdb';
+import { findOne, findById, comparePassword } from './userdb';
 const passport = require('passport');
 let localStrategy = require('passport-local').Strategy
 

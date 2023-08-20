@@ -1,13 +1,13 @@
 import { AuthUser } from "../models/User";
 import * as Messages from '../../common/messages';
-import RoomInstance from "./roominstance";
+import RoomInstance from "./api/instance/roominstance";
 import { entManager } from "../services/sql";
 import Inventory from "./inventory";
-import { Instance } from "./worldinstance";
+import { Instance } from "./api/instance/worldinstance";
 import { GameEventBus } from "../events/gameevents";
 import { GameEvent } from "../events/gameevent";
 import { ProcessingStage } from "../events/processingstage";
-import { resolve as assetResolve } from "../loaders/assetresolver";
+import { resolve as assetResolve } from "../services/assetresolver";
 import { Dialog } from "../../common/dialog";
 import { UpdateDiscordUser, ___updateDiscordPlayerAndRooms } from "../services/discord";
 

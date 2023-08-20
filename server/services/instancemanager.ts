@@ -1,8 +1,8 @@
 import { InternalEventBus } from "../events/internalevents"
 import { InternalEvent } from "../events/internalevent"
 import Player from "../game/player"
-import { Instance } from "../game/worldinstance";
-import World from "../game/world";
+import { Instance } from "../game/api/instance/worldinstance";
+import World from "../game/api/prototype/world";
 import { GameEventBus } from "../events/gameevents";
 import { ActionEventBus } from "../events/actionevents";
 
