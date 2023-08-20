@@ -9,6 +9,7 @@
         </button>
       </div>
       <div class="modal-body">
+          <h4>Write in your notebook!</h4>
           <textarea id="notebook" class="mx-auto w-100" v-on:input="updateText"></textarea>
       </div>
       <div class="modal-footer">

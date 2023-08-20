@@ -1,6 +1,6 @@
 import nlp from 'compromise';
-import baseLanguage from '../lib/directionextension'
-import directionextension from '../lib/directionextension';
+import baseLanguage from './directionextension'
+import directionextension from './directionextension';
  
 
 export default ({}) => {

@@ -1,7 +1,7 @@
 import { AuthUser } from "../models/User";
 import * as Messages from '../../common/messages';
 import RoomInstance from "./roominstance";
-import { entManager } from "../loaders/sql";
+import { entManager } from "../services/sql";
 import Inventory from "./inventory";
 import { Instance } from "./worldinstance";
 import { GameEventBus } from "../events/gameevents";

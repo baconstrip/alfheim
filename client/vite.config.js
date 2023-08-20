@@ -1,5 +1,4 @@
 import { defineConfig, optimizeDeps } from 'vite'
-import pkg from './package.json'
 import vue from '@vitejs/plugin-vue'
 
 // https://vitejs.dev/config/
@@ -11,9 +10,6 @@ export default defineConfig({
   sourcemap: true,
   base: "/static/",
   build: {
-    // rollupOptions: {
-    //   external: Object.keys(pkg.dependencies || {}),
-    // },
     rollupOptions: {
       input: {
         app: 'game.html',
@@ -25,7 +21,12 @@ export default defineConfig({
         manualChunks: undefined,
       },
     },
-    outDir: "static/out"
+    outDir: "static/out",
+    watch: {},
+// DEBUG OPTIONS
+    minify: false,
+    sourcemap: "inline",
+// DEBUG OPTIONS
   },
   optimizeDeps: {
     include: ['lodash'] 

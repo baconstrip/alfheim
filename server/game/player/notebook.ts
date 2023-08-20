@@ -1,7 +1,7 @@
-import * as Messages from '../../common/messages';
-import { InternalEventBus } from '../events/internalevents';
-import { InternalEvent } from '../events/internalevent';
-import Player from '../game/player';
+import * as Messages from '../../../common/messages';
+import { InternalEventBus } from '../../events/internalevents';
+import { InternalEvent } from '../../events/internalevent';
+import Player from '../player';
 import validator from 'validator';
 
 export default async ({}) => {

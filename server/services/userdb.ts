@@ -1,6 +1,6 @@
 import passport from "../loaders/passport";
 
-import { entManager, userRepository } from "../loaders/sql"
+import { entManager, userRepository } from "./sql"
 import { AuthUser } from "../models/User";
 import { Request } from "express";
 

@@ -1,15 +1,15 @@
 import Express from 'express';
 import ws from 'ws';
 
-import expressloader from './express';
-import wsloader from './ws';
-import sqlloader from './sql';
+import expressloader from '../web/express';
+import wsloader from '../web/ws';
+import sqlloader from '../services/sql';
 import passport from './passport';
 import services from './services';
 import { Server } from 'http';
-import basicgame from './basicgame';
+import basicgame from '../game/language/textprocessing';
 import worlds from '../services/worlds';
-import compromise from './compromise';
+import compromise from '../game/language/compromise';
 import modules from './modules';
 import assetresolver from './assetresolver';
 import configuration from './configuration';

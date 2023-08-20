@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { addUser, userFromRequest } from '../services/userdb';
-import { InternalEventBus } from '../events/internalevents';
-import { InternalEvent } from '../events/internalevent';
+import { addUser, userFromRequest } from '../../services/userdb';
+import { InternalEventBus } from '../../events/internalevents';
+import { InternalEvent } from '../../events/internalevent';
 const { body, validationResult } = require('express-validator');
 const passport = require('passport');
 

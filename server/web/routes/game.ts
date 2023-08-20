@@ -1,6 +1,5 @@
 import { Router, Request, Response } from 'express';
 import * as express from 'express';
-import { userFromRequest } from '../services/userdb';
 const loggedin = require('connect-ensure-login');
 
 const gameRoute = Router();

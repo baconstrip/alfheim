@@ -1,14 +1,14 @@
-import * as Messages from '../../common/messages';
-import { InternalEventBus } from '../events/internalevents';
-import { InternalEvent } from '../events/internalevent';
-import Player from '../game/player';
-import { replacePunctuation } from '../lib/util';
+import * as Messages from '../../../common/messages';
+import { InternalEventBus } from '../../events/internalevents';
+import { InternalEvent } from '../../events/internalevent';
+import Player from '../player';
+import { replacePunctuation } from '../../lib/util';
 import nlp from 'compromise';
-import { Instance } from '../game/worldinstance';
+import { Instance } from '../worldinstance';
 import _ from 'lodash';
-import { EntityTypeToTag } from '../game/worldentitytype';
-import { ActionEventBus } from '../events/actionevents';
-import { ProcessingStage } from '../events/processingstage';
+import { EntityTypeToTag } from '../worldentitytype';
+import { ActionEventBus } from '../../events/actionevents';
+import { ProcessingStage } from '../../events/processingstage';
 
 type LanguageExtension = (doc: nlp.Document, world: nlp.World) => void;
 

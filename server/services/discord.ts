@@ -4,7 +4,7 @@ import Player from '../game/player';
 import RoomInstance from '../game/roominstance';
 import { Instance } from '../game/worldinstance';
 import instancemanager, { ListInstances } from './instancemanager';
-import { ListPlayers } from './players';
+import { ListPlayers } from '../game/player/players';
 import { GuildTextBasedChannel } from 'discord.js';
 import { GuildChannel } from 'discord.js';
 

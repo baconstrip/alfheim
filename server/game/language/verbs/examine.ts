@@ -1,4 +1,4 @@
-import { registerGlobalVerb, LanguagePart } from "../player/inputparsing";
+import { registerGlobalVerb, LanguagePart } from "../../player/inputparsing";
 
 const ___defaultMessage = `I don't know what you want to look at, I don't think there's anything like that around here`
 

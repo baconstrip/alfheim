@@ -4,7 +4,7 @@ import Player from "../game/player";
 import RoomInstance from "../game/roominstance";
 import { Instance } from "../game/worldinstance";
 import { FindInstanceByID } from "./instancemanager";
-import { LookupPlayerID } from "./players";
+import { LookupPlayerID } from "../game/player/players";
 
 export class ModuleData {
     private name: string;

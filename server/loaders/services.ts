@@ -1,6 +1,6 @@
 import dialogmanager from '../services/dialogmanager';
-import notebook from '../player/notebook';
-import players from '../services/players';
+import notebook from '../game/player/notebook';
+import players from '../game/player/players';
 import worlds from '../services/worlds';
 
 export default async ({}) => {

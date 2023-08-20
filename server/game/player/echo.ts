@@ -1,7 +1,7 @@
-import * as Messages from '../../common/messages';
-import { InternalEventBus } from '../events/internalevents';
-import { InternalEvent } from '../events/internalevent';
-import Player from '../game/player';
+import * as Messages from '../../../common/messages';
+import { InternalEventBus } from '../../events/internalevents';
+import { InternalEvent } from '../../events/internalevent';
+import Player from '../player';
 
 export default async ({ }) => {
     InternalEventBus.onEvent(InternalEvent.MESSAGE_IN, ({ ply, message }: { ply: Player, message: Messages.Msg }) => {

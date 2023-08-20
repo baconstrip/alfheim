@@ -1,8 +1,8 @@
-import { LanguagePart, registerGlobalVerb } from "../player/inputparsing";
+import { LanguagePart, registerGlobalVerb } from "../../player/inputparsing";
 import nlp from 'compromise';
-import { DirectionFromWord } from "../game/direction";
-import RoomInstance from "../game/roominstance";
-import Player from "../game/player";
+import { DirectionFromWord } from "../../direction";
+import RoomInstance from "../../roominstance";
+import Player from "../../player";
 
 export default ({}) =>{
     const verbMove = new LanguagePart({

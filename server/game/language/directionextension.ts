@@ -1,5 +1,5 @@
 import nlp from 'compromise';
-import { Direction } from "../game/direction";
+import { Direction } from "../direction";
 
 export default ({}) => {
     // Add some rules to make it more likely that directions are matched

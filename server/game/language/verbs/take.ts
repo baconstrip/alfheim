@@ -1,4 +1,4 @@
-import { registerGlobalVerb, LanguagePart } from "../player/inputparsing";
+import { registerGlobalVerb, LanguagePart } from "../../player/inputparsing";
 
 export default ({}) =>{
     const takeVerb = new LanguagePart({
