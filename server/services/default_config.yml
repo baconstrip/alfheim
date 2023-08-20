@@ -1,4 +1,13 @@
+# General Settings
 port: 8049
+
+# A unique string that a player can type into the game to make them an
+# administrator. Simply type this into chat exactly as it appears in the
+# configuration.
+admin-password: MAKEMEADMIN
+
+# Discord integration
+
 # Allows disabling Discord functionality for faster testing.
 discord-connection: false
 # You can specify a Discord bot token here or in a file called "token.txt"

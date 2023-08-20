@@ -8,15 +8,17 @@ export type DiscordChannel = {
 
 export class AlfheimConfig {
     public port: number;
+    public adminPassword: string;
     public discordEnabled: boolean;
     public discordToken: string;
     public discordServer: string;
     public discordBotID: string;
     public additionalChannels: DiscordChannel[];
 
-    constructor({ port, discordEnable, discordToken, discordServer, discordBotID, additionalChannels}:
+    constructor({ port, adminPassword, discordEnable, discordToken, discordServer, discordBotID, additionalChannels}:
         {
             port: number,
+            adminPassword: string,
             discordEnable: boolean,
             discordToken: string,
             discordServer: string
@@ -24,6 +26,7 @@ export class AlfheimConfig {
             additionalChannels: DiscordChannel[]
         }) { 
         this.port = port;
+        this.adminPassword = adminPassword;
         this.discordEnabled = discordEnable;
         this.discordToken = discordToken;
         this.discordServer = discordServer;
@@ -35,7 +38,7 @@ export class AlfheimConfig {
 
 export default ({}): AlfheimConfig => {
     if (!fs.existsSync('config.yml')) {
-        fs.copyFileSync('./loaders/default_config.yml', './config.yml');
+        fs.copyFileSync('./services/default_config.yml', './config.yml');
     }
     if (!fs.statSync('config.yml').isFile()) {
         throw new Error('config.yml is not a file, must be a file');
@@ -73,6 +76,7 @@ export default ({}): AlfheimConfig => {
 
     return new AlfheimConfig({
         port: config['port'],
+        adminPassword: config['admin-password'],
         discordEnable: config['discord-connection'],
         discordToken: token,
         discordServer: config['discord-server'],

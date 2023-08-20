@@ -10,6 +10,7 @@ import { ProcessingStage } from "../events/processingstage";
 import { resolve as assetResolve } from "../services/assetresolver";
 import { Dialog } from "../../common/dialog";
 import { UpdateDiscordUser, ___updateDiscordPlayerAndRooms } from "../services/discord";
+import { updateAdminUI } from "./adminpage";
 
 export default class Player {
     authUser!: AuthUser;
@@ -176,8 +177,13 @@ export default class Player {
             JSON.stringify(Messages.BuildMessage(Messages.ServerMessage.UPDATE_METADATA, {
                 username: this.authUser.displayname,
                 alive: this.alive,
+                admin: this.authUser.admin,
             }))
         );
+
+        if (this.authUser.admin) {
+            updateAdminUI(this);
+        }
     }
 
     ___locationSummary(): Messages.LocationSummary {

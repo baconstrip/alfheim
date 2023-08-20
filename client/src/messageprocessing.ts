@@ -13,6 +13,7 @@ let msgTypeMap = new Map([
     [Messages.ServerMessage.READ_DIALOG, 'read-dialog'],
     [Messages.ServerMessage.WRITE_NOTEBOOK, 'write-notebook'],
     [Messages.ServerMessage.UPDATE_METADATA, 'update-metadata'],
+    [Messages.ServerMessage.ADMIN_INFO, 'admin-info'],
 ]);
 
 function processMessage(msg: any) {

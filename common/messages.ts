@@ -25,6 +25,7 @@ export enum ServerMessage {
     READ_DIALOG,
     WRITE_NOTEBOOK,
     UPDATE_METADATA,
+    ADMIN_INFO,
 }
 
 // ------ Base Message Type ------- //
@@ -151,6 +152,12 @@ export class WriteNotebook {
 export class UpdateMetadata {
     username!: string;
     alive!: boolean;
+    admin!: boolean;
+}
+
+export class AdminInfo {
+    allPlayers!: PlayerSummary[];
+    instances!: string[];
 }
 
 // ---------- Utilities ---------- //

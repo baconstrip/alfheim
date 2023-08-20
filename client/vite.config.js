@@ -3,9 +3,7 @@ import vue from '@vitejs/plugin-vue'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue()],
-  css: {
-  },
+  plugins: [ vue()],
   minify: false,
   sourcemap: true,
   base: "/static/",
@@ -25,10 +23,13 @@ export default defineConfig({
     watch: {},
 // DEBUG OPTIONS
     minify: false,
-    sourcemap: "inline",
+    sourcemap: 'inline',
 // DEBUG OPTIONS
   },
   optimizeDeps: {
     include: ['lodash'] 
-  }
+  },
+  css: {
+    devSourcemap: true,
+  },
 })

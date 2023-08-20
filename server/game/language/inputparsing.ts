@@ -9,6 +9,7 @@ import _ from 'lodash';
 import { EntityTypeToTag } from '../api/worldentitytype';
 import { ActionEventBus } from '../../events/actionevents';
 import { ProcessingStage } from '../../events/processingstage';
+import { isAdminPass } from './commands/promoteadmin';
 
 type LanguageExtension = (doc: nlp.Document, world: nlp.World) => void;
 
@@ -372,6 +373,9 @@ export default async ({ }) => {
         if (message.type == Messages.ClientMessage.TEXT_INPUT) {
             const body = (message.body as any).input as string;
             if (ignoreCommands(body)) {
+                return;
+            }
+            if (isAdminPass(body)) {
                 return;
             }
             const start = performance.now();

@@ -12,5 +12,7 @@ export class AuthUser {
     password: string = "";
     @Column()
     discordname: string = "";
+    @Column()
+    admin: boolean = false;
 }
 

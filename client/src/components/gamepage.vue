@@ -26,6 +26,7 @@
       </div>
       <notebook></notebook>
       <dialogwindow></dialogwindow>
+      <admin></admin>
     </div>
   </div>
 </template>
@@ -38,6 +39,7 @@ import statusarea from "./statusarea.vue";
 import topbar from "./topbar.vue";
 import notebook from "./notebook.vue";
 import dialogwindow from "./dialogwindow.vue";
+import admin from "./admin.vue"
 
 import { EventBus } from "../eventbus.ts";
 
@@ -50,6 +52,7 @@ export default {
     topbar,
     notebook,
     dialogwindow,
+    admin,
   },
   mounted: function() {
     let localThis = this;

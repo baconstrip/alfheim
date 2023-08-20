@@ -1,3 +1,5 @@
+import { ServerMessage } from "../../common/messages";
+
 export function connect(message: Function, error: Function): Function {
     const ws = new WebSocket('ws://' + window.location.host + '/test');
     var lastSeen = new Date();
@@ -14,7 +16,7 @@ export function connect(message: Function, error: Function): Function {
                 return;
             }
 
-            console.log('message from server:');
+            console.log(`Message from Server: ${ServerMessage[data.type]}`)
             console.log(data);
             message(data);
         } catch (e) {

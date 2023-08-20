@@ -40,7 +40,7 @@ export default async ({ expressApp, wsServer, httpServer }:
     console.log('Loaded dialog manager');
     await notebook({});
     console.log('Loaded notebook manager');
-    await textprocessing({});
+    await textprocessing( config );
     console.log('Loaded base game components');
     await compromise({});
     console.log('Loaded natural language processor');
