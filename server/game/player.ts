@@ -48,7 +48,7 @@ export default class Player {
      * @param dialog dialog to display
      * @returns true if the dialog was shown to the player.
      */
-    createDialog(dialog: Dialog, name: string): boolean {
+    ___createDialog(dialog: Dialog, name: string): boolean {
         if (GameEventBus.dispatch(GameEvent.DIALOG_SHOWN, ProcessingStage.PRE, {
             ply: this,
             msg: name,
@@ -75,7 +75,7 @@ export default class Player {
     /**
      * Clears a dialog from the player identified by name, if it is displayed.
      */
-    clearDialog(name: string) {
+    ___clearDialog(name: string) {
         this.soc?.send(
             JSON.stringify(Messages.BuildMessage(Messages.ServerMessage.REMOVE_DIALOG, {name: name}))
         );

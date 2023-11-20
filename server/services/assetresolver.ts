@@ -37,10 +37,12 @@ class AssetResolver {
             return path;
         }
 
+        // internalRelative regexp matches ASCII text
         let internalRelative: RegExp = /[a-zA-Z][a-zA-Z0-9\/]*/i;
         let externalAssetRegex: RegExp = /\$([a-zA-Z][a-zA-Z0-9]*)\$\/(.*)/i;
         if (externalAssetRegex.test(path)) {
             // Assert that we have match, as we just tested for it.
+            
             let groups = path.match(externalAssetRegex) as Array<string>;
             let inferredModule = groups[1];
             let internalPath = groups[2];

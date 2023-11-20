@@ -38,7 +38,7 @@ class WrappedDialog  {
         this.dialog = dialog;
 
         this.closeFunc = () => {
-            player.clearDialog(key);
+            player.___clearDialog(key);
         };
     }
     /**
@@ -170,7 +170,7 @@ class ___dialogManagerType {
             key: key,
             dialog: wrapped,
         });
-        player.createDialog(dialog, key.string());
+        player.___createDialog(dialog, key.string());
 
         this.connectInputs(contents, player, key.string());
 
