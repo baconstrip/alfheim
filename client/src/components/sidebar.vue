@@ -7,9 +7,12 @@
       <inventory></inventory>
     </div>
     <div class="row mb-auto" id="filler"></div>
-    <div class="row mr-auto ml-auto justify-content-center">
+    <div class="row mr-auto ml-auto justify-content-center no-gutters">
       <div class="col">
-        <button class="btn btn-lg btn-primary" data-toggle="modal" data-target="#notebookModal">Notebook</button>
+        <button class="btn btn-lg btn-primary mr-2" data-toggle="modal" data-target="#notebookModal">Notebook</button>
+      </div>
+      <div class="col">
+        <button class="btn btn-lg btn-primary mr-2" data-toggle="modal" data-target="#mapModal">Map</button>
       </div>
       <div v-if="admin" class="col">
         <button class="btn btn-lg btn-danger" data-toggle="modal" data-target="#adminModal">Admin</button>

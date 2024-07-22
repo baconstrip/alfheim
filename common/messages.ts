@@ -1,4 +1,5 @@
 import { Dialog, DialogElement, DialogEvent } from "./dialog";
+import { MapRepresentation } from "./worldmap";
 
 // Messages sent from the client to the server
 export enum ClientMessage {
@@ -26,6 +27,7 @@ export enum ServerMessage {
     WRITE_NOTEBOOK,
     UPDATE_METADATA,
     ADMIN_INFO,
+    UPDATE_MAP,
 }
 
 // ------ Base Message Type ------- //
@@ -158,6 +160,10 @@ export class UpdateMetadata {
 export class AdminInfo {
     allPlayers!: PlayerSummary[];
     instances!: string[];
+}
+
+export class MapUpdate {
+    map!: MapRepresentation;
 }
 
 // ---------- Utilities ---------- //

@@ -121,3 +121,5 @@ server/data/
 
 token.txt
 config.yml
+
+common/*.js**

@@ -1,4 +1,4 @@
-import { PathDirection } from "./direction";
+import { PathDirection } from "../../common/direction";
 import { Lock } from "./api/locking";
 
 export default class Path {

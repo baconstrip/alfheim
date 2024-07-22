@@ -1,4 +1,4 @@
-import { PathDirection } from "../../server/game/direction";
+import { PathDirection } from "../../common/direction";
 import Path from "../../server/game/path";
 import Room from "../../server/game/api/prototype/room";
 import World from "../../server/game/api/prototype/world";

@@ -1,5 +1,5 @@
 <template>
-  <div class="row h-25 text-container bg-primary info mt-auto">
+  <div class="row text-container info mt-auto">
     <div class="row mx-auto w-100 h-100 d-block">
       <div id="text-log" class="mx-auto w-100 h-75" name="text-log" disabled>
       </div>
@@ -62,6 +62,8 @@ export default {
         $('#text-log').html('');
         $('#text-log').scrollTop(1e9);
     });
+
+    $('#text-input').focus();
   }, 
   data: function() {
     return {

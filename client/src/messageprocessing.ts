@@ -14,6 +14,7 @@ let msgTypeMap = new Map([
     [Messages.ServerMessage.WRITE_NOTEBOOK, 'write-notebook'],
     [Messages.ServerMessage.UPDATE_METADATA, 'update-metadata'],
     [Messages.ServerMessage.ADMIN_INFO, 'admin-info'],
+    [Messages.ServerMessage.UPDATE_MAP, 'update-map'],
 ]);
 
 function processMessage(msg: any) {

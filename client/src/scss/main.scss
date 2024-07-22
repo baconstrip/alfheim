@@ -46,12 +46,8 @@
  #text-input {
      overflow: hidden;
      border-top: none !important;
+     max-height: 4em;
  }
-//  #text-input {
-//      overflow: hidden;
-//      outline: 0 !important;
-//      resize: none;
-//  }
 
  #text-input:focus {
      outline: 0 !important;

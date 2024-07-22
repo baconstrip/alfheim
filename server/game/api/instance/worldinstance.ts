@@ -3,7 +3,7 @@ import * as Messages from '../../../../common/messages';
 import Player from "../../player";
 import RoomInstance from "./roominstance";
 import GameObjectInstance from "./gameobjectinstance";
-import { PathDirection, GetSourceDirection, GetDestinationDirection } from "../../direction";
+import { PathDirection, GetSourceDirection, GetDestinationDirection } from "../../../../common/direction";
 import { WorldEntityType } from "../worldentitytype";
 import Inventory from "../../inventory";
 import ZoneInstance from "./zoneinstance";
@@ -11,6 +11,7 @@ import _ from "lodash";
 import { GameEventBus } from "../../../events/gameevents";
 import { GameEvent } from "../../../events/gameevent";
 import { ProcessingStage } from "../../../events/processingstage";
+import { MapPath, MapRepresentation, MapRepresentationRoom } from "../../../../common/worldmap";
 
 export class Instance {
     readonly id: number;
@@ -300,5 +301,25 @@ export class Instance {
             }
         });
         return seen;
+    }
+
+    /**
+     * Using this world's current state, generates a MapReprestation for the 
+     * client.
+     */
+    GetMapRepresentation(): MapRepresentation {
+        var repr = new MapRepresentation();
+
+        for (let [roomId, room] of this.rooms) {
+            let mapRoom = new MapRepresentationRoom(roomId, room.forRoom.name, [...room.players.values()].map(x => x.authUser.displayname));
+            repr.rooms.push(mapRoom);
+        }
+
+        for (let path of this.forWorld.paths) {
+            let mapPath = new MapPath(path.source, path.dest, path.direction);
+            repr.paths.push(mapPath);
+        }
+
+        return repr;
     }
 }

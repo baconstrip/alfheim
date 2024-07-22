@@ -1,7 +1,7 @@
 import World from "../game/api/prototype/world";
 import Room from "../game/api/prototype/room";
 import Path from "../game/path";
-import { PathDirection } from "../game/direction";
+import { PathDirection } from "../../common/direction";
 import GameObject from "../game/api/prototype/gameobject";
 import Zone from "../game/api/prototype/zone";
 

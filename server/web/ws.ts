@@ -107,7 +107,8 @@ export default async ({ wsServer, httpServer, sessions } :
     setInterval(() => {
         wsServer.clients.forEach((soc: ws) => {
             let last = (soc as TimedWebSocket).lastMessage;
-            if (new Date().getTime() - last.getTime() > 10000) {
+            // TODO change this for actual game
+            if (new Date().getTime() - last.getTime() > 40000) {
                 soc.terminate();
                 console.log('lost connection to ' + soc.url);
             }

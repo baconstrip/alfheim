@@ -1,7 +1,7 @@
 import { MutableRoom } from "../prototype/room";
 import Player from "../../player";
 import { Instance } from "./worldinstance";
-import { Direction } from "../../direction";
+import { Direction } from "../../../../common/direction";
 import Inventory from "../../inventory";
 
 export default class RoomInstance {

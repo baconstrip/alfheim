@@ -27,6 +27,7 @@
       <notebook></notebook>
       <dialogwindow></dialogwindow>
       <admin></admin>
+      <worldmap></worldmap>
     </div>
   </div>
 </template>
@@ -39,7 +40,8 @@ import statusarea from "./statusarea.vue";
 import topbar from "./topbar.vue";
 import notebook from "./notebook.vue";
 import dialogwindow from "./dialogwindow.vue";
-import admin from "./admin.vue"
+import admin from "./admin.vue";
+import worldmap from "./worldmap.vue";
 
 import { EventBus } from "../eventbus.ts";
 
@@ -53,6 +55,7 @@ export default {
     notebook,
     dialogwindow,
     admin,
+    worldmap,
   },
   mounted: function() {
     let localThis = this;

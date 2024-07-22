@@ -3,8 +3,11 @@ import { InternalEvent } from "../events/internalevent"
 import Player from "../game/player"
 import { Instance } from "../game/api/instance/worldinstance";
 import World from "../game/api/prototype/world";
-import { GameEventBus } from "../events/gameevents";
+import { GameEventArgs, GameEventBus } from "../events/gameevents";
 import { ActionEventBus } from "../events/actionevents";
+import { GameEvent } from "../events/gameevent";
+import { ProcessingStage } from "../events/processingstage";
+import * as Messages from '../../common/messages';
 
 // Singleton manager.
 class InstanceManager {
@@ -25,7 +28,7 @@ export default async (defaultWorld: Instance) => {
     // Default world binding adds a player to a world as soon as they join.
     InternalEventBus.onEvent(InternalEvent.POST_PLAYER_JOIN_LIVE, (ply: Player) => {
         // If the player is returning, skip adding to default world.
-        if (___findPlayer(ply.authUser.id)) {
+        if (__findPlayer(ply.authUser.id)) {
             console.log('Player returning: ' + ply.authUser.id);
             ply.___refreshUI();
             ply.sendMessage("Welcome back, we hope you enjoyed your hiatus");
@@ -36,11 +39,43 @@ export default async (defaultWorld: Instance) => {
     });
 
     InternalEventBus.onEvent(InternalEvent.PLAYER_CLEANUP, (id: number) => {
-        let ply = ___findPlayer(id);
+        let ply = __findPlayer(id);
         if (ply) {
             ply.world()?.removePlayer(ply);
             ply.location = undefined;
         }
+    });
+
+    let updateMapFunc = (e: GameEventArgs):boolean => {
+        let map = e.ply!.world()!.GetMapRepresentation();
+        for (let ply of e.ply!.world()!.players()) {
+            ply.soc?.send(
+                JSON.stringify(Messages.BuildMessage(Messages.ServerMessage.UPDATE_MAP, {
+                    map: map,
+                }))
+            );
+        }
+        return false;
+    };
+
+    // Update player maps when players move or join
+    GameEventBus.globalOnEvent(GameEvent.PLAYER_MOVE, ProcessingStage.PRE, updateMapFunc);
+    GameEventBus.globalOnEvent(GameEvent.PLAYER_JOIN_INSTANCE, ProcessingStage.POST, updateMapFunc);
+
+    // Same as above, but filters this player from the map.
+    GameEventBus.globalOnEvent(GameEvent.PLAYER_LEAVE_INSTANCE, ProcessingStage.PRE, (e: GameEventArgs):boolean => {
+        let map = e.ply!.world()!.GetMapRepresentation();
+        for (let room of map.rooms) {
+            room.players = room.players.filter((x) => x != e.ply!.authUser.displayname);
+        }
+        for (let ply of e.ply!.world()!.players()) {
+            ply.soc?.send(
+                JSON.stringify(Messages.BuildMessage(Messages.ServerMessage.UPDATE_MAP, {
+                    map: map,
+                }))
+            );
+        }
+        return false;
     });
 }
 
@@ -77,7 +112,7 @@ export function ListInstances(): Instance[] {
     return Array.from(___inst.instances.values());
 }
 
-function ___findPlayer(id: number): Player | undefined {
+function __findPlayer(id: number): Player | undefined {
     for (let instance of ___inst.instances) {
         for (let room of instance[1].rooms) {
             for (let ply of room[1].players) {

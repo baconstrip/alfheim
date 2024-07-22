@@ -1,6 +1,6 @@
 import { LanguagePart, registerGlobalVerb } from "../inputparsing";
 import nlp from 'compromise';
-import { DirectionFromWord } from "../../direction";
+import { DirectionFromWord } from "../../../../common/direction";
 import RoomInstance from "../../api/instance/roominstance";
 import Player from "../../player";
 
