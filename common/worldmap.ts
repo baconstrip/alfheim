@@ -25,6 +25,7 @@ export class MapPath {
 }
 
 export class MapRepresentation {
+    // TODO make rooms a map<id, mrroom>
     rooms: MapRepresentationRoom[];
     paths: MapPath[];
 

@@ -103,3 +103,16 @@
     font-family: 'Tangerine', 'cursive';
     font-size: 3rem
 }
+
+#map {
+    outline: 0px;
+    width: 100%;
+    height: auto;
+    min-height: 400px;
+}
+
+.floor-button {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    width: fit-content;
+}

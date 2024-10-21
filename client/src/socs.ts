@@ -6,21 +6,28 @@ export function connect(message: Function, error: Function): Function {
     ws.onmessage = function (msg) {
         lastSeen = new Date();
 
+        var data: any = null;
         try {
-            const data = JSON.parse(msg.data);
-            if (data['mAgiC__KEepAlive']) {
+            data = JSON.parse(msg.data);
+            if (data!['mAgiC__KEepAlive']) {
                 return;
             }
-            if (data['error']) {
+            if (data!['error']) {
                 error(data);
                 return;
             }
 
-            console.log(`Message from Server: ${ServerMessage[data.type]}`)
+            console.log(`Message from Server: ${ServerMessage[data!.type]}`)
             console.log(data);
-            message(data);
         } catch (e) {
-            console.log("Failed to parse JSON from server: " + msg.data);
+            console.log("Failed to parse JSON from server: " + msg.data + "\n\n Error: " + e.message);
+            return;
+        }
+
+        try {
+            message(data);
+        } catch(e) {
+            console.log(`Error processing server (${ServerMessage[data!.type]}) message in client code: ${e.message}:\n\n${e.stack}`)
         }
     };
 
